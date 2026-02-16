@@ -1,0 +1,1079 @@
+--- 
+header: 
+   gunner: 2
+   builder: 'Clan Severn'
+   crewComfort: -2
+   jf: 1
+   overtons: 0.5
+   pf: 1
+   high: 6
+   medic: 0
+   disposition: 'In Service'
+   architect: ''
+   flight: ''
+   name: ''
+   config: 'S'
+   keel: ''
+   undertons: 0.5
+   sensop: 2
+   medium: 0
+   jumpFuelPercentage: 0.1
+   shifts: 1
+   crewLocked: 'yes'
+   pilot: 1
+   staff: 0
+   mission: 'A'
+   missionLabel: 'Free Trader'
+   spaciousness: 2
+   owner: 'A. L. Jamison'
+   shipname: 'Beowulf'
+   totalCrew: 4
+   powerFuelPercentage: 0.01
+   qsp: 'A-S211'
+   low: 20
+   troops: 0
+   format: 'A'
+   crew: 4
+   numShifts: 1
+   tons: 200
+   totalMCr: 52.5
+   tonsFree: 0
+   astrogator: 1
+   passengers: 6
+   comments: |
+      Using a 200-ton hull, the Beowulf-class free trader is an elementary interstellar merchant ship plying the space lanes carrying cargo and passengers. It has jump drive-A, maneuver drive-A, and power plant-A, giving performance of jump-1 and 1-G acceleration. Fuel tankage supports the jump drive and one jump-1. Adjacent to the bridge is a computer Model/1. There are ten staterooms and twenty low berths. There are two hardpoints; the Beowulf has two hybrid triple turrets installed. There are no ship's vehicles. Cargo capacity is 82 tons. The hull is streamlined.
+      
+      The free trader typically requires a crew of four: pilot, engineer, medic, and steward. Up to two gunners may be added. The ship can carry six high or middle passengers and twenty low passengers.
+   demand: -1
+   mult: 1
+   tl: 11
+   driver: 0
+   url: ''
+   steward: 1
+   engineer: 3
+   freightmaster: 0
+   id: ''
+components: 
+   - {category: 'hull', name: 'hull', mcr: 14, mult: 1, type: 'Hull', label: 'Streamlined hull', config: 'S', eff: 1, tons: 200}
+
+   - {label: 'Jump Fuel (J1, 20t/pc)', e: 0, CP: 0, type: 'Drives', notes: 'J1, 20t/pc', eff: 1, tons: 20, q: 0, category: 'jumpfuel', r: 0, target: 11, s: 0, tl: 11, Sq: 0, b: 0, mcr: 0}
+
+   - {label: 'Plant Fuel (one month)', e: 0, CP: 0, type: 'Drives', notes: 'one month', eff: 1, tons: 2, q: 0, category: 'powerfuel', r: 0, mcr: 0, s: 0, tl: 11, Sq: 0, b: 0, target: 11}
+
+   - {type: 'Hull', mcrPerTon: 1, mcr: 2, CP: 1, code: 'K', category: 'landers', name: 'Landing legs with pads', label: 'Landing legs with pads', eff: 1, tons: 2, tonsPercent: 1}
+
+   - {label: 'Lifters', e: 0, CP: 1, type: 'Drives', eff: 1, tons: 0, q: 0, category: 'lifters', r: 0, target: 11, s: 0, tl: 11, Sq: 0, b: 0, mcr: 2}
+
+   - {type: 'Ops', name: 'computer', mcr: 1.5, CP: 1, category: 'computer', label: 'Model/1', notes: '1 cells', eff: 1, tons: 1, code: 1}
+
+   - {rating: 1, b: 0, E: 0, name: 'Maneuver', CP: 1, Q: 0, type: 'Drives', basetl: 9, notes: '1 G', eff: 1, S: 0, q: 0, category: 'Maneuver', R: 0, mcr: 4, e: 0, s: 0, autoAdjust: 1, tl: 11, Sq: 4, B: 0, target: 11, tons: 2, r: 0, label: 'Maneuver-1 (A)'}
+
+   - 
+      range: '1'
+      name: 'Polymer'
+      mcr: 0
+      mod: ''
+      CP: 1
+      tl: 11
+      type: 'Armor'
+      label: 'AV=5. 1 Kinetic Polymer'
+      basetl: 10
+      eff: 1
+      tons: 0
+      mount: 'Kinetic'
+
+   - {label: 'AR Surf Communicator', e: 0, name: 'Communicator', CP: 1, mount: 'Surface', type: 'Sensors', basetl: 8, eff: 1, tons: 0, q: 0, range: 'Attack Range', r: 0, target: 11, mod: 0, tl: 11, Sq: 0, b: 0, mcr: 1, s: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', range: 'Attack Range', basetl: 9, label: 'AR Surf Scope', eff: 1, tons: 0, q: 0, type: 'Sensors', r: 0, target: 11, s: 0, tl: 11, Sq: 0, name: 'Scope', mcr: 1, mod: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Antenna', range: 'Attack Range', basetl: 9, eff: 1, r: 0, q: 0, type: 'Sensors', name: 'Radar', target: 12, s: 0, tl: 11, Sq: 2, label: 'AR Ant Radar', mcr: 1.5, mod: 1, tons: 1}
+
+   - {range: 'Vdistant', name: 'Hybrid L-S-M', mcr: 1, mod: -1, tl: 11, type: 'Weapons', label: 'Vd T3 Hybrid L-S-M', basetl: 10, eff: 1, CP: 1, tons: 1, mount: 'Triple Turret'}
+
+   - {range: 'Vdistant', name: 'Hybrid L-S-M', mcr: 1, mod: -1, CP: 1, tl: 11, type: 'Weapons', basetl: 10, label: 'Vd T3 Hybrid L-S-M', eff: 1, tons: 1, mount: 'Triple Turret'}
+
+   - {type: 'Payload', label: 'Mail Vault', mcr: 0, eff: 1, tons: 1, notes: 'for express contracts'}
+
+   - 
+      mcr: 0
+      CP: 1
+      type: 'Ops'
+      label: 'Air Lock'
+      notes: ''
+      eff: 1
+      tons: 0.5
+
+   - 
+      mcr: 0
+      CP: 1
+      type: 'Payload'
+      label: 'Cargo Lock'
+      notes: ''
+      eff: 1
+      tons: 2
+
+   - 
+      type: 'Payload'
+      label: 'Cargo Hold Basic'
+      mcr: 0
+      eff: 1
+      tons: '82'
+      notes: ''
+
+   - 
+      E: 0
+      r: 0
+      CP: 1
+      notes: 'J 1'
+      original: {E: 0, CP: 1, notes: 'J 1', eff: 1, rating: 1, name: 'Jump', s: 0, autoAdjust: 1, q: 0, b: 0, jumpFuelUsage: 0.1, label: 'Jump-1 (A)', e: 0, Q: 0, type: 'Drives', R: 0, tons: 10, category: 'Jump', basetl: 9, target: 11, mod: 0, tl: 11, r: 0, B: 0, mcr: 10, S: 0, Sq: 20}
+      jumpFuelUsage: 0.1
+      name: 'Jump'
+      eff: 1
+      s: 0
+      autoAdjust: 1
+      q: 0
+      label: 'Jump-1 (A)'
+      rating: 1
+      b: 0
+      e: 0
+      Q: 0
+      category: 'Jump'
+      R: 0
+      tons: 10
+      type: 'Drives'
+      basetl: 9
+      target: 11
+      mod: 0
+      tl: 11
+      Sq: 20
+      B: 0
+      mcr: 10
+      S: 0
+      stage: 'Std'
+
+   - 
+      E: 0
+      powerFuelUsage: 0.01
+      CP: 1
+      notes: '1'
+      original: {E: 0, powerFuelUsage: 0.01, CP: 1, notes: '1', eff: 1, rating: 1, name: 'PowerPlant', s: 0, autoAdjust: 1, q: 0, r: 0, b: 0, e: 0, Q: 0, category: 'PowerPlant', basetl: 8, label: 'PowerPlant-1 (A)', S: 0, type: 'Drives', R: 0, target: 11, mod: 0, tl: 11, Sq: 8, B: 0, mcr: 4, tons: 4}
+      rating: 1
+      r: 0
+      eff: 1
+      s: 0
+      autoAdjust: 1
+      q: 0
+      label: 'PowerPlant-1 (A)'
+      b: 0
+      e: 0
+      Q: 0
+      category: 'PowerPlant'
+      R: 0
+      tons: 4
+      type: 'Drives'
+      basetl: 8
+      target: 11
+      mod: 0
+      tl: 11
+      name: 'PowerPlant'
+      B: 0
+      mcr: 4
+      S: 0
+      stage: 'Std'
+      Sq: 8
+
+   - {count: 1, mcr: 0.1, category: 'scoops', CP: 1, tl: 8, type: 'Drives', label: 'Fuel Scoops 200t/hr', notes: '200t/hr', eff: 1, tons: 1}
+
+   - 
+      type: 'Ops'
+      name: 'bridge'
+      mcr: 0
+      category: 'bridge'
+      label: 'Spacious Bridge'
+      notes: ''
+      eff: 1
+      tons: 20
+
+   - {type: 'Passengers', name: 'passenger space', mcr: 3, category: 'paxTons', label: 'Pass. H=6 M=0 Demand=-1', notes: 'Demand=-1', eff: 1, tons: 24}
+
+   - {type: 'Passengers', name: 'low berths', mcr: 2, category: 'lowBerths', label: 'Low berths (20)', notes: 20, eff: 1, tons: 10}
+
+   - {category: 'crewTons', name: 'crew space', mcr: 1.5, type: 'Crew', label: 'Crew C=4 Comfort=-2', notes: 'Comfort=-2', eff: 1, tons: 12}
+
+   - {type: 'Ops', name: 'life support', mcr: 2, CP: 1, category: 'lifeSupport', label: 'Life support 37 days at capacity', notes: '37 days at capacity', eff: 1, tons: 2}
+
+   - {type: 'Ops', name: 'luxury life support', mcr: 1, category: 'luxurySupport', label: 'Luxury life support', eff: 1, tons: 1, note: '6 High passengers'}
+
+   - 
+      mcr: 0
+      CP: 1
+      type: 'Ops'
+      label: 'Air Lock'
+      notes: ''
+      eff: 1
+      tons: 0.5
+
+--- 
+components: 
+   - {label: 'Streamlined hull', name: 'hull', CP: 0, category: 'hull', config: 'S', eff: 1, tons: 200, q: 0, type: 'Hull', r: 0, target: 12, e: 0, s: 0, mult: 1, tl: 12, Sq: 400, b: 0, mcr: 14}
+
+   - {b: 0, e: 0, CP: 0, category: 'jumpfuel', notes: 'J2, 20t/pc', eff: 1, tons: 40, q: 0, type: 'Drives', r: 0, mcr: 0, s: 0, tl: 11, Sq: 0, label: 'Jump Fuel (J2, 20t/pc)', target: 11}
+
+   - {b: 0, e: 0, CP: 0, category: 'powerfuel', notes: 'one month', eff: 1, tons: 4, q: 0, type: 'Drives', r: 0, mcr: 0, s: 0, tl: 11, Sq: 0, label: 'Plant Fuel (one month)', target: 11}
+
+   - {label: 'Landing legs with pads', e: 0, CP: 1, type: 'Hull', mcrPerTon: 1, eff: 1, tons: 2, q: 0, category: 'landers', name: 'Landing legs with pads', mcr: 2, s: 0, tl: 12, r: 0, b: 0, target: 12, Sq: 4, tonsPercent: 1, code: 'K'}
+
+   - {b: 0, e: 0, CP: 1, type: 'Drives', eff: 1, tons: 0, q: 0, category: 'lifters', r: 0, mcr: 2, s: 0, tl: 11, Sq: 0, label: 'Lifters', target: 11}
+
+   - {label: 'Model/2', e: 0, CP: 1, category: 'computer', notes: '2 cells', eff: 1, tons: 2, code: 2, type: 'Ops', r: 0, target: 12, b: 0, tl: 12, Sq: 4, name: 'computer', mcr: 5, s: 0, q: 0}
+
+   - {label: 'Maneuver-1 (A)', e: 0, r: 0, CP: 1, Q: 0, category: 'Maneuver', R: 0, E: 0, eff: 1, tons: 2, mcr: 4, q: 0, type: 'Drives', basetl: 9, notes: '1 G', s: 0, autoAdjust: 1, tl: 11, Sq: 4, b: 0, B: 0, target: 11, S: 0, name: 'Maneuver', rating: 1}
+
+   - 
+      label: 'AV=5. 1 Kinetic Polymer'
+      e: 0
+      r: 0
+      CP: 1
+      mount: 'Kinetic'
+      type: 'Armor'
+      basetl: 10
+      eff: 1
+      tons: 0
+      q: 0
+      range: '1'
+      name: 'Polymer'
+      target: 11
+      s: 0
+      tl: 11
+      Sq: 0
+      b: 0
+      mcr: 0
+      mod: ''
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 8, label: 'AR Surf Communicator', eff: 1, tons: 0, q: 0, range: 'Attack Range', name: 'Communicator', mcr: 1, s: 0, tl: 11, Sq: 0, r: 0, target: 11, mod: 0}
+
+   - {b: 0, e: 0, r: 0, CP: 1, mount: 'Surface', range: 'Attack Range', basetl: 9, eff: 1, tons: 0, q: 0, type: 'Sensors', name: 'Scope', target: 11, s: 0, tl: 11, Sq: 0, label: 'AR Surf Scope', mcr: 1, mod: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Antenna', type: 'Sensors', basetl: 9, label: 'AR Ant Radar', eff: 1, tons: 1, q: 0, range: 'Attack Range', name: 'Radar', target: 12, s: 0, tl: 11, Sq: 2, r: 0, mcr: 1.5, mod: 1}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 11, eff: 1, tons: 0, q: 0, range: 'Orbit', name: 'Proximeter', target: 11, s: 0, tl: 11, r: 0, label: 'Or Surf Proximeter', mcr: 0.1, mod: 0, Sq: 0}
+
+   - {b: 0, e: 0, r: 0, CP: 1, mount: 'Single Turret', range: 'Attack Range', basetl: 7, eff: 1, tons: 1, q: 0, type: 'Weapons', name: 'Missile', target: 8, s: 0, tl: 11, Sq: 2, label: 'AR T1 Missile', mcr: 0.4, mod: -3}
+
+   - {b: 0, name: 'Beam Laser', CP: 1, mount: 'Single Turret', type: 'Weapons', basetl: 10, e: 0, eff: 1, tons: 1, q: 0, range: 'Vdistant', r: 0, target: 8, mod: -3, tl: 11, Sq: 2, label: 'Vd T1 Beam Laser', mcr: 0.5, s: 0}
+
+   - {b: 0, e: 0, CP: 0, type: 'Payload', notes: 'for express contracts', eff: 1, tons: 1, q: 0, r: 0, target: 12, s: 0, tl: 12, Sq: 2, label: 'Mail Vault', mcr: 0}
+
+   - 
+      label: 'Air Lock'
+      e: 0
+      CP: 1
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 0.5
+      q: 0
+      r: 0
+      target: 12
+      s: 0
+      tl: 12
+      Sq: 1
+      b: 0
+      mcr: 0
+
+   - 
+      b: 0
+      e: 0
+      CP: 1
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 2
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 4
+      label: 'Cargo Lock'
+      target: 12
+
+   - 
+      label: 'Cargo Hold Basic'
+      e: 0
+      CP: 0
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 64
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 128
+      b: 0
+      target: 12
+
+   - {b: 0, e: 0, type: 'Drives', CP: 1, category: 'scoops', notes: '200t/hr', eff: 1, tons: 1, q: 0, count: 1, r: 0, target: 8, s: 0, tl: 8, Sq: 2, label: 'Fuel Scoops 200t/hr', mcr: 0.1}
+
+   - {label: 'Pass. H=6 M=0 Demand=-1', e: 0, CP: 0, category: 'paxTons', notes: 'Demand=-1', eff: 1, r: 0, q: 0, type: 'Passengers', name: 'passenger space', target: 12, s: 0, tl: 12, Sq: 48, b: 0, mcr: 3, tons: 24}
+
+   - {speed: 3, load: 2, tl: 9, av: '9,0,4,0,4,0,24,0', type: 'Vehicle', label: 'Air/Raft Enclosed', mcr: 0.1, eff: 1, tons: 4, code: 'ELPV'}
+
+   - 
+      b: 0
+      e: 0
+      CP: 0
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 12
+      q: 0
+      category: 'bridge'
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 24
+      name: 'bridge'
+      target: 12
+      label: 'Spacious Bridge'
+
+   - {label: 'Crew C=4 Comfort=-1', name: 'crew space', CP: 0, category: 'crewTons', notes: 'Comfort=-1', eff: 1, tons: 16, q: 0, type: 'Crew', r: 0, target: 12, e: 0, s: 0, tl: 12, Sq: 32, b: 0, mcr: 2}
+
+   - {label: 'Life support 37 days at capacity', e: 0, r: 0, CP: 1, type: 'Ops', notes: '37 days at capacity', eff: 1, tons: 2, q: 0, category: 'lifeSupport', name: 'life support', target: 12, s: 0, tl: 12, Sq: 4, b: 0, mcr: 2}
+
+   - {label: 'Luxury life support', e: 0, name: 'luxury life support', CP: 0, type: 'Ops', eff: 1, tons: 1, q: 0, category: 'luxurySupport', r: 0, mcr: 1, s: 0, tl: 12, Sq: 2, b: 0, target: 12, note: '6 High passengers'}
+
+   - {label: 'Low berths (10)', e: 0, CP: 0, category: 'lowBerths', b: 0, eff: 1, tons: 5, q: 0, type: 'Passengers', name: 'low berths', mcr: 1, s: 0, tl: 12, Sq: 10, r: 0, target: 12, notes: 10}
+
+   - {E: 0, powerFuelUsage: 0.01, CP: 1, notes: '2', eff: 1, rating: 2, name: 'PowerPlant', s: 0, autoAdjust: 1, q: 0, r: 0, b: 0, e: 0, Q: 0, type: 'Drives', R: 0, label: 'PowerPlant-2 (B)', S: 0, category: 'PowerPlant', basetl: 9, mcr: 7, tons: 7, tl: 12, Sq: 14, B: 0, target: 12}
+
+   - {E: 0, CP: 1, notes: 'J 2', eff: 1, q: 0, r: 0, s: 0, autoAdjust: 1, jumpFuelUsage: 0.1, name: 'Jump', rating: 2, b: 0, e: 0, Q: 0, type: 'Drives', basetl: 11, label: 'Jump-2 (B)', tons: 15, category: 'Jump', R: 0, target: 12, S: 0, tl: 12, Sq: 30, B: 0, mcr: 15}
+header: 
+   gunner: 1
+   format: 'A'
+   steward: 1
+   crewComfort: -1
+   jf: 2
+   overtons: 7.5
+   config: 'S'
+   high: 6
+   medic: 0
+   disposition: 'In Service'
+   architect: ''
+   flight: ''
+   name: ''
+   pilot: 1
+   keel: ''
+   mission: 'A2'
+   missionLabel: 'Far Trader'
+   sensop: 1
+   medium: 0
+   shipname: 'Empress Marava'
+   shifts: 1
+   crewLocked: 'yes'
+   staff: 0
+   low: 10
+   totalMCr: 62.5
+   owner: ''
+   jumpFuelPercentage: 0.1
+   passengers: 6
+   powerFuelPercentage: 0.02
+   numShifts: 1
+   undertons: 12.5
+   troops: 0
+   totalCrew: 4
+   crew: 4
+   qsp: 'A2-S212'
+   tons: 200
+   spaciousness: 2
+   tonsFree: -7.5
+   pf: 1
+   builder: 'General Shipyards'
+   demand: -1
+   mult: 1
+   tl: 12
+   driver: 0
+   url: ''
+   astrogator: 1
+   engineer: 1
+   freightmaster: 0
+   id: ''
+
+--- 
+components: 
+   - {label: 'Airframe hull', e: 0, r: 0, CP: 0, type: 'Hull', config: 'A', eff: 1, tons: 200, q: 0, category: 'hull', name: 'hull', target: 15, s: 0, mult: 1, tl: 15, Sq: 400, b: 0, mcr: 16}
+
+   - {label: 'Jump Fuel (J2, 20t/pc)', e: 0, CP: 0, category: 'jumpfuel', notes: 'J2, 20t/pc', eff: 1, tons: 40, q: 0, type: 'Drives', r: 0, target: 15, s: 0, tl: 15, Sq: 0, b: 0, mcr: 0}
+
+   - {label: 'Plant Fuel (one month)', e: 0, CP: 0, category: 'powerfuel', notes: 'one month', eff: 1, tons: 4, q: 0, type: 'Drives', r: 0, target: 15, s: 0, tl: 15, Sq: 0, b: 0, mcr: 0}
+
+   - {mcrPerTon: 1, e: 0, name: 'Flotation hull', CP: 1, category: 'fittings', label: 'Flotation hull', eff: 1, tons: 2, q: 0, type: 'Hull', r: 0, target: 15, s: 0, tl: 15, Sq: 4, b: 0, mcr: 2, tonsPercent: 1, code: 'D'}
+
+   - {mcrPerTon: 2, e: 0, name: 'Collapsing wings', CP: 1, type: 'Hull', label: 'Collapsing wings', eff: 1, tons: 2, code: 'V', category: 'wings', r: 0, mcr: 4, s: 0, tl: 15, Sq: 4, b: 0, target: 15, tonsPercent: 1, q: 0}
+
+   - {mcrPerTon: 1, e: 0, name: 'Landing legs with pads', CP: 1, category: 'landers', label: 'Landing legs with pads', eff: 1, tons: 2, code: 'K', type: 'Hull', r: 0, target: 15, s: 0, tl: 15, Sq: 4, b: 0, mcr: 2, tonsPercent: 1, q: 0}
+
+   - {label: 'Lifters', e: 0, CP: 1, category: 'lifters', eff: 1, tons: 0, q: 0, type: 'Drives', r: 0, mcr: 2, s: 0, tl: 15, Sq: 0, b: 0, target: 15}
+
+   - {label: 'Model/1bis', r: 0, CP: 1, type: 'Ops', notes: '2 cells', eff: 1, tons: 1.5, q: 0, category: 'computer', name: 'computer', target: 15, e: 0, s: 0, tl: 15, Sq: 3, b: 0, mcr: 2.2, code: 1}
+
+   - {label: 'Fuel Scoops 200t/hr', e: 0, CP: 1, category: 'scoops', notes: '200t/hr', eff: 1, tons: 1, q: 0, count: 1, r: 0, mcr: 0.1, s: 0, tl: 8, Sq: 2, type: 'Drives', target: 8, b: 0}
+
+   - {label: 'Fuel Purifiers 4t/hr', e: 0, CP: 1, category: 'purifiers', notes: '4t/hr', eff: 1, tons: 1, q: 0, type: 'Drives', r: 0, mcr: 1, s: 0, tl: 8, Sq: 2, count: 1, b: 0, target: 8}
+
+   - 
+      b: 0
+      e: 0
+      name: 'Charged'
+      CP: 1
+      mount: 'Rad'
+      range: '1'
+      basetl: 14
+      eff: 1
+      tons: 0
+      q: 0
+      type: 'Armor'
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 15
+      Sq: 0
+      label: 'AV=28. 1 Rad Charged'
+      target: 15
+      mod: ''
+
+   - {b: 0, name: 'Communicator', CP: 1, mount: 'Surface', range: 'Attack Range', basetl: 8, e: 0, eff: 1, tons: 0, q: 0, type: 'Sensors', r: 0, target: 15, mod: 0, tl: 15, Sq: 0, label: 'AR Surf Communicator', mcr: 1, s: 0}
+
+   - {label: 'AR Ant EMS', e: 0, CP: 1, mount: 'Antenna', range: 'Attack Range', basetl: 12, b: 0, eff: 1, tons: 1, q: 0, type: 'Sensors', name: 'EMS', target: 16, mod: 1, tl: 15, Sq: 2, r: 0, mcr: 1.5, s: 0}
+
+   - {label: 'AR Surf Visor', e: 0, r: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 14, eff: 1, tons: 0, q: 0, range: 'Attack Range', name: 'Visor', target: 15, s: 0, tl: 15, Sq: 0, b: 0, mcr: 1, mod: 0}
+
+   - {b: 0, e: 0, name: 'Life Detector', CP: 1, mount: 'Surface', type: 'Sensors', basetl: 13, eff: 1, tons: 0, q: 0, range: 'Geo', r: 0, target: 15, mod: 0, tl: 15, Sq: 0, label: 'G Surf Life Detector', mcr: 0.1, s: 0}
+
+   - {b: 0, r: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 13, e: 0, eff: 1, tons: 0, q: 0, range: 'Geo', name: 'Proximeter', mcr: 0.1, mod: 0, tl: 15, Sq: 0, label: 'G Surf Proximeter', target: 15, s: 0}
+
+   - {label: 'G Surf Activity Sensor', e: 0, r: 0, CP: 1, mount: 'Surface', range: 'Geo', basetl: 14, eff: 1, tons: 0, q: 0, type: 'Sensors', name: 'Activity Sensor', mcr: 0.1, mod: 0, tl: 15, Sq: 0, b: 0, target: 15, s: 0}
+
+   - {b: 0, e: 0, name: 'Field Sensor', CP: 1, mount: 'Surface', type: 'Sensors', basetl: 15, eff: 1, tons: 0, q: 0, range: 'Geo', r: 0, target: 15, s: 0, tl: 15, Sq: 0, label: 'G Surf Field Sensor', mcr: 0.1, mod: 0}
+
+   - {label: 'Vd T2 Beam Laser', r: 0, CP: 1, mount: 'Dual Turret', range: 'Vdistant', basetl: 10, e: 0, eff: 1, tons: 1, q: 0, type: 'Weapons', name: 'Beam Laser', target: 13, s: 0, tl: 15, Sq: 2, b: 0, mcr: 0.5, mod: -2}
+
+   - {type: 'Vehicle', load: 2, tl: 9, av: '9,0,4,0,4,0,24,0', speed: 3, label: 'Air/Raft Enclosed', mcr: 0.1, eff: 1, tons: 4, code: 'ELPV'}
+
+   - {type: 'Smallcraft', mcr: '14', tl: '15', av: '40,10,10,15,10,10,10', speed: '7G', label: 'Launch', load: 15, eff: 1, tons: 20}
+
+   - 
+      label: 'Capture Tank 1'
+      e: 0
+      CP: 0
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 7
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 15
+      Sq: 14
+      b: 0
+      target: 15
+
+   - 
+      label: 'Capture Tank 2'
+      e: 0
+      CP: 0
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 7
+      q: 0
+      r: 0
+      target: 15
+      s: 0
+      tl: 15
+      Sq: 14
+      b: 0
+      mcr: 0
+
+   - {B: 0, e: 0, mcr: 4, CP: 1, Q: 0, category: 'Maneuver', type: 'Drives', R: 0, notes: '1 G', eff: 1, tons: 2, q: 0, name: 'Maneuver', r: 0, target: 11, E: 0, label: 'Maneuver-1 (A)', autoAdjust: 1, rating: 1, Sq: 4, b: 0, basetl: 9, s: 0, S: 0, tl: 11}
+
+   - {E: 0, powerFuelUsage: 0.01, CP: 1, notes: '2', eff: 1, q: 0, r: 0, s: 0, autoAdjust: 1, rating: 2, label: 'PowerPlant-2 (B)', b: 0, e: 0, Q: 0, type: 'Drives', basetl: 9, S: 0, category: 'PowerPlant', R: 0, target: 11, tons: 7, tl: '11', name: 'PowerPlant', B: 0, mcr: 7, Sq: 14}
+
+   - {E: 0, CP: 1, notes: 'J 2', eff: 1, q: 0, name: 'Jump', s: 0, autoAdjust: 1, jumpFuelUsage: 0.1, r: 0, rating: 2, b: 0, e: 0, Q: 0, category: 'Jump', basetl: 11, label: 'Jump-2 (B)', tons: 15, type: 'Drives', R: 0, mcr: 15, S: 0, tl: 11, Sq: 30, B: 0, target: 11}
+
+   - 
+      b: 0
+      e: 0
+      CP: 0
+      category: 'bridge'
+      notes: ''
+      eff: 1
+      tons: 20
+      q: 0
+      type: 'Ops'
+      name: 'bridge'
+      target: 11
+      s: 0
+      tl: 11
+      r: 0
+      label: 'Spacious Bridge'
+      mcr: 0
+      Sq: 40
+
+   - {label: 'Pass. H=6 M=0 Demand=0', e: 0, r: 0, CP: 0, category: 'paxTons', notes: 'Demand=0', eff: 1, tons: 30, q: 0, type: 'Passengers', name: 'passenger space', target: 11, s: 0, tl: 11, Sq: 60, b: 0, mcr: 3.7}
+
+   - {b: 0, e: 0, name: 'crew space', CP: 0, type: 'Crew', notes: 'Comfort=0', eff: 1, tons: 25, q: 0, category: 'crewTons', r: 0, mcr: 3.1, s: 0, tl: 11, Sq: 50, label: 'Crew C=5 Comfort=0', target: 11}
+
+   - {label: 'Life support 141 days at capacity', e: 0, CP: 1, type: 'Ops', notes: '141 days at capacity', eff: 1, tons: 6, q: 0, category: 'lifeSupport', name: 'life support', mcr: 6, b: 0, tl: 11, Sq: 12, r: 0, target: 11, s: 0}
+
+   - {label: 'Luxury life support', e: 0, CP: 0, category: 'luxurySupport', b: 0, eff: 1, tons: 1, q: 0, type: 'Ops', name: 'luxury life support', target: 11, s: 0, tl: 11, Sq: 2, r: 0, mcr: 1, note: '6 High passengers'}
+
+   - 
+      label: 'Air Lock'
+      e: 0
+      CP: 1
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 0.5
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 11
+      Sq: 1
+      b: 0
+      target: 11
+header: 
+   gunner: 1
+   crewComfort: 0
+   longTerm: {}
+   jf: 2
+   overtons: 63.5
+   numShifts: 1
+   pf: 1
+   high: 6
+   medic: 1
+   disposition: 'In Service'
+   architect: ''
+   flight: ''
+   name: ''
+   pilot: 1
+   keel: ''
+   low: 0
+   sensop: 2
+   medium: 0
+   jumpFuelPercentage: 0.1
+   shifts: 1
+   crewLocked: 'yes'
+   staff: 0
+   mission: 'K'
+   missionLabel: 'Safari Ship'
+   totalMCr: 87.5
+   steward: 1
+   shipname: 'Leaping Snowcat'
+   passengers: 6
+   undertons: 0.5
+   powerFuelPercentage: 0.02
+   qsp: 'K-A212'
+   spaciousness: 2
+   troops: 0
+   owner: 'T. Cassidine'
+   astrogator: 1
+   crew: 5
+   comments: |
+      Using a 200-ton airframe hull, the safari ship is an excursion vessel intended for trophy-taking (real or photographic) expeditions to other worlds. It has jump drive-B, maneuver drive-A, and power plant-B, giving a performance of jump-2 and 1-G acceleration. Fuel tankage supports the power plant and one jump-2. Adjacent to the bridge is a computer Model/1 bis. There are eleven staterooms and no low berths. The ship has one hardpoint and one ton allocated to fire control.  A dual beam laser turret is installed.
+      
+      There are two ship’s vehicles: an air/raft and a 20-ton launch. Cargo capacity is 6 tons. Two 7-ton capture tanks hold specimens, and a 7-ton trophy lounge serves as a
+      hunter’s recreation area. The safari ship requires a crew of five: pilot, astrogator, engineer, steward, and medic. A gunner and additional expedition personnel may be added. The pilot operates the launch; the steward operates the air/raft. The ship can carry a party of six (or up to 8 if the crew goes to double occupancy) on expeditions; it does not engage in commercial passenger service.
+   tons: 200
+   tonsFree: 0
+   format: 'A'
+   totalCrew: 5
+   demand: 0
+   mult: 1
+   tl: 11
+   driver: 0
+   url: ''
+   builder: 'Bilstein Yards'
+   engineer: 3
+   config: 'A'
+   freightmaster: 0
+   id: ''
+
+--- 
+components: 
+   - {b: 0, e: 0, CP: 0, type: 'Hull', config: 'S', eff: 1, tons: 100, q: 0, category: 'hull', name: 'hull', target: 15, s: 0, mult: 1, tl: 15, Sq: 200, r: 0, mcr: 8, label: 'Streamlined hull'}
+
+   - {label: 'Jump Fuel (J2, 8t/pc)', e: 0, CP: 0, type: 'Drives', notes: 'J2, 8t/pc', eff: 1, tons: 16, q: 0, category: 'jumpfuel', r: 0, mcr: 0, s: 0, tl: 15, Sq: 0, b: 0, target: 15}
+
+   - {label: 'Plant Fuel (one month)', e: 0, CP: 0, category: 'powerfuel', notes: 'one month', eff: 1, tons: 7, q: 0, type: 'Drives', r: 0, target: 15, s: 0, tl: 15, Sq: 0, b: 0, mcr: 0}
+
+   - {b: 0, e: 0, CP: 1, tonsPercent: 1, type: 'Hull', mcrPerTon: 1, label: 'Landing legs with pads', eff: 1, tons: 1, q: 0, category: 'landers', name: 'Landing legs with pads', mcr: 1, s: 0, code: 'K', Sq: 2, r: 0, target: 15, tl: 15}
+
+   - {b: 0, e: 0, CP: 1, type: 'Drives', eff: 1, tons: 0, q: 0, category: 'lifters', r: 0, mcr: 1, s: 0, tl: 15, Sq: 0, label: 'Lifters', target: 15}
+
+   - {label: 'Model/1bis', e: 0, r: 0, CP: 1, type: 'Ops', notes: '2 cells', eff: 1, tons: 1.5, code: 1, category: 'computer', name: 'computer', target: 15, s: 0, q: 0, Sq: 3, b: 0, mcr: 2.2, tl: 15}
+
+   - 
+      E: 0
+      name: 'PowerPlant'
+      CP: 1
+      notes: '6'
+      eff: 0.9
+      q: 2
+      powerFuelUsage: 0.011
+      original: {E: 0, powerFuelUsage: 0.01, CP: 1, notes: '6', eff: 1, q: 0, r: 0, s: 0, autoAdjust: 1, rating: 6, label: 'PowerPlant-6 (C)', b: 0, e: 0, Q: 0, category: 'PowerPlant', basetl: 13, S: 0, type: 'Drives', R: 0, mcr: 10, mod: 0, tl: 15, name: 'PowerPlant', B: 0, target: 15, tons: 10, Sq: 20}
+      s: 3
+      autoAdjust: 1
+      rating: 6
+      b: 0
+      label: 'Mod PowerPlant-6 (C)'
+      r: 3
+      Q: 0
+      type: 'Drives'
+      basetl: 13
+      e: 2
+      S: 0
+      category: 'PowerPlant'
+      R: 0
+      target: 15
+      mod: 2
+      tl: 13
+      Sq: 20
+      B: 0
+      mcr: 5
+      tons: 5
+      stage: 'Mod'
+
+   - 
+      E: 0
+      CP: 1
+      notes: '6 G'
+      original: {E: 0, CP: 1, notes: '6 G', eff: 1, rating: 6, name: 'Maneuver', s: 0, autoAdjust: 1, q: 0, label: 'Maneuver-6 (C)', b: 0, r: 0, Q: 0, type: 'Drives', R: 0, e: 0, S: 0, category: 'Maneuver', basetl: 10, mcr: 10, mod: 0, tl: 15, Sq: 10, B: 0, target: 15, tons: 5}
+      q: -2
+      r: 1
+      eff: 1.2
+      s: 1
+      autoAdjust: 1
+      rating: 6
+      b: -5
+      label: 'Adv Maneuver-6 (C)'
+      e: 3
+      Q: 0
+      category: 'Maneuver'
+      basetl: 10
+      tons: 2.5
+      type: 'Drives'
+      R: 0
+      target: 15
+      mod: 3
+      tl: 12
+      name: 'Maneuver'
+      B: 0
+      mcr: 10
+      S: 0
+      stage: 'Adv'
+      Sq: 10
+
+   - 
+      E: 0
+      CP: 1
+      notes: 'J 2'
+      eff: 1.1
+      rating: 2
+      name: 'Jump'
+      original: {E: 0, CP: 1, notes: 'J 2', eff: 1, rating: 2, name: 'Jump', s: 0, autoAdjust: 1, jumpFuelUsage: 0.1, b: 0, q: 0, label: 'Jump-2 (A)', r: 0, Q: 0, category: 'Jump', R: 0, e: 0, tons: 10, type: 'Drives', basetl: 11, mcr: 10, mod: 0, tl: 15, Sq: 20, B: 0, target: 15, S: 0}
+      s: 1
+      autoAdjust: 1
+      q: 1
+      label: 'Imp Jump-2 (A)'
+      jumpFuelUsage: 0.09000000000000001
+      b: -2
+      r: 0
+      Q: 0
+      type: 'Drives'
+      R: 0
+      e: 0
+      S: 0
+      category: 'Jump'
+      basetl: 11
+      mcr: 10
+      mod: 1
+      tl: 14
+      Sq: 20
+      B: 0
+      target: 15
+      tons: 10
+      stage: 'Imp'
+
+   - 
+      label: 'AV=140. 5 Blast Charged'
+      e: 0
+      r: 0
+      CP: 1
+      mount: 'Blast'
+      type: 'Armor'
+      basetl: 14
+      eff: 1
+      tons: 20
+      q: 0
+      range: '5'
+      name: 'Charged'
+      mcr: 3
+      s: 0
+      tl: 15
+      Sq: 40
+      b: 0
+      target: 15
+      mod: ''
+
+   - {label: 'AR Surf Communicator', e: 0, CP: 1, mount: 'Surface', range: 'Attack Range', basetl: 8, b: 0, eff: 1, tons: 0, q: 0, type: 'Sensors', r: 0, mcr: 1, s: 0, tl: 15, Sq: 0, name: 'Communicator', target: 15, mod: 0}
+
+   - {b: 0, e: 0, r: 0, CP: 1, mount: 'Surface', range: 'Long Range', basetl: 9, eff: 1, tons: 1, q: 0, type: 'Sensors', name: 'Jammer', mcr: 1, mod: 0, tl: 15, Sq: 2, label: 'LR Surf Jammer', target: 15, s: 0}
+
+   - {label: 'LR Ant EMS', e: 0, CP: 1, mount: 'Antenna', type: 'Sensors', basetl: 13, b: 0, eff: 1, tons: 2, q: 0, range: 'Long Range', name: 'EMS', mcr: 2.5, mod: 1, tl: 15, Sq: 4, r: 0, target: 16, s: 0}
+
+   - {label: 'LR Surf Stealth Mask', e: 0, name: 'Stealth Mask', CP: 1, mount: 'Surface', range: 'Long Range', basetl: 13, eff: 1, tons: 1, q: 0, type: 'Sensors', r: 0, target: 15, s: 0, tl: 15, Sq: 2, b: 0, mcr: 1, mod: 0}
+
+   - {label: 'AR Surf Visor', e: 0, name: 'Visor', CP: 1, mount: 'Surface', type: 'Sensors', basetl: 14, eff: 1, tons: 0, q: 0, range: 'Attack Range', r: 0, mcr: 1, s: 0, tl: 15, Sq: 0, b: 0, target: 15, mod: 0}
+
+   - {label: 'LR Surf Neutrino Detector', name: 'Neutrino Detector', CP: 1, mount: 'Surface', range: 'Long Range', basetl: 11, e: 0, eff: 1, tons: 1, q: 0, type: 'Sensors', r: 0, mcr: 1, s: 0, tl: 15, Sq: 2, b: 0, target: 15, mod: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', range: 'Geo', basetl: 13, label: 'G Surf Proximeter', eff: 1, tons: 0, q: 0, type: 'Sensors', r: 0, target: 15, s: 0, tl: 15, Sq: 0, name: 'Proximeter', mcr: 0.1, mod: 0}
+
+   - 
+      b: 0
+      e: 0
+      name: 'bridge'
+      CP: 0
+      category: 'bridge'
+      notes: ''
+      eff: 1
+      tons: 7
+      q: 0
+      type: 'Ops'
+      r: 0
+      target: 15
+      s: 0
+      tl: 15
+      Sq: 14
+      label: 'Cramped Bridge'
+      mcr: 0
+
+   - {b: 0, e: 0, r: 0, CP: 0, category: 'crewTons', notes: 'Comfort=-2', eff: 1, tons: 12, q: 0, type: 'Crew', name: 'crew space', mcr: 1.5, s: 0, tl: 15, Sq: 24, label: 'Crew C=4 Comfort=-2', target: 15}
+
+   - {b: 0, e: 0, CP: 1, category: 'lifeSupport', notes: '75 days at capacity', eff: 1, name: 'life support', q: 0, type: 'Ops', r: 0, mcr: 1, tons: 1, tl: 15, Sq: 2, label: 'Life support 75 days at capacity', target: 15, s: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Quad Turret Deployable', range: 'Long Range', basetl: 8, label: 'LR T4de Missile', eff: 1, tons: 6, q: 0, type: 'Weapons', r: 0, mcr: 13.7, mod: 0, tl: 15, Sq: 12, name: 'Missile', target: 15, s: 0}
+
+   - 
+      b: 0
+      e: 0
+      CP: 1
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 0.5
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 15
+      Sq: 1
+      label: 'Air Lock'
+      target: 15
+
+   - 
+      b: 0
+      e: 0
+      CP: 0
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 1
+      q: 0
+      r: 0
+      target: 15
+      s: 0
+      tl: 15
+      Sq: 2
+      label: 'Magazine'
+      mcr: 0
+
+   - 
+      b: 0
+      e: 0
+      CP: 0
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      tons: 1
+      q: 0
+      r: 0
+      target: 15
+      s: 0
+      tl: 15
+      Sq: 2
+      label: 'Emergency Capsule'
+      mcr: 1
+
+   - 
+      b: 0
+      e: 0
+      CP: 0
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 3
+      q: 0
+      r: 0
+      target: 15
+      s: 0
+      tl: 15
+      Sq: 6
+      label: 'Cargo Hold Basic'
+      mcr: 0
+header: 
+   gunner: 0
+   crewComfort: -2
+   undertons: 0.5
+   architect: ''
+   overtons: 2
+   pf: 1
+   high: 0
+   medic: 0
+   disposition: 'In Service'
+   jf: 2
+   flight: ''
+   name: ''
+   pilot: 1
+   keel: ''
+   low: 0
+   sensop: 7
+   owner: ''
+   shipname: 'Lidakhuggarash'
+   shifts: 1
+   crewLocked: 'yes'
+   staff: 0
+   mission: 'V'
+   missionLabel: 'Corvette'
+   totalMCr: 65
+   steward: 0
+   jumpFuelPercentage: 0.08181818181818182
+   totalCrew: 4
+   powerFuelPercentage: 0.07333333333333333
+   numShifts: 1
+   spaciousness: 0.5
+   troops: 0
+   medium: 0
+   astrogator: 1
+   crew: 4
+   qsp: 'V-S162'
+   tons: 100
+   tonsFree: 0.5
+   config: 'S'
+   builder: 'Piorabanti'
+   demand: 0
+   mult: 1
+   tl: 15
+   driver: 0
+   url: ''
+   format: 'A'
+   engineer: 4
+   passengers: 0
+   freightmaster: 0
+   id: ''
+
+--- 
+components: 
+   - {label: 'Cluster hull', e: 0, CP: 0, type: 'Hull', config: 'C', eff: 1, q: 0, category: 'hull', name: 'hull', mcr: 10, tons: 600, mult: 1, tl: 12, r: 0, b: 0, target: 12, s: 0, Sq: 1200}
+
+   - {label: 'Jump Fuel (J0, 60t/pc)', e: 0, CP: 0, category: 'jumpfuel', notes: 'J0, 60t/pc', eff: 1, tons: 0, q: 0, type: 'Drives', r: 0, target: 12, s: 0, tl: 12, Sq: 0, b: 0, mcr: 0}
+
+   - {label: 'Plant Fuel (0 months)', e: 0, CP: 0, category: 'powerfuel', notes: '0 months', eff: 1, tons: 0, q: 0, type: 'Drives', r: 0, target: 12, s: 0, tl: 12, Sq: 0, b: 0, mcr: 0}
+
+   - {b: 0, e: 0, CP: 1, category: 'computer', notes: '3 cells', eff: 1, tons: 3, code: 3, type: 'Ops', name: 'computer', mcr: 10.5, s: 0, q: 0, r: 0, label: 'Model/3', target: 12, tl: 12, Sq: 6}
+
+   - {E: 0, CP: 2, notes: 'J 3', eff: 1, jumpFuelUsage: 0.1, r: 0, s: 0, autoAdjust: 1, rating: 3, name: 'Jump', q: 0, label: 'Jump-3 (J)', e: 0, Q: 0, category: 'Jump', R: 0, b: 0, S: 0, type: 'Drives', basetl: 12, mcr: 50, tons: 50, tl: 12, Sq: 100, B: 0, target: 12}
+
+   - {E: 0, CP: 1, notes: 'J 2', eff: 1, jumpFuelUsage: 0.1, r: 0, s: 0, autoAdjust: 1, rating: 2, name: 'Jump', q: 0, label: 'Jump-2 (F)', e: 0, Q: 0, category: 'Jump', R: 0, b: 0, S: 0, type: 'Drives', basetl: 11, mcr: 35, tons: 35, tl: 12, Sq: 70, B: 0, target: 12, mod: 0}
+
+   - {E: 0, CP: 5, notes: '5', eff: 1, q: 0, r: 0, s: 0, autoAdjust: 1, rating: 5, name: 'Collector', label: 'Collector-5 (Q)', e: 0, Q: 0, type: 'Drives', R: 0, b: 0, S: 0, category: 'Collector', basetl: 18, mcr: 75, tons: 150, tl: 18, Sq: 300, B: 0, target: 18}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 8, eff: 1, tons: 0, q: 0, range: 'Attack Range', name: 'Communicator', mcr: 1, mod: 0, tl: 12, r: 0, label: 'AR Surf Communicator', target: 12, s: 0, Sq: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Antenna', type: 'Sensors', basetl: 12, eff: 1, tons: 1, q: 0, range: 'Attack Range', name: 'EMS', mcr: 1.5, mod: 1, tl: 12, r: 0, label: 'AR Ant EMS', target: 13, s: 0, Sq: 2}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 9, eff: 1, tons: 0, q: 0, range: 'Attack Range', name: 'Scope', mcr: 1, mod: 0, tl: 12, r: 0, label: 'AR Surf Scope', target: 12, s: 0, Sq: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 12, eff: 1, tons: 0, q: 0, range: 'Far Orbit', name: 'Proximeter', mcr: 0.1, mod: 0, tl: 12, r: 0, label: 'Fo Surf Proximeter', target: 12, s: 0, Sq: 0}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Single Turret', type: 'Weapons', basetl: 10, eff: 1, tons: 1, q: 0, range: 'Vdistant', name: 'Beam Laser', mcr: 0.5, mod: -3, tl: 12, r: 0, label: 'Vd T1 Beam Laser', target: 9, s: 0, Sq: 2}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Single Turret', type: 'Weapons', basetl: 10, eff: 1, tons: 1, q: 0, range: 'Vdistant', name: 'Beam Laser', mcr: 0.5, mod: -3, tl: 12, r: 0, label: 'Vd T1 Beam Laser', target: 9, s: 0, Sq: 2}
+
+   - {b: 0, e: 0, CP: 0, type: 'Passengers', notes: 'Demand=0', eff: 1, q: 0, category: 'paxTons', name: 'passenger space', mcr: 4.3, s: 0, tl: 12, r: 0, label: 'Pass. H=7 M=0 Demand=0', target: 12, tons: 35, Sq: 70}
+
+   - {b: 0, e: 0, CP: 1, mount: 'Surface', type: 'Sensors', basetl: 12, eff: 1, tons: 0, q: 0, range: 'Geo', name: 'Deep Radar', mcr: 0.1, mod: 0, tl: 12, r: 0, label: 'G Surf Deep Radar', target: 12, s: 0, Sq: 0}
+
+   - 
+      label: 'Cargo Hold Basic'
+      e: 0
+      CP: 0
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 150
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 300
+      b: 0
+      target: 12
+
+   - 
+      label: 'Machine Shop'
+      e: 0
+      CP: 1
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 10
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 20
+      b: 0
+      target: 12
+
+   - 
+      label: 'Metallurgical Shop'
+      e: 0
+      CP: 1
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 10
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 20
+      b: 0
+      target: 12
+
+   - 
+      label: 'Electronics Shop'
+      e: 0
+      CP: 1
+      type: 'Payload'
+      notes: ''
+      eff: 1
+      tons: 10
+      q: 0
+      r: 0
+      mcr: 0
+      s: 0
+      tl: 12
+      Sq: 20
+      b: 0
+      target: 12
+
+   - {b: 0, e: 0, CP: 0, type: 'Ops', notes: '', eff: 1, q: 0, category: 'bridge', name: 'bridge', mcr: 0, s: 0, tl: 12, r: 0, label: 'Spacious Bridge', target: 12, tons: 20, Sq: 40}
+
+   - {b: 0, e: 0, CP: 0, type: 'Crew', notes: 'Comfort=0', eff: 1, q: 0, category: 'crewTons', name: 'crew space', mcr: 4.3, s: 0, tl: 12, r: 0, label: 'Crew C=7 Comfort=0', target: 12, tons: 35, Sq: 70}
+
+   - {b: 0, e: 0, CP: 1, category: 'lifeSupport', notes: '42 days at capacity', eff: 1, tons: 3, q: 0, type: 'Ops', name: 'life support', mcr: 3, tl: 12, r: 0, label: 'Life support 42 days at capacity', target: 12, s: 0, Sq: 6}
+
+   - {b: 0, e: 0, CP: 0, type: 'Ops', eff: 1, q: 0, category: 'luxurySupport', name: 'luxury life support', mcr: 1, s: 0, tl: 12, r: 0, label: 'Luxury life support', target: 12, tons: 1, note: '7 High passengers', Sq: 2}
+
+   - 
+      b: 0
+      e: 0
+      CP: 1
+      mount: 'Rad'
+      type: 'Armor'
+      basetl: 10
+      eff: 1
+      tons: 0
+      q: 0
+      range: '1'
+      name: 'Polymer'
+      mcr: 0
+      mod: ''
+      tl: 12
+      r: 0
+      label: 'AV=5. 1 Rad Polymer'
+      target: 12
+      s: 0
+      Sq: 0
+
+   - {type: 'Smallcraft', mcr: 10, tl: 15, av: '30,10,10,10,10,10,10', speed: '5G', label: 'Pinnace Fast', load: 20, eff: 1, tons: 40}
+
+   - {type: 'Smallcraft', mcr: 10, tl: 15, av: '30,10,10,10,10,10,10', speed: '5G', label: 'Pinnace Fast', load: 20, eff: 1, tons: 40}
+
+   - {label: '40t Pod Grapples (2)', e: 0, CP: 0, type: 'Ops', notes: '2 per 35t', eff: 1, tons: 4, q: 0, r: 0, mcr: 4, s: 0, tl: 12, Sq: 8, b: 0, target: 12}
+
+   - {label: '40t Pod Grapples (2)', e: 0, CP: 0, type: 'Ops', notes: '2 per 35t', eff: 1, q: 0, r: 0, mcr: 4, s: 0, tl: 12, Sq: 8, b: 0, target: 12, tons: 4}
+
+   - {label: '95t Pod Grapples (3)', e: 0, CP: 0, type: 'Ops', notes: '2 per 35t', eff: 1, q: 0, r: 0, mcr: 6, s: 0, tl: 12, Sq: 12, b: 0, target: 12, tons: 6}
+header: 
+   gunner: 1
+   crewComfort: 0
+   undertons: 1
+   architect: ''
+   overtons: 9
+   config: 'C'
+   high: 7
+   medic: 1
+   disposition: 'In Service'
+   jf: 0
+   flight: ''
+   name: ''
+   pilot: 1
+   keel: ''
+   mission: 'K2'
+   missionLabel: 'Excursion Ship'
+   sensop: 2
+   medium: 0
+   jumpFuelPercentage: 0.1
+   shifts: 1
+   powerFuelPercentage: 0
+   staff: 0
+   low: 0
+   spaciousness: 2
+   steward: 1
+   shipname: 'ANNIC NOVA'
+   totalCrew: 7
+   crewLocked: 'yes'
+   qsp: 'K2-C603'
+   totalMCr: 231.5
+   troops: 0
+   owner: ''
+   passengers: 7
+   crew: 7
+   numShifts: 1
+   tons: 600
+   tonsFree: -9
+   astrogator: 1
+   builder: 'Unknown'
+   demand: 0
+   mult: 1
+   tl: 12
+   driver: 0
+   url: ''
+   format: 'A'
+   engineer: 3
+   pf: 0
+   freightmaster: 0
+   id: '4000019 00024'

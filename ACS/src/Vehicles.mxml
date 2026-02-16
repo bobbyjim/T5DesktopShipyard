@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VDividedBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				paddingLeft="10"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				creationComplete="onCreationComplete()"
+				>
+
+	<!--s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+	creationComplete="onCreationComplete()"-->
+
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			
+			//[Bindable] private var _livingSpace:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _vehicles:ArrayCollection = new ArrayCollection();
+			
+			private function onCreationComplete():void
+			{
+				_vehicles.source = Cfg.getInstance().vehicles as Array;
+				//_livingSpace.source = Cfg.getInstance().payload[ 'payload' ];
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<mx:DataGrid id="vehicleGrid" width="420" height="100%" dataProvider="{_vehicles}"
+				dragEnabled="true" dragEnter="DragManager.acceptDragDrop(this.vehicleGrid);" dragDrop="event.action='';"
+				editable="false">
+		<mx:columns>
+				<mx:DataGridColumn width="170" dataField="label" headerText="Craft" />
+				<mx:DataGridColumn width="35"  dataField="tl"    headerText="TL" />
+				<mx:DataGridColumn width="45"  dataField="tons"  headerText="Tons"/>
+				<mx:DataGridColumn width="45"  dataField="mcr"   headerText="MCr"/>
+				<mx:DataGridColumn width="120"  dataField="notes" headerText="Notes"/>
+		</mx:columns>
+	</mx:DataGrid>
+</mx:VDividedBox>

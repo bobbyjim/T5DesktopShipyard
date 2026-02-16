@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.utils.StringUtil;
+			
+			import data.Cfg;
+			
+			import org.idmedia.as3commons.util.StringUtils;
+			
+			public var shipGrid:ShipGrid;
+			private var letters:Array 
+			= ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
+			
+			private var drives:Object = {};
+			
+			
+			private function onCreationComplete():void
+			{
+				drives = Cfg.getInstance().drives;
+				updateUI();
+			}
+
+			public function updateUI():void
+			{
+				//handleVolumeChanged();
+				setSliderValue( maneuverSlider, 'Maneuver Drive' );
+				setSliderValue( collectorSlider, 'Collector' );
+				setSliderValue( jumpSlider, 'Jump Drive' );
+				setSliderValue( powerSlider, 'Power Plant' );
+				setSliderValue( antimatterSlider, 'Antimatter' );
+				setSliderValue( gravSlider, 'Gravitic Drive' );
+				setSliderValue( nafalSlider, 'NAFAL' );
+				setSliderValue( rocketSlider, 'Rocket' );
+				
+				setStepperValue( antimattercreator, 'antimatterCreators' );
+				setStepperValue( this.bins, 'bins' );
+				setStepperValue( this.intakes, 'intakes' );
+				setStepperValue( this.purifiers, 'purifiers' );
+				setStepperValue( this.scoops, 'scoops' );
+				setStepperValue( this.transferpumps, 'pumps' );
+				
+				resetFuel();
+			}
+			
+			private function resetFuel():void
+			{
+				var fuel:Object = Cfg.getInstance().find( 'fuel' );
+				if ( fuel == null ) return;
+				jumpFuel.value  = fuel['jf'];
+				powerFuel.value = fuel['pf'];
+				
+			}
+			
+			private function setStepperValue( stepper:NumericStepper, key:String ):void
+			{
+				var value:int = Cfg.getInstance().getIntValue( key, 'count' );
+				stepper.value = value;
+			}
+			private function setSliderValue( slider:HSlider, key:String ):void
+			{
+				var value:int = Cfg.getInstance().getIntValue( key, 'rating' );
+				slider.value = value;
+			}
+			
+			public function handleVolumeChanged():void
+			{
+				// holy crap, the user went and changed out the volume in his ship.
+				// now I have to go and recalculate the drives.
+				this.setManeuver();
+				this.setCollector();
+				this.setJump();
+				this.setPower();
+				this.setAntimatter();
+				this.setGravitic();
+				this.setNafal();
+				this.setFuel();
+			}
+			
+			public function handleStageChanged():void
+			{
+				this.setFuel();
+			}
+			
+			/////////////////////////////////////////////////////////////////////////
+			//
+			//  New Drive Functions
+			//
+			/////////////////////////////////////////////////////////////////////////
+			private function getEP( value:int ):int
+			{
+				var tons:int = Cfg.getHdr().tons;
+				var EP:int = Math.ceil( value * tons / 200 ) * 100;
+				if ( EP > 2400 )
+					EP = Math.ceil( EP/200 ) * 200;
+				
+				return EP;
+			}
+			
+			private function getDriveMult( EP:int ):int
+			{
+				return 1+int( (EP-1) / 2400 );				
+			}
+			
+			private function getDriveLetter( EP:int ):String
+			{
+				var mult:int = getDriveMult( EP );
+				var eachEP:int = Math.ceil( EP/mult );
+				var index:int  = Math.ceil( eachEP/100 )-1;
+				var letter:String = letters[ Math.ceil(index) ];
+
+				if ( mult > 1 )
+					return letter + mult;
+				else
+					return letter; // single drive
+			}
+			
+			private function getDriveTons( tonsPerEP:String, EP:int, minTons:int ):Number
+			{
+				var equation:Array = tonsPerEP.split( '+' );
+				var sPercent:String = equation[0].toString().replace( '%', '' );
+				var percent:Number  = parseFloat(sPercent) / 100;
+				var constant:Number = parseFloat(equation[1]);
+				
+				//var mult:int = getDriveMult( EP );
+				var tons:Number = (constant + EP * percent); // * mult;
+				tons = Math.max( tons, minTons );
+				
+				return tons;
+			}
+			
+			private function getDriveNote( rating:int, prefix:String, suffix:String ):String
+			{
+				var note:String = prefix;
+				
+				if ( note == null ) 
+					note = '' + rating;
+				else
+					note += ' ' + rating;
+				
+				if ( suffix != null )
+					note += ' ' + suffix;
+				
+				return note;
+			}
+			
+			private function findBaseTL( base:int, dat:Array, r:int ):int
+			{
+				for( var i:int=0; i<dat.length; i++ )
+				{
+					if ( dat[i] < r ) 
+						base++;
+				}
+				
+				return base;
+			}
+			
+			private function setDrive( code:String, event:Event=null ):Object
+			{
+				var coreData:Object = drives.drives.codes[ code ];
+				var category:String = coreData.label;
+				var old:Object = shipGrid.find( category );
+
+				var value:Number = 0;
+				
+				//
+				// A null event means we're forcing a recalculation.
+				// So, try to use the current rating of the drive we just removed.
+				//
+				if ( event != null )    value = event.target.value; // 0 - 9
+				else if ( old != null )	value = old.rating;
+
+				if ( value == 0 ) return null;
+
+				var EP:int = getTrueEP( value ); // getEP( value );
+				var letter:String = getDriveLetter( EP );
+				var tons:int = getDriveTons( coreData[ 'tons by EP' ], EP, coreData[ 'min' ] );
+				var mcr:Number = tons * coreData[ 'mcr' ];
+				var CP:int = Math.ceil( tons / 35 );
+				var note:String = getDriveNote( value, coreData.prefix, coreData.suffix );
+				
+				var basetl:int = findBaseTL( coreData[ 'tl' ], coreData[ 'ratingFromTL' ], value );
+				var tl:int = basetl;
+				
+				//
+				//  Now adjust upwards based on ship's TL.
+				//
+				var hdr:Object = Cfg.getHdr();
+				if ( tl < hdr.tl )
+					tl = hdr.tl;
+				
+				// reuse old drive, if there is one
+				var replacement:Object = old;
+				var newdrive:Boolean = (old == null);
+				
+				// otherwise, create new object
+				if ( newdrive )
+					replacement = {};
+				
+				replacement.type 		=  	'Drives';
+				replacement.category 	= 	category;
+				replacement.basetl 		=	basetl;
+				replacement.tl 			=	tl;
+				replacement.label 		=  	category + ' ' + letter;
+				replacement.name 		=   category;
+				replacement.tons 		=	tons;
+				replacement.mcr 		=	mcr;
+				replacement.rating 		= 	value;
+				replacement.notes 		=	note;
+				replacement.CP 			= 	CP;
+				
+				if ( newdrive )
+					shipGrid.addComponent( replacement );
+				
+				shipGrid.refreshShipGrid();
+				
+				return replacement; // for tinkering with
+			}
+			
+			protected function setManeuver(event:Event=null):void
+			{
+				setDrive( 'M', event );
+			}
+			
+			protected function setGravitic(event:Event=null):void
+			{
+				setDrive( 'G', event );
+			}
+			
+			protected function setNafal(event:Event=null):void
+			{
+				setDrive( 'N', event );
+			}
+
+			protected function setRocket(event:Event):void
+			{
+				setDrive( 'R', event );
+			}
+
+			protected function setJump(event:Event=null):void
+			{
+				var jdrive:Object = setDrive( 'J', event );
+				
+				if ( jdrive != null )
+					jdrive[ 'fuelUsage' ] = 0.1;
+				
+				setFuel();
+			}
+			
+			protected function setHop(event:Event=null):void
+			{
+				var hdrive:Object = setDrive( 'H', event );	
+
+				if ( hdrive != null )
+					hdrive[ 'fuelUsage' ] = 0.1;
+				
+				setFuel();
+			}
+
+			protected function setSkip(event:Event=null):void
+			{
+				var sdrive:Object = setDrive( 'S', event );	
+				
+				if ( sdrive != null )
+					sdrive[ 'fuelUsage' ] = 0.1;
+				
+				setFuel();
+			}
+			
+			protected function setAntimatter(event:Event=null):void
+			{
+				setDrive( 'A', event );
+			}
+			
+			protected function setCollector(event:Event=null):void
+			{
+				setDrive( 'C', event );	
+			}
+			
+			protected function setPower(event:Event=null):void
+			{
+				var pplant:Object = setDrive( 'P', event );
+				
+				if ( pplant != null )
+					pplant[ 'fuelUsage' ] = 0.01;
+				
+				setFuel();
+			}
+			
+			private function setFuel():void
+			{
+				Drives.getDriveHelper().setFuel( jumpFuel.value, powerFuel.value );
+				
+/* 				var fuel:Object = shipGrid.find( 'fuel' );
+				
+				var powerPlant:Object = Cfg.getInstance().find( 'Power Plant' );
+				var jumpDrive:Object  = Cfg.getInstance().find( 'Jump Drive' );
+				
+				var jf:Number = this.jumpFuel.value;
+				var pf:Number = this.powerFuel.value;
+
+				if ( powerPlant != null )
+				{
+					if ( powerPlant.hasOwnProperty( 'fuelUsage' ) == false )
+						powerPlant.fuelUsage = 0.01;
+					
+					pf *= powerPlant.rating * powerPlant.fuelUsage;
+				}
+				else
+					pf = 0;
+				
+				if ( jumpDrive != null )
+				{
+					if ( jumpDrive.hasOwnProperty( 'fuelUsage' ) == false )
+						jumpDrive.fuelUsage = 0.1;
+
+					jf *= jumpDrive.fuelUsage;
+				}
+				else
+					jf = 0;
+				
+				var value:Number = jf + pf;
+				
+				var tons:int = Cfg.getHdr().tons * value;
+				var newfuel:Boolean = fuel == null;
+				
+				if ( newfuel )
+					fuel = {};
+				
+				fuel.type = 'Drives';
+				fuel.category = 'fuel';
+				fuel.label = 'Fuel';
+				fuel.tons = tons;
+				fuel.jf = jf;
+				fuel.pf = pf;
+				fuel.notes = 'J' + this.jumpFuel.value + ' and ' + this.powerFuel.value + ' months';
+				fuel.CP = 0;
+
+				if ( newfuel )
+					shipGrid.addComponent( fuel );
+				
+				shipGrid.refreshShipGrid(); */
+			}
+			
+			private function setFuelThingy( category:String, 
+											label:String, 
+											tl:int, 
+											count:int, 
+											tonsPerHour:int=0, // per ton
+											mcrPerUnit:Number=1,
+											tonsPerUnit:int=1, 
+											notes:String='' ):void
+			{
+				shipGrid.remove( category );
+				
+				if ( count == 0 ) return;
+				
+				var tons:int   = count * tonsPerUnit;
+				var mcr:Number = count * mcrPerUnit;
+				
+				if ( notes == '' && tonsPerHour > 0 )
+				{
+					notes = tonsPerHour * tons + 't/hr';
+				}
+				
+				shipGrid.addComponent(
+					{
+						type: 'Drives',
+						category: category,
+						label: label,
+						tl: tl,
+						tons: tons,
+						count: count,
+						mcr: mcr,
+						CP: 1,
+						notes: notes
+					}
+				);
+			}
+			
+			private function setAntimatterCreators():void
+			{
+				var value:int = this.antimattercreator.value;
+				setFuelThingy( 'Antimatter Creator', 'Antimatter Creator', 19, value );
+			}
+			
+			private function setBins():void
+			{
+				var value:int = this.bins.value;
+				setFuelThingy( 'bins', 'Fuel Bins', 8, value, 20, 0.1 );
+			}
+
+			private function setIntakes():void
+			{
+				var value:int = this.intakes.value;
+				setFuelThingy( 'intakes', 'Fuel Intakes', 8, value, 40, 0.1 );
+			}
+
+			private function setPurifiers():void
+			{
+				var value:int = this.purifiers.value;
+				setFuelThingy( 'purifiers', 'Fuel Purifiers', 8, value, 4 );
+			}
+
+			private function setScoops():void
+			{
+				var value:int = this.scoops.value;
+				setFuelThingy( 'scoops', 'Fuel Scoops', 8, value, 200, 0.1 );
+			}
+
+			private function setXferPumps():void
+			{
+				var value:int = this.transferpumps.value;
+				setFuelThingy( 'pumps', 'Fuel Transfer Pumps', 10, value );
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:HSlider id="jumpSlider" x="77" y="50" width="271" change="setJump(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+
+	<s:HSlider id="antimatterSlider" x="77" y="397" width="271" change="setAntimatter(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="10" y="397" text="Antimatter"/>
+	<s:Label x="34" y="50" text="Jump"/>
+	<s:Label x="12" y="25" text="Maneuver"/>	
+	<s:HSlider id="maneuverSlider" x="77" y="25" width="271" change="setManeuver(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="25" y="276" text="Gravitic"/>
+	<s:HSlider id="gravSlider" x="77" y="276" width="271" change="setGravitic(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="30" y="75" text="Power"/>
+	<s:HSlider id="powerSlider" x="77" y="75" width="271" change="setPower(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="29" y="320" text="NAFAL"/>
+	<s:Label x="27" y="296.5" text="Rocket"/>
+	<s:HSlider id="nafalSlider" x="77" y="320" width="271" change="setNafal(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:HSlider id="collectorSlider" x="77" y="422" width="271" change="setCollector(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="16" y="422" text="Collector"/>
+	<s:Label x="12" y="122" fontWeight="bold" text="FUEL"/>
+	<s:Label x="12" y="254" fontWeight="bold" text="ALTERNATIVE SYSTEMS"/>
+
+	<s:Label x="356" y="25" text="{maneuverSlider.value} G"/>
+	<s:Label x="356" y="50" text="J-{jumpSlider.value}"/>
+	<s:Label x="356" y="397" text="A-{antimatterSlider.value}"/>
+	<s:Label x="356" y="422" text="C-{collectorSlider.value}"/>
+	<s:Label x="356" y="75" text="P-{powerSlider.value}"/>
+	<s:Label x="355" y="320" text="N-{nafalSlider.value}"/>
+	<s:Label x="45" y="346" text="Hop"/>
+	<s:HSlider enabled="false" id="hopSlider" x="77" y="346" width="271" change="setHop(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="355" y="346" text="H-{hopSlider.value}"/>
+	<s:Label x="44" y="371" text="Skip"/>
+	<s:HSlider enabled="false" id="skipSlider" x="77" y="371" width="271" change="setSkip(event)" liveDragging="true" maximum="9"
+			   minimum="0" stepSize="1" value="0"/>
+	<s:Label x="355" y="371" text="S-{skipSlider.value}"/>
+	<s:HSlider id="rocketSlider" x="77" y="297" width="271" change="setRocket(event)" liveDragging="true" maximum="0.9"
+			   minimum="0" stepSize="0.1" value="0"/>
+	<s:Label x="356" y="296.5" text="{rocketSlider.value} G"/>
+	<s:Label x="356" y="276" text="{gravSlider.value} G" />
+	<s:NumericStepper id="jumpFuel" x="81" y="106.5" width="53" change="setFuel()"/>
+	<s:NumericStepper id="powerFuel" x="218" y="106.5" change="setFuel()"/>
+	<s:Label x="142" y="112.5" height="11" text="parsecs"/>
+	<s:Label x="279" y="112" text="months power"/>
+	<mx:HRule x="11" y="94" width="393" height="1"/>
+	<mx:HRule x="10" y="245" width="393" height="1"/>
+	<s:NumericStepper id="scoops" x="81" y="132" width="53" change="setScoops()" maximum="999"/>
+	<s:NumericStepper id="purifiers" x="81" y="158" width="53" change="setPurifiers()" maximum="999"/>
+	<s:NumericStepper id="intakes" x="218" y="132" width="53" change="setIntakes()" maximum="999"/>
+	<s:NumericStepper id="bins" x="218" y="158" width="53" change="setBins()" maximum="999"/>
+	<s:NumericStepper id="antimattercreator" x="81" y="210" width="53"
+					  change="setAntimatterCreators()" maximum="999"/>
+	<s:NumericStepper id="transferpumps" x="81" y="184" width="53" change="setXferPumps()"
+					  maximum="999"/>
+	<s:Label x="142" y="137.5" text="scoops"/>
+	<s:Label x="279" y="137.5" text="intakes"/>
+	<s:Label x="279" y="163.5" text="bins"/>
+	<s:Label x="142" y="163.5" text="purifiers"/>
+	<s:Label x="142" y="189.5" text="transfer pumps"/>
+	<s:Label x="142" y="215.5" text="antimatter creators (TL19)"/>
+</s:Group>

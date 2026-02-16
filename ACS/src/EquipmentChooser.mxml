@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()">
+	<fx:Declarations>
+		<s:RadioButtonGroup id="radiogroup1"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			
+			import flashx.textLayout.events.SelectionEvent;
+			import flashx.textLayout.tlf_internal;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.DragManager;
+
+			[Bindable] private var _components:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _emplacements:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _stages:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _output:ArrayCollection = new ArrayCollection();
+			
+			private var _ranges:ArrayCollection = new ArrayCollection();
+			
+			private var equipmentType:String;
+			
+			private function onCreationComplete():void
+			{
+				_emplacements.filterFunction = emplacementFilterFunction;
+				_components.filterFunction = componentFilterFunction;
+/* 				_stages.source = Cfg.getInstance().defenses.stages;
+				stageCB.selectedIndex = 2; // standard
+ */			}
+			
+			private function componentFilterFunction( comp:Object ):Boolean
+			{
+				if ( comp.hasOwnProperty( 'cfg not' ) )
+				{
+					if ( Cfg.getHdr().config == comp[ 'cfg not' ] )
+						return false;
+				}
+				return true;
+			}
+			
+			private function emplacementFilterFunction( mount:Object ):Boolean
+			{
+				var comp:Object = componentGrid.selectedItem;
+				if ( comp == null ) return true;
+				
+				var matches:Array;
+				
+				if ( comp.hasOwnProperty( 'only' ) )
+				{
+					matches = (mount.code as String).match( comp.only );
+					if ( matches == null )
+					{
+						return false;
+					}
+				}
+				
+				if ( comp.hasOwnProperty( 'not' ) )
+				{
+					matches = (mount.code as String).match( comp.not );
+					if ( matches != null )
+					{
+						return false;
+					}
+				}
+				
+				return true;
+			}
+			
+			private function setFirstSelection():void
+			{
+				componentGrid.setSelectedIndex(0);
+				emplacementGrid.setSelectedIndex(0);
+			}
+			
+			private function setArmor():void
+			{
+				equipmentType = 'Armor';
+				_components.source = Cfg.getInstance().defenses.armor.list;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.armor.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.armor.layers;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+
+			private function setDefenses():void
+			{
+				equipmentType = 'Defense';
+				_components.source = Cfg.getInstance().defenses.defenses.list;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.defenses.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.none;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+			
+			private function setCoatings():void
+			{
+				equipmentType = 'Armor';
+				_components.source = Cfg.getInstance().defenses.coatings.list;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.coatings.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.none;
+				setFirstSelection();
+				this.invalidateDisplayList();				
+			}
+						
+			private function setSpaceSensors():void
+			{
+				equipmentType = 'Sensor';
+				_components.source = Cfg.getInstance().defenses.sensors.space;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.sensors.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.space;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+
+			private function setWorldSensors():void
+			{
+				equipmentType = 'Sensor';
+				_components.source = Cfg.getInstance().defenses.sensors.world;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.sensors.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.world;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+			
+			private function setSpaceWeapons():void
+			{
+				equipmentType = 'Weapon';
+				_components.source = Cfg.getInstance().defenses.weapons.space;			
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.weapons.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.space;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+
+			private function setWorldWeapons():void
+			{
+				equipmentType = 'Weapon';
+				_components.source = Cfg.getInstance().defenses.weapons.world;			
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.weapons.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.ranges.world;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+			
+			private function setComputers():void
+			{
+				equipmentType = 'Ops';
+				_components.source = Cfg.getInstance().defenses.computers.list;
+				_components.refresh();
+				_emplacements.source = Cfg.getInstance().defenses.computers.mounts;
+				_emplacements.refresh();
+				_ranges.source = Cfg.getInstance().defenses.computers.ranges;
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+			
+			private function calculateEquipment():void
+			{
+				if ( this.componentGrid.selectedItem == null
+				  || this.emplacementGrid.selectedItem == null )
+					return;
+				
+				_emplacements.refresh();
+				
+				var comp:Object = componentGrid.selectedItem;
+				var mount:Object = emplacementGrid.selectedItem;
+
+				if ( mount == null )
+				{
+					emplacementGrid.selectedIndex = 0;
+					mount = emplacementGrid.selectedItem;
+				}
+				var output:Array = [];	
+				
+				var hulldata:Array    	 = Cfg.getInstance().grepByCategory( 'Hull' );
+				
+				for each (var range:Object in _ranges.source)
+				{
+					var rangeMountTons:int = 0;
+					if ( range.hasOwnProperty( 'mount tons' ) )
+						rangeMountTons = range[ 'mount tons' ];
+
+					var basetl:int = comp.tl;
+					
+					/*************************************************************************************
+					 * 
+					 * 
+					 * 								W A R N I N G !!!!!!!!!!!
+					 * 
+					 * 5/7/2016  I just changed how the mount TL affects the total weapon TL.  BEWARE!!!!
+					 * 
+					 * 
+					 * **********************************************************************************/
+					if ( mount.hasOwnProperty( 'tl' ) ) // WAS: { basetl += mount.tl } !!!!!!!!!!!!!!!!!!!!!!
+					{
+						if ( mount.tl > basetl ) basetl = mount.tl; 
+					}
+					
+					// finally, add on range TL adjustment
+					basetl += range.tl;
+
+					var tl:int = basetl;
+					
+					//
+					// If the component's TL is lower than that of the ship,
+					// then update it.
+					//
+					if ( tl < Cfg.getHdr().tl )
+						tl = Cfg.getHdr().tl;
+					
+					var label:String = mount.code + ' ' + comp.label; // + '-' + tl,
+					if ( range.code != null && range.code != '' )
+						label = range.code + ' ' + label;
+					
+					// Computer
+					if ( equipmentType == 'Ops' )
+					{
+						label = comp.label + ' ' + mount.code + ' ' + range.label;
+					}
+					
+					var tons:Number = 0;
+					if ( mount.hasOwnProperty( 'mount tons' ) )
+						tons = mount[ 'mount tons' ];
+					else
+						tons = 0.04 * Cfg.getHdr().tons; // armor, I think
+					
+					var totalTons:Number = range[ 'mount tons mult' ] * tons + rangeMountTons;
+					
+					if ( comp.hasOwnProperty( 'tons' ) )
+						totalTons += comp[ 'tons' ];
+					
+					// i.e. TL-based cost, e.g. ARMOR
+					//if ( comp.hasOwnProperty( 'mcr per tl' ) )
+					//	comp.mcr = totalTons * Cfg.getHdr().tl * comp[ 'mcr per tl' ];
+
+					var cost:Number = range[ 'mount cost mult' ] * mount[ 'mount mcr'  ] + comp.mcr;
+
+					// ARMOR
+					if ( comp.hasOwnProperty( 'AV mult' ) )
+					{
+						var av:int = 20;
+						if ( comp.code != 'F' ) // FeN
+						{
+							var armorTL:int = Math.max( parseInt( comp.tl ), Cfg.getHdr().tl );
+							av = armorTL
+								* parseFloat(comp[ 'AV mult' ]);
+						}
+						av *= parseInt( range.code );
+						label = "AV=" + av + ". " + label;
+						
+						if ( comp.hasOwnProperty( 'hull cost mult' ) )
+							cost = hulldata[0].mcr * comp[ 'hull cost mult' ];
+						
+						// Coatings
+						//if ( comp[ 'type' ] == 'Coating' )
+						//	cost = comp[ 'mcr' ] * Cfg.getHdr().tons;
+					}
+					
+					cost = int( cost * 10 ) / 10;
+
+					if ( comp.hasOwnProperty( 'actual range' )
+						&& comp[ 'actual range' ] == 5 )
+					{
+						cost *= 2;
+						totalTons *= 3;
+					}
+					
+					var category:String = label;
+					if ( comp.hasOwnProperty( 'category' ) )
+						category = comp.category;
+
+					//
+					// Finally: turrets and barbettes can't be under one ton
+					//
+					if ( (mount.code as String).match( /(T|B)[1234]/ ) )
+					{
+						if ( totalTons < 1 )
+							totalTons = 1;
+					}
+					
+					var item:Object = 
+						{
+							//code: comp.code, 
+							type:  equipmentType,
+							config: equipmentType,
+							range: range.code,
+							name:  comp.label,
+							mount: mount.code,
+							label: label, 
+							category: category,
+							mod:   mount.mod,
+							basetl: basetl,
+							tl:    tl,
+							CP:    1,
+							tons:  totalTons,
+							notes: '',
+							mcr:   cost  
+						};
+					
+					if ( comp.hasOwnProperty( 'hull cost mult' ) )
+					{
+						item[ 'hull cost mult' ] = comp[ 'hull cost mult' ];
+					}
+					output.push( item );
+				}
+				
+				_output.source = output;
+				this.invalidateDisplayList();
+			}
+			
+		]]>
+	</fx:Script>	
+	
+	<s:Group x="10" y="33" width="90" height="215" toolTip="Select a component to design.">
+		<s:RadioButton x="4" y="10" label="Armor" click="setArmor()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="57" label="S-Sensors" click="setSpaceSensors()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="77" label="R-Sensors" click="setWorldSensors()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="103" label="S-Weapons" click="setSpaceWeapons()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="122" label="R-Weapons" click="setWorldWeapons()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="148" label="Defenses" click="setDefenses()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="174" label="Coatings" click="setCoatings()" groupName="radiogroup1"/>
+		<s:RadioButton x="4" y="31" label="Computer" click="setComputers()" groupName="radiogroup1"/>
+	</s:Group>
+	
+	<s:DataGrid id="componentGrid" x="10" y="256" width="204" height="184"
+				dataProvider="{_components}" requestedRowCount="4"
+				toolTip="Select a component type from this list." valueCommit="calculateEquipment()">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="36"  dataField="code"  headerText=""></s:GridColumn>
+				<s:GridColumn  dataField="label" headerText="Component"></s:GridColumn>
+				<!--s:GridColumn width="35"  dataField="tl"    headerText="TL"></s:GridColumn-->
+				<!--s:GridColumn width="35"  dataField="mcr"   headerText="MCr"></s:GridColumn-->
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:DataGrid id="emplacementGrid" x="218" y="256" width="204" height="184"
+				dataProvider="{_emplacements}" requestedRowCount="4"
+				toolTip="Select an emplacement type from this list."
+				valueCommit="calculateEquipment()">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn  dataField="label" headerText="Emplacement"></s:GridColumn>
+				<s:GridColumn width="39"  dataField="mod"    headerText="Mod"></s:GridColumn>
+				<!--s:GridColumn width="32"  dataField="mount tons"  headerText="Vol"></s:GridColumn>
+				<s:GridColumn width="35"  dataField="mount mcr"   headerText="MCr"></s:GridColumn-->
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+
+	<!--s:ComboBox id="stageCB" x="10" y="417" width="230" dataProvider="{_stages}" enabled="false"
+				labelField="label" toolTip="Select a stage effect."/-->
+
+	<mx:DataGrid id="outputGrid" x="108" y="33" width="314" height="215" dataProvider="{_output}"
+				 dragDrop="event.action='';" dragEnabled="true"
+				 dragEnter="DragManager.acceptDragDrop(this.outputGrid);"
+				 toolTip="Drag an item from this list to the ship grid.">
+		<mx:columns>
+			<mx:DataGridColumn width="125" dataField="label" headerText="Type"/>
+			<mx:DataGridColumn width="32"  dataField="tl"    headerText="TL"/>
+			<mx:DataGridColumn width="32"  dataField="tons"  headerText="Vol"/>
+			<mx:DataGridColumn width="35"  dataField="mcr"   headerText="MCr"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label x="186" y="14" color="#F00505" fontWeight="normal" text="Drag and Drop from this grid:"/>
+
+</s:Group>

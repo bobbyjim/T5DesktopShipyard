@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:local="*"
+		 width="1001" height="100%"
+		 creationComplete="onCreationComplete()"
+		 >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import component.Disclaimer;
+			
+			import data.Cfg;
+			import data.Drives;
+			
+			import mx.collections.ArrayCollection;
+			import mx.effects.easing.Circular;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			
+			import org.as3yaml.*;
+			import org.idmedia.as3commons.util.AbstractCollection;
+			
+			import spark.components.TitleWindow;
+			
+			public var path:String = 'T5ShipyardCfg/';
+			
+			[Bindable] private var cfg:Cfg = Cfg.getInstance();
+			
+			private var disclaimer:Disclaimer = new Disclaimer();
+			
+			private function onCreationComplete():void
+			{
+				disclaimer.addEventListener(CloseEvent.CLOSE, closeDisclaimer);
+			}
+			
+			private function openDisclaimer():void
+			{
+				PopUpManager.addPopUp(disclaimer, this, true);
+				PopUpManager.centerPopUp(disclaimer);
+			}
+			
+			private function closeDisclaimer( event:Event=null ):void
+			{
+				PopUpManager.removePopUp(disclaimer);
+			}
+			
+			public function onInitialize():void
+			{
+				Drives.getDriveHelper().shipGrid = this.shipGrid;
+				
+				var defenses:URLLoader = new URLLoader();
+				defenses.addEventListener(Event.COMPLETE, handleDefensesLoaded);  	
+				defenses.load( new URLRequest(path+"acs-defenses.yml") );	
+				
+				var drives:URLLoader = new URLLoader();
+				drives.addEventListener(Event.COMPLETE, handleDrivesLoaded);  	
+				drives.load( new URLRequest(path+"acs-drives.yml") );	
+
+				var hull:URLLoader = new URLLoader();
+				hull.addEventListener(Event.COMPLETE, handleHullsLoaded);
+				hull.load( new URLRequest(path+"acs-hulls.yml" ) );	
+
+				var hab:URLLoader = new URLLoader();
+				hab.addEventListener(Event.COMPLETE, handleLivingSpaceLoaded);
+				hab.load( new URLRequest(path+"acs-payload.yml" ) );   
+
+				var veh:URLLoader = new URLLoader();
+				veh.addEventListener(Event.COMPLETE, handleVehiclesLoaded);
+				veh.load( new URLRequest(path+"acs-vehicles.yml" ) );   
+				
+				var disp:URLLoader = new URLLoader();
+				disp.addEventListener(Event.COMPLETE, handleDispositionsLoaded);
+				disp.load( new URLRequest(path+"acs-dispositions.yml" ) );
+				
+				var template:URLLoader = new URLLoader();
+				template.addEventListener( Event.COMPLETE, handleTemplateLoaded );
+				template.load( new URLRequest(path+"acs-ship-template.yml" ) );
+
+				var stock:URLLoader = new URLLoader();
+				stock.addEventListener( Event.COMPLETE, handleStockShipsLoaded );
+				stock.load( new URLRequest(path+"acs-stock-ships.yml" ) );
+			}	
+			
+			public function handleDefensesLoaded( evt:Event ):void
+			{
+				Cfg.getInstance().defenses = YAML.decode(evt.target.data);
+			}
+			
+			public function handleDrivesLoaded( evt:Event ):void
+			{
+				Cfg.getInstance().drives = YAML.decode(evt.target.data);
+			}
+			
+			public function handleHullsLoaded( evt:Event ):void
+			{
+				Cfg.getInstance().hulls = YAML.decode(evt.target.data);
+			}
+			
+			public function handleLivingSpaceLoaded( evt:Event ):void
+			{
+				Cfg.getInstance().payload = YAML.decode(evt.target.data);
+			}
+			
+			public function handleVehiclesLoaded(evt:Event):void
+			{
+				Cfg.getInstance().vehicles = YAML.decode(evt.target.data);
+			}
+			
+			public function handleDispositionsLoaded( evt:Event ):void
+			{
+				Cfg.getInstance().dispositions = YAML.decode(evt.target.data);
+			}
+			
+			public function handleStockShipsLoaded( evt:Event ):void
+			{
+				var items:Array = evt.target.data.split( '---' );
+				items.shift();
+				for each ( var item:String in items )
+				{
+					var obj:Object = null;
+					obj = YAML.decode( item );
+					Cfg.stockShips.source.push( obj );
+				}
+				
+				Cfg.stockShips.refresh();
+			}
+
+			public function handleTemplateLoaded(evt:Event):void
+			{
+				var template:Object = YAML.decode(evt.target.data);
+				Cfg.getInstance().templateHull = template;
+//				shipGrid.addComponent( ObjectUtil.clone( hdr.hull ) );
+//				shipGrid.recalculate();
+			}
+ 			
+			private function handleHullChanged():void
+			{
+				if ( hullChooser != null )
+					hullChooser.handleVolumeChanged();
+				
+				Drives.getDriveHelper().handleVolumeChanged();
+			}
+			
+			private function handleStageChanged():void
+			{
+				if ( driveBuilder != null )
+					driveBuilder.handleStageChanged();
+				
+				updateUI();
+			}
+			
+			private function updateUI():void
+			{
+				this.enabled = false;
+
+				if ( infoTab != null )
+				{
+					infoTab.updateUI();
+				}
+				
+				if ( hullChooser != null )
+				{
+					hullChooser.updateUI();
+				}
+				
+				if ( driveBuilder != null )
+				{
+					driveBuilder.updateUI();
+				}
+				
+				if ( livingSpaceChooser != null )
+				{
+					livingSpaceChooser.updateUI();
+				}
+				
+				this.enabled = true;
+			}
+			
+			private function resetUI():void
+			{
+				if ( infoTab != null )
+				{
+					infoTab.resetUI();
+				}
+
+				if ( hullChooser != null )
+				{
+					hullChooser.resetUI();
+				}
+				
+				if ( driveBuilder != null )
+				{
+					driveBuilder.resetUI();
+				}
+				
+				if ( livingSpaceChooser != null )
+				{
+					livingSpaceChooser.resetUI();
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<mx:TabNavigator x="10" y="35" width="432" height="495" creationPolicy="all" change="updateUI()" >
+		<s:NavigatorContent label="Archive">
+			<local:InputOutput id="inputOutput" width="432" height="462" cfg="{cfg}"
+							   shipGrid="{shipGrid}" 
+							   shipLoaded="resetUI(); updateUI()"/>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Info">
+			<local:Info id="infoTab" width="432" cfg="{cfg}" />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Hull">
+			<local:HullChooser id="hullChooser" shipGrid="{shipGrid}" width="432" height="500" hullChanged="handleHullChanged()" />
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent label="Drives">
+			<local:DriveBuilder id="driveBuilder" shipGrid="{shipGrid}" width="432" height="500" />
+		</s:NavigatorContent>
+		
+		<s:NavigatorContent label="Components">
+			<local:EquipmentChooser id="equipmentChooser" width="432" height="500" />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Living">
+			<local:CrewAndPassengers id="livingSpaceChooser" shipGrid="{shipGrid}" width="432" height="500" />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Payload">
+			<local:Payload id="payloadChooser" width="432" height="450" />
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Craft">
+			<local:Vehicles id="craftChooser" width="432" height="450" />
+		</s:NavigatorContent>
+	</mx:TabNavigator>
+	
+	<local:ShipGrid id="shipGrid" x="446" y="35" width="540" height="100%" 
+				  stageChanged="handleStageChanged()"	
+				  shipDestroyed="resetUI()"
+				  />
+	<s:Label x="10" y="10" width="194" fontSize="12" fontStyle="normal" fontWeight="normal"
+			 text="Traveller5 ACS Shipyard 17.12.02"/>
+	<mx:HRule x="10" y="21" width="976" height="6"/>
+	<s:Label x="229" y="10" width="504" click="openDisclaimer()" fontSize="10" fontStyle="italic"
+			 text="The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977 - 2017 Far Future Enterprises"/>
+	<s:Label x="741" y="9" color="#D90D0D" fontStyle="italic" text="[More]"
+			 click="openDisclaimer()"/>
+	
+</s:Group>

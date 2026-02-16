@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="ACS">
+    <configurations>
+      <configuration name="ACS" target-platform="Desktop" output-type="Library" output-file="ACS.swc" output-folder="$MODULE_DIR$/bin">
+        <dependencies>
+          <entries>
+            <entry library-id="b734144f-6494-4547-9d06-0be4f0707840">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="acd021e9-b954-4edc-98d5-67523ba90695">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="fae3ac96-4155-4f75-892b-fb94fad0016f">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="986e1be8-492a-4481-b901-2943d4d5bfc0">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex_sdk_4.6" />
+        </dependencies>
+        <compiler-options>
+          <map>
+            <entry key="compiler.locale" value="en_US" />
+          </map>
+          <option name="filesToIncludeInSWC" value="$MODULE_DIR$/src/T5ShipyardCfg/acs-hulls.yml&#10;$MODULE_DIR$/src/T5ShipyardCfg/acs-vehicles.yml" />
+        </compiler-options>
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="flex_sdk_4.6" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="b734144f-6494-4547-9d06-0be4f0707840" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/as3commons-logging-1.1.1.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="acd021e9-b954-4edc-98d5-67523ba90695" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/as3corelib.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="fae3ac96-4155-4f75-892b-fb94fad0016f" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/as3yaml.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="986e1be8-492a-4481-b901-2943d4d5bfc0" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/libs/lib1541.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

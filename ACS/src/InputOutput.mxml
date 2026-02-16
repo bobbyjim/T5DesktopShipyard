@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="onCreationComplete()"
+		 width="432" height="441">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Metadata>
+		[Event(name="shipLoaded", type="flash.events.Event")]		
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.serialization.json.JSON;
+			import com.adobe.serialization.json.JSONDecoder;
+			import com.adobe.serialization.json.JSONEncoder;
+			
+			import data.Cfg;
+			import data.IO;
+			
+			import generators.AcsCodec;
+			import generators.PONEncoder;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.DragEvent;
+			import mx.utils.Base64Encoder;
+			
+			import org.as3yaml.Serializer;
+			import org.as3yaml.YAML;
+			 			
+			[Bindable] public var cfg:Cfg;
+			
+			private var chooser:FileReference = new FileReference();
+			private var cache:SharedObject = SharedObject.getLocal( "T5ShipyardCache" );
+			
+			[Bindable]
+			private var cachedShips:ArrayCollection = new ArrayCollection();
+			
+			[Bindable] public var shipGrid:ShipGrid;
+			
+			private function onCreationComplete():void
+			{
+
+				// not sure we want to do this here until the ship template
+				// is loaded!
+				
+//				Cfg.getHdr(); // first time thru will initialize ship grid.
+				
+				
+/* 				if ( cache.data.hasOwnProperty( 'ships' ) )
+					cachedShips.source = cache[ 'ships' ];
+				else
+				{
+					cache.data.ships = [];
+					cache.flush();
+				}
+ */			}
+			
+			private function upload():void
+			{
+				chooser.addEventListener(Event.SELECT, onFileSelected);
+				chooser.browse();
+			}
+			
+			private function onFileSelected(event:Event):void
+			{
+				chooser.removeEventListener(Event.SELECT, onFileSelected);
+				chooser.addEventListener(Event.COMPLETE, onUploadComplete);
+				chooser.load();
+			}
+			
+			private function onUploadComplete( event:Event ):void
+			{
+				chooser.removeEventListener(DataEvent.UPLOAD_COMPLETE_DATA, onUploadComplete);
+				trace( 'upload complete' );
+				var filename:Array = event.currentTarget.name.split( /\./ );
+				var filetype:String = filename[1];
+				var content:String = event.currentTarget.data.toString();
+				
+				var obj:Object;
+				
+				switch( filetype )
+				{
+					case 'acs'  :  // new ACS YAML compact format
+						if ( isArchive( content ) )
+						{
+							this.loadAcsArchive( content );
+							return;
+						}
+						else
+						{
+							obj = AcsCodec.decode( content );
+						}
+						break;
+					
+					case 'yml'  : 
+						if ( isArchive( content ) )
+						{
+							loadArchive( content );
+							return;
+						}
+						else
+						{
+							obj = YAML.decode( content ); 
+						}
+						break;
+					
+					case 'pon'  :
+						content = content.replace( /=>/g, ':' );
+						obj = com.adobe.serialization.json.JSON.decode( content, false );
+						break;
+						
+					case 'json' : 
+						obj = com.adobe.serialization.json.JSON.decode( content, false );
+						break;
+
+					case 'xml'  :
+						obj = PONEncoder.decodeXML( content );
+						break;
+				}
+				
+				cfg.load( obj );
+				Cfg.getInstance().componentList.refresh();
+				shipGrid.updateShipFormat();
+				shipGrid.gc.refresh();
+				this.dispatchEvent( new Event( 'shipLoaded' ) );
+			}
+			
+			private function loadStockDesign():void
+			{
+				if ( stockDesignGrid.selectedItem == null )
+					return;
+				
+				// Load header
+				var newHdr:Object = stockDesignGrid.selectedItem[ 'header' ];
+				Cfg.getInstance().header = newHdr;
+				
+				// Load component list
+				var newShip:ArrayCollection = new ArrayCollection();
+				newShip.source = stockDesignGrid.selectedItem[ 'components' ];
+				for each (var item:Object in newShip)
+				{
+					Cfg.getInstance().sanitize(item);
+				}
+				shipGrid.componentList = newShip;
+				
+				// Force a refresh
+				Cfg.getInstance().componentList.refresh();
+				shipGrid.gc.refresh();
+				this.dispatchEvent( new Event( 'shipLoaded' ) );
+				
+				Cfg.checkFormat();
+			}
+									
+			private function serialID():String
+			{
+				var encoder:Base64Encoder = new Base64Encoder();
+				var r:Number = Math.random();
+				encoder.encode( Math.random().toString() );
+				var id:String = encoder.toString();
+				return id;
+			}
+			
+			protected function stockDesignGrid_keyUpHandler(event:KeyboardEvent):void
+			{
+				if ( event.keyCode == Keyboard.DELETE
+		        ||	 event.keyCode == Keyboard.BACKSPACE
+				)
+				{
+					Alert.show( 'Are you sure you want to delete this design?', 'Verify delete', Alert.YES | Alert.NO, null, deleteFromArchiveHandler );
+				}
+			}
+			
+			private function deleteFromArchiveHandler( event:CloseEvent ):void
+			{
+				if ( event.detail == Alert.YES )
+					stockDesignGrid.dataProvider.removeItemAt( stockDesignGrid.selectedIndex );				
+			}
+
+			//
+			// Pushes current ship to the archive
+			//
+			private function pushToArchive(ship:Object=null):void
+			{
+				if ( ship == null )
+				{
+					ship = cfg.getShipObject();
+				}
+				stockDesignGrid.dataProvider.addItem( ship );
+			}
+			
+			public function saveArchive():void
+			{
+				var out:Array = [];
+				var designs:ArrayCollection = this.stockDesignGrid.dataProvider as ArrayCollection;
+				
+				for each (var ship:Object in designs)
+				{
+					var yaml:String = PONEncoder.encodeYAML(ship);					
+					out.push( yaml );
+				}
+				
+				var doc:String = out.join( "\n\n" );
+				
+				new FileReference().save( doc, 'acs-archive.yml' );
+			}
+			
+			/* public function saveD64archive():void
+			{
+				var out:Array = [];
+				var designs:ArrayCollection = this.stockDesignGrid.dataProvider as ArrayCollection;
+				
+				for each (var ship:Object in designs)
+				{
+					var image = IO.
+				}
+			} */
+			
+			private function isArchive( content:String ):Boolean
+			{
+				var array:Array = content.split( '---' );
+				array.shift(); // first entry is empty
+				if ( array.length > 1 )
+					return true;
+				
+				return false;
+			}
+			
+			private function loadArchive( text:String ):void
+			{
+				var content:Array = text.split( '---' );
+				content.shift(); // junk
+				var array:Array = [];
+
+				for each ( var item:String in content )
+				{
+					var obj:Object = YAML.decode( item );
+					array.push( obj );					
+				}
+
+				(this.stockDesignGrid.dataProvider as ArrayCollection).source = array;
+				trace( 'archive loaded' );
+			}
+			
+			private function loadAcsArchive( text:String ):void
+			{
+				var content:Array = text.split( '---' );
+				content.shift(); // junk
+				var array:Array = [];
+				
+				for each ( var item:String in content )
+				{
+					var obj:Object = AcsCodec.decode( item );
+					array.push( obj );					
+				}
+				
+				(this.stockDesignGrid.dataProvider as ArrayCollection).source = array;
+				trace( 'archive loaded' );				
+			}
+			
+			private function handleDragDropToArchive( evt:DragEvent ):void
+			{
+				if ( evt.dragInitiator == stockDesignGrid )
+				{
+					return; // I think
+				}
+				
+				var source:DataGrid = evt.dragInitiator as DataGrid;
+				var obj:Object = Cfg.copy(source.selectedItem);
+				delete obj.mx_internal_uid;
+				
+				if ( obj.hasOwnProperty( 'header' ) && obj.hasOwnProperty( 'components' ) )
+				{
+					pushToArchive( obj );
+				}
+			}    
+			
+		]]>
+	</fx:Script>	
+	
+	<s:Button x="10" y="9" width="56" height="21" label="Load" click="upload()" fontSize="11"
+			  toolTip="Load a design or archive"/>
+	<s:Label visible="false" enabled="false" x="10" y="51.5" text="Archive (double click a design to load):"/>
+	
+	<mx:DataGrid id="stockDesignGrid" x="10" y="72" width="412" height="330"
+				enabled="true" 
+				dataProvider="{Cfg.stockShips}"
+			    doubleClickEnabled="true"
+			    doubleClick="loadStockDesign()"
+			    keyUp="stockDesignGrid_keyUpHandler(event)"
+			    dragMoveEnabled="true"
+			    dragEnabled="true"
+			    dropEnabled="true"
+				dragDrop="handleDragDropToArchive(event);"
+			    toolTip="Organize your ship designs here.  Double click a design to load.  Press the delete key to delete a design."
+				>
+		<mx:columns>
+			<mx:DataGridColumn width="175" dataField="header.shipname" headerText="Ship name" />
+			<mx:DataGridColumn width="45"  dataField="header.tons"     headerText="Tons" />
+			<mx:DataGridColumn width="55"  dataField="header.qsp" headerText="QSP" />
+			<mx:DataGridColumn   dataField="header.owner" headerText="Owner"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+	
+	<mx:HRule x="13" y="38" width="409" height="3"/>
+	<s:Button x="339" y="9" width="82" label="Archive" click="pushToArchive()" toolTip="Temporarily stores current ship in the archive."/>
+	<!--s:Button visible="false" x="312" y="412" width="110" label="PDF Archive" click="IO.multiplePDF(event)" enabled="true"
+			  toolTip="Create a PDF of all design sheets in the archive."/-->
+	<s:Button x="10" y="410" width="110" label="Save Archive..." click="saveArchive()" enabled="true"
+			  toolTip="Save all designs in the archive to a loadable YAML file."/>
+	<!--s:Button x="128" y="9" width="50" label="PDF" click="IO.toPDF()" fontFamily="Arial"
+			  fontSize="11" toolTip="Create a PDF of the design sheet"/-->
+	<s:Button x="289" y="43" width="45" label="Text" click="IO.toText()" enabled="true"
+			  fontFamily="Arial" fontSize="11" toolTip="Create a text file of the design sheet"/>
+	<s:Button x="137" y="9" width="50" label="YAML" click="IO.toYAML()" fontFamily="Arial"
+			  fontSize="11" toolTip="YAML is the standard format for loading and saving ship designs for this program"/>
+	<s:Button x="247" y="9" width="45" label="JSON" click="IO.toJSON()" enabled="true"
+			  fontFamily="Arial" fontSize="9" toolTip="JSON is an alternate format for loading and saving ship designs"/>
+	<s:Button x="333" y="43" width="45" label="ACS" click="IO.toACS()" enabled="true"
+			  fontFamily="Arial" fontSize="9" toolTip="Create an ACS file of the design sheet"/>
+	<s:Button x="291" y="9" width="40" label="XML" click="IO.toXML()" enabled="true"
+			  fontFamily="Arial" fontSize="9" toolTip="XML is an alternate format for loading and saving ship designs"/>
+	<s:Button x="186" y="9" width="50" label="HTML" click="IO.toHTML()" enabled="true"
+			  fontFamily="Arial" fontSize="11" toolTip="Create an HTML document of the design sheet"/>
+	<s:Button x="377" y="43" width="45" label="D64" click="IO.toD64()" enabled="true"
+			  fontFamily="Arial" fontSize="9" toolTip="Create a Commodore 1541 diskette image from the design sheet"/>
+	<s:Label x="80" y="14.5" text="Save as:"/>
+
+</s:Group>

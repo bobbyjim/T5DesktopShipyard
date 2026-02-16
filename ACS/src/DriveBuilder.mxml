@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()"
+>
+
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			import data.Drives;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.DragManager;
+
+			[Bindable] private var _components:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _output:ArrayCollection = new ArrayCollection();
+			[Bindable] private var _fuel:ArrayCollection = new ArrayCollection();
+
+			public var shipGrid:ShipGrid;
+			private var letters:Array 
+			= ['A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
+
+			private var drives:Object = {};
+
+			private function onCreationComplete():void
+			{
+				drives = Cfg.getInstance().drives;
+				_fuel.source = Cfg.getInstance().drives.fuel as Array;
+				setDrives();
+				updateUI();
+			}
+
+			private function setDrives():void
+			{
+				_components.source = Cfg.getInstance().drives.drives; 
+				setFirstSelection();
+				this.invalidateDisplayList();
+			}
+
+			private function setFirstSelection():void
+			{
+				componentGrid.setSelectedIndex(0);
+			}
+
+			public function updateUI():void
+			{
+/* 				setStepperValue( antimattercreator, 'Antimatter Creators' );
+				setStepperValue( this.bins, 'Fuel Bins' );
+				setStepperValue( this.intakes, 'Fuel Intakes' );
+				setStepperValue( this.purifiers, 'Fuel Purifiers' );
+				setStepperValue( this.scoops, 'Fuel Scoops' );
+				setStepperValue( this.transferpumps, 'Transfer Pumps' );
+ */				
+				resetFuel();
+				setFuel();
+			}
+
+			public function resetUI():void
+			{
+/* 				antimattercreator.value 
+					= bins.value
+					= intakes.value
+					= purifiers.value
+					= scoops.value
+					= transferpumps.value = 0;
+ */				jumpFuel.value
+					= powerFuel.value
+					= 0;
+			}
+			
+			private function resetFuel():void
+			{
+				var hdr:Object = Cfg.getHdr();
+				if ( hdr.hasOwnProperty( 'jf' ) )
+					this.jumpFuel.value  = hdr.jf;
+				
+				if ( hdr.hasOwnProperty( 'pf' ) )
+					this.powerFuel.value = hdr.pf;
+			}
+			
+			private function setStepperValue( stepper:NumericStepper, key:String ):void
+			{
+				var value:int = Cfg.getInstance().getIntValue( key, 'count' );
+				stepper.value = value;
+			}
+			
+			public function handleStageChanged():void
+			{
+				setFuel();
+			}
+
+			private function setFuel():void
+			{
+				var jf:Number = this.jumpFuel.value;
+				var pf:Number = this.powerFuel.value;
+				Drives.getDriveHelper().setFuel( jf, pf );
+			}
+
+			public function handleVolumeChanged():void
+			{
+				Drives.getDriveHelper().handleVolumeChanged();
+			}
+			
+			private function calculateDrives():void
+			{
+				var coreData:Object = componentGrid.selectedItem;
+				var array:Array = [];
+				for ( var rating:int = 1; rating <= 9; rating++ )
+				{
+					var drive:Object = Drives.getDriveHelper().getDrive( coreData, rating );
+					array.push( drive );
+				}
+				_output.source = array;
+			}
+						
+			private function setFuelThingy( code:String,
+											category:String, 
+											label:String, 
+											tl:int, 
+											count:int, 
+											tonsPerHour:int=0, // per ton
+											kcrPerUnit:Number=100.0,
+											tonsPerUnit:int=1, 
+											notes:String='' ):void
+			{
+				shipGrid.remove( category );
+				
+				if ( count == 0 ) return;
+				
+				var tons:int   = count * tonsPerUnit;
+				var mcr:Number = count * kcrPerUnit / 1000.0;
+				
+				if ( notes == '' && tonsPerHour > 0 )
+				{
+					notes = tonsPerHour * tons + 't/hr';
+				}
+				
+				shipGrid.addComponent(
+					{
+						code: code + count,
+						type: 'Drive',
+						category: category,
+						label: label + ' ' + notes,
+						tl: tl,
+						tons: tons,
+						count: count,
+						mcr: mcr,
+						CP: 1,
+						notes: notes
+					}
+				);
+			}
+
+/*
+			private function setAntimatterCreators():void
+			{
+				var value:int = this.antimattercreator.value;
+				setFuelThingy( 'A', 'Antimatter Creators', 'Antimatter Creators', 19, value );
+			}
+			
+			private function setBins():void
+			{
+				var value:int = this.bins.value;
+				setFuelThingy( 'B', 'Fuel Bins', 'Fuel Bins', 8, value, 50 );
+			}
+			
+			private function setIntakes():void
+			{
+				var value:int = this.intakes.value;
+				setFuelThingy( 'I', 'Fuel Intakes', 'Fuel Intakes', 8, value, 100 );
+			}
+			
+			private function setPurifiers():void
+			{
+				var value:int = this.purifiers.value;
+				setFuelThingy( 'P', 'Fuel Purifiers', 'Fuel Purifiers', 8, value, 0 );
+			}
+			
+			private function setScoops():void
+			{
+				var value:int = this.scoops.value;
+				setFuelThingy( 'S', 'Fuel Scoops', 'Fuel Scoops', 8, value, 100 );
+			}
+
+			private function setXferPumps():void
+			{
+				var value:int = this.transferpumps.value;
+				setFuelThingy( 'X', 'Transfer Pumps', 'Fuel Transfer Pumps', 10, value );
+			}
+*/
+	
+		]]>
+	</fx:Script>
+	<s:DataGrid id="componentGrid" x="10" y="10" width="138" height="259"
+				dataProvider="{_components}" requestedRowCount="4"
+				toolTip="Select a drive type from this list." valueCommit="calculateDrives()">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="125" dataField="label" headerText="Drive Type"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+
+	<mx:DataGrid id="outputGrid" x="150" y="30" width="272" height="239" dataProvider="{_output}"
+				 dragDrop="event.action='';" dragEnabled="true"
+				 dragEnter="DragManager.acceptDragDrop(this.outputGrid);"
+				 toolTip="Drag an item from this list to the ship grid.">
+		<mx:columns>
+			<mx:DataGridColumn width="124" dataField="label" headerText="Type"/>
+			<mx:DataGridColumn width="32"  dataField="tl"    headerText="TL"/>
+			<mx:DataGridColumn width="32"  dataField="tons"  headerText="Vol"/>
+			<mx:DataGridColumn width="32"  dataField="mcr"   headerText="MCr"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label x="201" y="10" color="#F00505" fontWeight="normal" text="Drag and Drop from this grid:"/>
+	<s:Label x="12" y="279" fontWeight="bold" text="FUEL"/>
+	<s:NumericStepper id="jumpFuel" x="61" y="273.5" width="53" change="setFuel()"
+					  toolTip="Number of parsecs of fuel carried"/>
+	<s:NumericStepper id="powerFuel" x="189" y="273.5" width="53" change="setFuel()" maximum="99.0"
+					  stepSize="0.5"
+					  toolTip="Number of months of powerplant fuel carried"/>
+	<s:Label x="122" y="279.5" height="11" text="parsecs"/>
+	<s:Label x="250" y="279" text="months power"/>
+
+	<mx:DataGrid id="fuelGrid" x="10" y="305" width="412" height="136" dataProvider="{_fuel}"
+				 dragEnabled="true" dragEnter="DragManager.acceptDragDrop(this.fuelGrid);" dragDrop="event.action='';"
+				 editable="false">
+		<mx:columns>
+			<mx:DataGridColumn width="170" dataField="label" headerText="Fuel System" />
+			<mx:DataGridColumn width="35"  dataField="tl"    headerText="TL" />
+			<mx:DataGridColumn width="45"  dataField="tons"  headerText="Tons"/>
+			<mx:DataGridColumn width="45"  dataField="mcr"   headerText="MCr"/>
+			<mx:DataGridColumn width="120"  dataField="notes" headerText="Notes"/>
+		</mx:columns>
+	</mx:DataGrid>
+
+	<!--s:NumericStepper id="scoops" x="61" y="314" width="53" change="setScoops()" maximum="999"/>
+	<s:NumericStepper id="purifiers" x="189" y="314" width="53" change="setPurifiers()" maximum="999"/>
+	<s:NumericStepper id="intakes" x="61" y="339" width="53" change="setIntakes()" maximum="999"/>
+	<s:NumericStepper id="bins" x="61" y="364" width="53" change="setBins()" maximum="999"/>
+	<s:NumericStepper id="antimattercreator" x="189" y="365" width="53"
+					  change="setAntimatterCreators()" maximum="999"/>
+	<s:NumericStepper id="transferpumps" x="189" y="339" width="53" change="setXferPumps()"
+					  maximum="999"/>
+	<s:Label x="122" y="319.5" text="scoops"/>
+	<s:Label x="122" y="344.5" text="intakes"/>
+	<s:Label x="122" y="369.5" text="bins"/>
+	<s:Label x="250" y="319.5" text="purifiers"/>
+	<s:Label x="251" y="343.5" text="transfer pumps"/>
+	<s:Label x="252" y="370.5" text="antimatter creators (TL19)"/-->
+</s:Group>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   title="Text Editor"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" 
+			   width="500" height="466"
+			   close="closeMe()"
+			   >
+
+	<fx:Metadata>
+		[Event(name="closed", type="mx.rpc.events.ResultEvent")]		
+	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+			import mx.effects.Resize;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] public var initText:String = '';
+			
+			protected function closeMe():void
+			{
+				this.dispatchEvent( new ResultEvent( 'closed', false, true, myTextArea.text ) );
+			}
+		]]>
+	</fx:Script>
+		
+	
+	<s:Button x="418" y="402" label="Close" click="closeMe()"/>
+	<s:TextArea id="myTextArea" text="{initText}" x="10" y="10" width="478" height="384"/>
+</s:TitleWindow>

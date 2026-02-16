@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="init()"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			public var shipGrid:ShipGrid;
+
+			private function init():void
+			{
+				updateUI();
+			}
+			
+			private function reset():void
+			{
+				delete Cfg.getHdr().crewLocked;
+				shipGrid.calculateCrewLevels();
+				updateUI();
+			}
+			
+			public function updateUI():void
+			{
+				var hdr:Object = Cfg.getHdr();
+				
+				bridge.value 			= hdr.spaciousness		|| 0;
+				crewLivingQuality.value = hdr.crewComfort		|| 0;
+				demand.value			= hdr.demand			|| 0;
+				high.value  			= hdr.high				|| 0;
+				medium.value 			= hdr.medium			|| 0;
+				low.value				= hdr.low				|| 0;
+			    shifts.value    		= hdr.shifts			|| 0;
+				crewCount.value 		= hdr.crew				|| 0;
+				
+ 				pilot.value 			= hdr.pilot				|| 0;
+				astrogator.value		= hdr.astrogator		|| 0;
+				sensop.value			= hdr.sensop			|| 0;
+				steward.value			= hdr.steward			|| 0;
+				medic.value				= hdr.medic				|| 0;
+				gunner.value			= hdr.gunner			|| 0;
+				driver.value			= hdr.driver			|| 0;
+				engineer.value			= hdr.engineer			|| 0;
+				freightmaster.value		= hdr.freightmaster		|| 0;
+				staff.value				= hdr.staff 			|| 0;
+				troopSquads.value		= hdr.troops 			|| 0;
+ 	
+				longTerm.selected = Cfg.getHdr().longTerm;
+
+				setBridge();
+				setPassengerSpace();
+				setLowPassageSpace();
+				setCrewSpace();
+				updateLifeSupport();
+			}
+
+			public function resetUI():void
+			{
+				bridge.value = 2;
+				crewLivingQuality.value 
+					= demand.value
+					= high.value
+					= medium.value
+					= low.value
+					= 0;
+				shifts.value = 1;
+				crewCount.value = 0;
+				
+				pilot.value
+					= this.astrogator.value
+					= sensop.value
+					= steward.value
+					= medic.value
+					= gunner.value
+					= driver.value
+					= engineer.value
+					= freightmaster.value
+					= staff.value
+					= troopSquads.value
+					= 0;
+				
+				longTerm.selected = false;
+			}
+			
+			private function setValue( stepper:NumericStepper, name:String ):void
+			{
+				var obj:Object = Cfg.getInstance().find( name );
+				if ( obj != null && obj.hasOwnProperty( 'amount' ) )
+					stepper.value = obj[ 'amount' ];
+			}
+			
+			private function setSkill(event:Event):void
+			{
+				setBridge();
+				manuallySetCrewSpace();
+				updateLifeSupport();
+			}
+			
+			private function setLongTerm( event:Event ):void
+			{
+				Cfg.getHdr().longTerm = event.target.selected;
+				updateLifeSupport();
+			}
+
+			private function setBridge():void
+			{
+				shipGrid.remove( 'Bridge' );
+
+				var pilo:int = pilot.value 		;
+				var astr:int = astrogator.value	;
+				var sens:int = sensop.value		;
+				var stew:int = steward.value		;
+				var medi:int = medic.value		    ;
+				var gunn:int = gunner.value		;
+				var driv:int = driver.value		;
+				var engi:int = engineer.value	;
+				var frei:int = freightmaster.value	;
+				
+				var skillTotal:int = pilo + astr + sens + stew + medi + gunn + driv + engi + frei;
+								
+				var spaciousness:Number = bridge.value;
+
+				var hdr:Object = Cfg.getHdr();
+
+				hdr.pilot = pilo;
+				hdr.astrogator = astr;
+				hdr.sensop = sens;
+				hdr.steward = stew;
+				hdr.medic = medi;
+				hdr.gunner = gunn;
+				hdr.driver = driv;
+				hdr.engineer = engi;
+				hdr.freightmaster = frei;
+				hdr.spaciousness = spaciousness;
+
+				if ( skillTotal == 0 ) return;
+
+				var tons:Number = Math.ceil( skillTotal * spaciousness * 2 ) / 2; // to the half ton
+				var label:String = 'Standard Bridge';
+				var notes:String = ''; // Standard';
+				var mod:int = 0;
+				
+				if ( spaciousness == 0.5 )
+				{
+					label = 'Cramped bridge';
+					mod = -2;
+					//notes = 'Cramped';
+				}
+				else if ( spaciousness == 2.0 ) 
+				{
+					label = 'Spacious bridge';
+					mod = 2;
+					//notes = 'Spacious';
+				}
+				
+				var bridge:Object =
+					{
+						type: 'Ops',
+						category: 'Bridge',
+						name: 'Bridge',
+						label: label,
+						notes: notes,
+						tons: tons,
+						mod: mod,
+						mcr: 0
+					};
+				
+				shipGrid.addComponent( bridge );
+			}
+			
+			private function setLowPassageSpace():void
+			{
+				shipGrid.remove( 'Low Berths' );
+				var hdr:Object = Cfg.getHdr();
+				var lo:int  = low.value;
+				hdr.low = lo;
+				
+				var tons:Number;
+				var mcr:Number;
+
+				if ( lo == 0 ) return;
+				
+				tons = lo/2;
+				mcr = lo * 0.1; // to KCr 100
+					
+				var berths:Object =
+						{
+							type: 'Passengers',
+							category: 'Low Berths',
+							label: 'Low berths (' + lo + ')',
+							name: 'low berths',
+							notes: lo,
+							tons: tons,
+							mcr: mcr
+						};
+					
+				shipGrid.addComponent( berths );	
+			}
+			
+			private function setPassengerSpace():void
+			{
+				shipGrid.remove( 'Passenger Space' );
+				
+				var hdr:Object = Cfg.getHdr();
+				var hi:int = high.value;
+				var me:int  = medium.value;
+				var pax:int  = hi + me;
+				var extraSpace:int = passengerAdditionalTons.value;
+				
+				hdr.passengers = pax;
+				hdr.high = hi;
+				hdr.medium = me;
+//				hdr.demand = demand.value;
+				
+				if ( pax == 0 ) return;
+				
+				var tons:Number = pax * 4 + extraSpace;
+				var mcr:Number  = tons/8;
+				
+				// D = (T/P)-5
+				// (D+5) x P = T
+				//tons = (demand.value + 5) * pax;
+				hdr.demand = (tons/pax) - 5;
+				demand.value = hdr.demand;
+				
+				//if ( tons < pax/2 ) tons = pax/2;
+								
+				var replacement:Object =
+				{
+					type: 'Passengers',
+					category: 'Passenger Space',
+					label: 'Passenger space (' + hi + '/' + me + ', D=' + demand.value + ')',
+					name: 'passenger space',
+					notes: hi + '/' + me + ', Demand=' + demand.value,
+					tons: tons,
+					mcr: mcr
+				};
+				
+				shipGrid.addComponent( replacement );
+				setCrewSpace();
+			}
+			
+/* 			private function setPassengerSpaceOld():void
+			{
+				shipGrid.remove( 'Passenger Space' );
+				
+			    var hdr:Object = Cfg.getHdr();
+				var hi:int = high.value;
+				var me:int  = medium.value;
+				var pax:int  = hi + me;
+
+				hdr.passengers = pax;
+				hdr.high = hi;
+				hdr.medium = me;
+				hdr.demand = demand.value;
+
+				if ( pax == 0 ) return;
+
+				var tons:Number;
+				var mcr:Number;
+				
+				// D = (T/P)-5
+				// (D+5) x P = T
+				tons = (demand.value + 5) * pax;
+				if ( tons < pax/2 ) tons = pax/2;
+				
+				mcr = tons/8;
+				
+				var replacement:Object =
+						{
+							type: 'Passengers',
+							category: 'Passenger Space',
+							label: 'Passenger space (' + hi + '/' + me + ', D=' + demand.value + ')',
+							name: 'passenger space',
+							notes: hi + '/' + me + ', Demand=' + demand.value,
+							tons: tons,
+							mcr: mcr
+						};
+			
+				shipGrid.addComponent( replacement );
+				setCrewSpace();
+			} */
+
+			private function manuallySetCrewSpace():void
+			{
+				Cfg.getHdr().crewLocked = 'yes';
+				setCrewSpace();
+			}
+			
+			private function setCrewSpace():void
+			{
+				shipGrid.remove( 'Crew Space' );
+				
+				var extraTons:int   = crewAdditionalTons.value;
+				var staterooms:int  = crewCount.value;
+				var numShifts:int	= shifts.value;
+				var troo:int    	= troopSquads.value;
+				var staf:int    	= staff.value;
+				
+				var totalCrew:int = staterooms * numShifts + troo * 5;
+				
+				var hdr:Object = Cfg.getHdr();
+				hdr.crewComfort = 0;
+				hdr.crew = staterooms;
+				hdr.shifts = numShifts;
+				hdr.staff = staf;
+				hdr.troops = troo;
+				hdr.totalCrew = totalCrew;
+
+				if ( totalCrew > 0 )
+				{
+					var totalTons:int = extraTons + staterooms * 4;
+					// tons = (quality + 5) * totalCrew; 
+					// tons/totalCrew = quality + 5
+					// (tons/totalCrew) - 5 = quality
+					var quality:int = (totalTons/totalCrew) - 5;
+					hdr.crewComfort = quality;
+					crewLivingQuality.value = quality;
+					
+					var mcr:Number = totalTons/8;
+
+					var replacement:Object =
+					{
+						type: 		'Crew',
+						category: 	'Crew Space',
+						label: 		'Crew space (' + totalCrew + ', C=' + quality + ')',
+						name:		'crew space',
+						notes: 		totalCrew + ', Comfort=' + quality,
+						tons: 		totalTons,
+						mcr: 		mcr
+					};
+					
+					shipGrid.addComponent( replacement );
+				}
+				
+				updateLifeSupport();
+			}
+			
+
+/* 			private function setCrewSpaceOld():void
+			{
+				shipGrid.remove( 'Crew Space' );
+				
+				var extraTons:int   = crewAdditionalTons.value;
+				var quality:int 	= crewLivingQuality.value;		
+				var crew:int    	= crewCount.value;
+				var numShifts:int	= shifts.value;
+				var troo:int    	= troopSquads.value;
+				var staf:int    	= staff.value;
+
+				var totalCrew:int = crew * numShifts + staf + troo * 5;
+				
+				var hdr:Object = Cfg.getHdr();
+				hdr.crewComfort = quality;
+				hdr.crew = crew;
+				hdr.shifts = numShifts;
+				hdr.staff = staf;
+				hdr.troops = troo;
+			    hdr.totalCrew = totalCrew;
+
+				if ( totalCrew > 0 ) 
+				{
+					var tons:Number = (quality + 5) * totalCrew; 
+					if ( tons < crew/2 ) tons = crew/2;
+
+					var mcr:Number = tons/8;
+				
+					var replacement:Object =
+					{
+						type: 		'Crew',
+						category: 	'Crew Space',
+						label: 		'Crew space (' + totalCrew + ', C=' + quality + ')',
+						name:		'crew space',
+						notes: 		totalCrew + ', Comfort=' + quality,
+						tons: 		tons,
+						mcr: 		mcr
+					};
+				
+					shipGrid.addComponent( replacement );
+				}
+				
+				updateLifeSupport();
+			} */
+			
+			private function updateLifeSupport():void
+			{
+				shipGrid.remove( 'Life Support' );
+				
+				var hdr:Object = Cfg.getHdr();
+				
+				var people:int = hdr.totalCrew + hdr.medium + 2*hdr.high;
+				
+				if ( people == 0 ) return;
+				
+				var tons:int   = 0;
+				var note:String = '';
+				var dur:int;
+				var mcr:Number;
+				
+				tons = Math.ceil(people / 10);
+				dur  = tons * 300 / people;
+				note = dur + ' days at capacity';
+				mcr  = tons;
+				
+				if ( Cfg.getHdr().longTerm )
+				{
+					tons *= 3; // i.e. another 2 tons per 10 personnel
+					dur = tons * 400 / people;
+					note = dur + ' days at capacity';
+					mcr  = tons;
+				}
+
+				var replacement:Object =
+					{
+						type: 'Ops',
+						category: 'Life Support',
+						label: 'Life support (' + dur + ' days)',
+						name: 'life support', 
+						notes: note,
+						tons: tons,
+						mcr: mcr,
+						CP: Math.ceil(tons/10)
+					};
+				
+				shipGrid.addComponent( replacement );
+				
+				shipGrid.remove( 'Luxury Life Support' );
+				
+				var hi:int = Cfg.getHdr().high;
+				
+				if ( hi > 0 )
+				{
+					tons = Math.ceil(hi / 10);
+					mcr  = tons;
+					
+					var luxury:Object =
+						{
+							type: 'Ops',
+							category: 'Luxury Life Support',
+							label: 'Luxury life support',
+							name: 'luxury life support',
+							notes: hi + ' High passengers',
+							tons: tons,
+							mcr: mcr
+						};
+					
+					shipGrid.addComponent( luxury );
+				}
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:Label x="229" y="27" fontWeight="bold" text="CREW"/>
+	<s:Label x="16" y="137" fontWeight="bold" text="BRIDGE"/>
+	<s:Label x="229" y="221" fontWeight="bold" text="PASSENGERS"/>
+	<mx:VRule x="219" y="14" width="2" height="426"/>
+	<s:Label x="87" y="217" text="Pilot"/>
+	<s:Label x="55" y="241" text="Astrogator"/>
+	<s:Label x="59" y="313.5" text="Engineer"/>
+	<s:Label x="67" y="337.5" text="Gunner"/>
+	<s:Label x="70" y="265" text="Sensop"/>
+	<s:Label x="63" y="361" text="Steward"/>
+	<s:Label x="75" y="289.5" text="Medic"/>
+	<s:Label x="33" y="385.5" text="Freightmaster"/>
+	<s:Label x="76" y="409.5" text="Driver"/>
+	<s:Label x="238" y="119.5" text="Troop Squads"/>
+	<s:Label x="288" y="145.5" height="10" text="Staff"/>
+	<s:NumericStepper id="pilot" 		x="119" y="211.5" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="astrogator" 	x="119" y="235.5" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="steward" 		x="119" y="355.5" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="sensop" 		x="119" y="259.5" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="medic" 		x="119" y="284" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="engineer"		x="119" y="308" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="gunner"		x="119" y="332" width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="freightmaster" x="119" y="380"  width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="driver"		x="119" y="404"   width="65" maximum="99" change="setSkill(event)" />
+	<s:NumericStepper id="troopSquads"	x="321" y="114"   width="67" maximum="99" change="manuallySetCrewSpace()" />
+	<s:NumericStepper id="staff"		x="321" y="139"   width="67" maximum="99" change="manuallySetCrewSpace()" />
+	<s:NumericStepper id="high"			x="321" y="237.5" width="67" maximum="99" change="setPassengerSpace();" />
+	<s:NumericStepper id="medium"		x="321" y="262.5" width="67" maximum="99" change="setPassengerSpace();" />
+	<s:NumericStepper id="low"			x="321" y="287.5" width="67" maximum="999" change="setLowPassageSpace();" />
+	<s:Label x="288" y="243" text="High"/>
+	<s:Label x="270" y="268" text="Medium"/>
+	<s:Label x="290" y="293" text="Low"/>
+	<s:CheckBox id="longTerm" x="249" y="409" label="Long Term life support"
+				change="setLongTerm(event)" click="updateLifeSupport()"/>
+	<mx:HRule x="221" y="204" width="194" height="1"/>
+	<mx:HRule x="219" y="370" width="194" height="1"/>
+	<mx:HRule x="25" y="121" width="194" height="1"/>
+	<s:NumericStepper id="bridge" x="119" y="165.5" width="65" change="setBridge()"
+					  maximum="2.0" minimum="0.5" value="2.0" stepSize="0.5"/>
+	<s:NumericStepper id="demand" x="321" y="337.5" width="67" maximum="5" minimum="-5" stepSize="1" value="0" 
+					  change="setPassengerSpace()" enabled="false"/>
+	<s:Label x="267" y="343" text="Demand"/>
+	<s:Label x="36" y="171" text="Spaciousness"/>
+	<s:Label x="270" y="169" text="Comfort"/>
+	<s:NumericStepper id="crewLivingQuality" x="321" y="163.5" width="65" change="manuallySetCrewSpace()"
+					  maximum="5" minimum="-5" stepSize="1" enabled="false"/>
+	<s:Label x="229" y="387" fontWeight="bold" text="LIFE SUPPORT"/>
+	<s:NumericStepper id="crewCount" x="321" y="39" width="67" change="manuallySetCrewSpace()" maximum="999"
+					  minimum="0"/>
+	<s:Label x="251" y="44.5" text="Staterooms"/>
+	<s:Button x="16" y="65" width="178" label="Calculate Bridge and Crew" click="reset()"/>
+	<s:Label x="282" y="69.5" text="Shifts"/>
+	<s:NumericStepper id="shifts" x="321" y="64" width="67" change="manuallySetCrewSpace()"
+					  click="manuallySetCrewSpace()" maximum="3" minimum="1"/>
+	<s:Label x="16" y="27" fontStyle="italic" fontWeight="normal" text="Automatic Adjustments"/>
+	<s:Label x="258" y="95" text="Add'l Tons"/>
+	<s:NumericStepper id="crewAdditionalTons" x="321" y="89" width="67"
+					  change="manuallySetCrewSpace()" maximum="100" minimum="-100"/>
+	<s:Label x="258" y="319" text="Add'l Tons"/>
+	<s:NumericStepper id="passengerAdditionalTons" x="321" y="313" width="67"
+					  change="setPassengerSpace();" maximum="100" minimum="-100"/>
+
+</s:Group>

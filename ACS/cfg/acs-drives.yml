@@ -1,0 +1,34 @@
+drives:
+   - { code:  P,  label: PowerPlant,       tons by EP: 3% + 1,    min: 4,  mcr: 1,   prefix: P, tl: 8,  ratingFromTL: [1,2,3,4,5,6,7,8,9,9,9,9,9,9,9,9,9,9], powerFuelUsage: 0.01 }
+   - { code:  J,  label: Jump Drive,       tons by EP: 5% + 5,    min: 10, mcr: 1,   prefix: J, tl: 9,  ratingFromTL: [1,1,2,3,4,5,6,6,7,7,8,8,9,9,9,9,9], jumpFuelUsage: 0.1 }
+   - { code:  M,  label: Maneuver Drive,   tons by EP: 2% + -1,   min: 2,  mcr: 2,   suffix: G, tl: 9,  ratingFromTL: [4,7,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] }
+   - { code:  A,  label: Antimatter Plant, tons by EP: 1% + 29,   min: 30, mcr: 2,   suffix: A, tl: 16, ratingFromTL: [1,2,3,4,5,6,7,8,9,9] }
+   - { code:  C,  label: Collector,        tons by EP: 10% + 0,   min: 10, mcr: 0.5, suffix: C, tl: 18, ratingFromTL: [5,9,9,9,9,9,9,9] }
+   - { code:  G,  label: Gravitic Drive,   tons by EP: 9% + 0,    min: 9,  mcr: 0.5, suffix: G, tl: 8,  ratingFromTL: [4,7,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9] }
+   - { code:  N,  label: NAFAL,            tons by EP: 2% + 0,    min: 30, mcr: 1,   suffix: G, tl: 9,  ratingFromTL: [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9], rating multiplier: 0.1 }
+   - { code:  U,  label: Fission Plant,    tons by EP: 5% + 10,   min: 15, mcr: 1.5, suffix: U, tl: 8,  ratingFromTL: [1,2,3,4,5,6,7,8,9] }
+   - { code:  H,  label: Hop Drive,        tons by EP: 5% + 5,    min: 10, mcr: 1,   prefix: H, tl: 17, ratingFromTL: [10,20,30,40,50,60,70,80,90] }
+   - { code:  S,  label: Skip Drive,       tons by EP: 5% + 5,    min: 10, mcr: 1,   prefix: S, tl: 20, ratingFromTL: [100,200,300,400,500,600,700,800,900] }
+
+drive-type: 'Drive'
+
+stage:
+   Exp: { label: Experimental, tl: -3, tons mult: 3,  mod mult: 0.5, q: flux, cost mult: 10,  efficiency: 0.5, fuel: 2.0 }
+   Pro: { label: Prototype,    tl: -2, tons mult: 2,  mod: -4,  q: flux, cost mult:  5,  efficiency: 0.8, fuel: 1.2 }
+   Ear: { label: Early,        tl: -1, tons mult: 1,  mod: -3,  q: flux, cost mult:  2,  efficiency: 0.9, fuel: 1.1 }
+   Std: { label: Standard,     tl:  0, tons mult: 1,  mod:  0,  q: no  , cost mult:  1,  efficiency: 1.0, fuel: 1.0 }
+   Bas: { label: Basic,        tl:  0, tons mult: 1,  mod: -1,  q: no  , cost mult: 0.9, efficiency: 0.9, fuel: 1.1 }
+   Alt: { label: Alternate,    tl:  0, tons mult: 1,  mod:  1,  q: no  , cost mult:  1,  efficiency: 1.0, fuel: 1.0 }
+   Imp: { label: Improved,     tl:  1, tons mult: 1,  mod:  1,  q: 1   , cost mult:  1,  efficiency: 1.1, fuel: 0.9 }
+   Gen: { label: Generic,      tl:  1, tons mult: 1,  mod: -2, q: 1   , cost mult: 0.5, efficiency: 0.9, fuel: 1.1 }
+   Mod: { label: Modified,     tl:  2, tons mult: 0.5, mod:  2, q: 2   , cost mult: 0.5, efficiency: 0.9, fuel: 1.1 }
+   Adv: { label: Advanced,     tl:  3, tons mult: 0.33, mod:  3, q: 3   , cost mult:  1,  efficiency: 1.2, fuel: 0.8 }
+   Ult: { label: Ultimate,     tl:  4, tons mult: 0.25, mod:  4, q: 4   , cost mult:  2,  efficiency: 1.3, fuel: 0.7 }
+
+fuel:
+   - { code: S, category: Fuel Scoops,         label: Fuel Scoops,         type: Drive, tons: 1, tl: 8,  mcr: 0.1, CP: 1 }
+   - { code: P, category: Fuel Purifiers,      label: Fuel Purifiers,      type: Drive, tons: 1, tl: 8,  mcr: 0.1, CP: 1 }
+   - { code: I, category: Fuel Intakes,        label: Fuel Intakes,        type: Drive, tons: 1, tl: 8,  mcr: 0.1, CP: 1 }
+   - { code: B, category: Fuel Bins,           label: Fuel Bins,           type: Drive, tons: 1, tl: 8,  mcr: 0.1, CP: 1 }
+   - { code: A, category: Antimatter Creators, label: Antimatter Creators, type: Drive, tons: 1, tl: 19, mcr: 0.1, CP: 1 }
+   - { code: X, category: Fuel Transfer Pumps, label: Fuel Transfer Pumps, type: Drive, tons: 1, tl: 10, mcr: 0.1, CP: 1 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tas:NoItemEditor xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 	xmlns:s="library://ns.adobe.com/flex/spark" 
+		 	xmlns:mx="library://ns.adobe.com/flex/mx" 
+			xmlns:tas="component.itemEditors.*"
+			width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Drives;
+			
+			private function setDriveRating():void
+			{
+				//var rating:int = driveRatingSlider.value;
+				var driveHelper:Drives = Drives.getDriveHelper();
+				
+				this.getThingy();
+			}
+		]]>
+	</fx:Script>
+	
+	<!--mx:HSlider id="driveRatingSlider" x="10" y="10" width="309" change="setDriveRating()"
+				maximum="9" minimum="1" snapInterval="1" value="1" values="[1,2,3,4,5,6,7,8,9]"/-->
+</tas:NoItemEditor>

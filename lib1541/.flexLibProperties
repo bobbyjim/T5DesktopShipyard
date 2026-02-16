@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="true" version="3">
+  <includeClasses>
+    <classEntry path="storage.C1541"/>
+    <classEntry path="storage.CMD"/>
+    <classEntry path="storage.CommodoreImage"/>
+    <classEntry path="storage.DiskChannel"/>
+    <classEntry path="storage.LByteArray"/>
+    <classEntry path="storage.PetsciiArray"/>
+    <classEntry path="storage.StorageFactory"/>
+    <classEntry path="storage.Tape"/>
+    <classEntry path="storage.formats.D16"/>
+    <classEntry path="storage.formats.D28"/>
+    <classEntry path="storage.formats.D30"/>
+    <classEntry path="storage.formats.D40"/>
+    <classEntry path="storage.formats.D64"/>
+    <classEntry path="storage.formats.D64b"/>
+    <classEntry path="storage.formats.D65"/>
+    <classEntry path="storage.formats.D71"/>
+    <classEntry path="storage.formats.D81"/>
+    <classEntry path="storage.formats.D81b"/>
+    <classEntry path="storage.formats.D82"/>
+    <classEntry path="storage.formats.D82b"/>
+    <classEntry path="storage.formats.LDA"/>
+    <classEntry path="storage.formats.PRG"/>
+    <classEntry path="storage.formats.R64"/>
+    <classEntry path="storage.formats.SKP"/>
+    <classEntry path="storage.formats.Storable"/>
+    <classEntry path="storage.formats.T64"/>
+    <classEntry path="storage.formats.D20"/>
+    <classEntry path="storage.formats.D10"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

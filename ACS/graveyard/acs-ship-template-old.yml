@@ -1,0 +1,51 @@
+---
+hull:
+   type: Hull
+   category: hull
+   name: hull
+   label: Streamlined hull
+   config: S
+   tons: 200
+   mcr: 14
+   mult: 1
+
+header:
+   tons: 200
+   tonsFree: 200
+   totalMCr: 14
+
+   id:
+   name:
+   tl: 12
+   mission:
+   architect:
+   owner:
+   keel:
+   flight:
+   url:
+   disposition:
+   builder: 
+
+   qsp: ''
+   spaciousness: 2
+   demand: 0
+   crewComfort: 0
+   crew: 0
+   totalCrew: 0
+   high: 0
+   medium: 0
+   low: 0
+   passengers: 0
+   numShifts: 1
+
+   pilot: 0
+   astrogator: 0
+   sensop: 0
+   gunner: 0
+   driver: 0
+   engineer: 0
+   freightmaster: 0
+   staff: 0
+   troops: 0
+   steward: 0
+   medic: 0

@@ -1,0 +1,36 @@
+---
+shipbuilders: 
+
+   - { code: AE, label:  Arshani, Etran}
+   - { code: AH, label:  AHG, AG}
+   - { code: BY, label:  Bilstein Yards}
+
+   - { code: CS, label:  Clan Severn}
+   - { code: CO, label:  Commonal}
+   - { code: DV, label:  Delvani}
+   - { code: GA1, label:  Gashidda No. 1}
+   - { code: GA2, label:  Gashidda No. 2}
+   - { code: GA3, label:  Gashidda No. 3}
+
+   - { code: GY, label:  General Shipyards}
+   - { code: GS, label:  GSB, AG}
+   - { code: HL, label:  Highlans}
+   - { code: LS, label:  Ling Standard}
+   - { code: MA, label:  Mars}
+   - { code: PB, label:  Piorabanti}
+
+   - { code: SB, label:  Sabaald}
+   - { code: TK, label:  Tukera}
+   - { code: VL1, label:  Vlandian No. 1}
+   - { code: VL2, label:  Vlandian No. 2}
+   - { code: 111, label:  Yard 11 No. 1}
+   - { code: 112, label:  Yard 11 No. 2}
+
+   - { code: 161, label:  Yard 16 No. 1}
+   - { code: 162, label:  Yard 16 No. 2}
+   - { code: 163, label:  Yard 16 No. 3}
+   - { code: 164, label:  Yard 16 No. 4}
+   - { code: 17, label:  Yard 17}
+   - { code: 221, label:  Yard 22 No. 1}
+
+   - { code: ZG, label:  Zagado}

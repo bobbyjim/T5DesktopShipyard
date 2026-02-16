@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			[Bindable] private var _thingy:Object;
+			
+			public function setThingy( obj:Object ):void
+			{
+				_thingy = obj;
+			}
+			
+			public function getThingy():Object
+			{
+				var findMe:String = 'w/fresher';
+				
+				if ( (_thingy[ 'label' ] as String).indexOf( findMe ) > -1 )
+				{
+					// remove fresher and cost
+					_thingy[ 'label' ] = (_thingy[ 'label' ] as String).replace( ' ' + findMe, "" );
+					_thingy[ 'mcr'   ] -= 0.5;					
+				}
+				
+				if ( hasFresher.selected )
+				{
+					_thingy[ 'label' ] += ' ' + findMe;
+					_thingy[ 'mcr'   ] += 0.5;
+				}
+				return _thingy;
+			}
+		]]>
+	</fx:Script>
+	<s:CheckBox id="hasFresher" x="10" y="10" label="Fresher Included"/>
+	
+</s:Group>

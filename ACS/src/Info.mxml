@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import component.TextEditor;
+			
+			import data.Cfg;
+			
+			import flashx.textLayout.tlf_internal;
+			
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] private var _missions:ArrayCollection = new ArrayCollection();			
+			[Bindable] private var dispositions:ArrayCollection = new ArrayCollection();
+			[Bindable] private var builders:ArrayCollection = new ArrayCollection();
+			[Bindable] private var catalogs:ArrayCollection = new ArrayCollection();
+			
+			[Bindable] public var cfg:Cfg;
+			[Bindable] private var info:Object = 
+				{
+					id:    '',
+					shipname:  '',
+					url:   '',
+					owner: '',
+					architect: '',
+					keel:   '',
+					flight: ''
+				};
+					
+			private var editor:TextEditor = new TextEditor();
+			private var historyEditor:TextEditor = new TextEditor();
+			
+			private function onCreationComplete():void
+			{
+				_missions.source = Cfg.getInstance().hulls.hulls.missions;
+				dispositions.source = cfg.dispositions.dispositions;
+				builders.source = cfg.dispositions.shipbuilders;
+				catalogs.source = cfg.dispositions.catalogs;
+				updateUI();
+			}
+			
+			public function updateUI():void
+			{
+				// set selections based on the stored values
+				var hdr:Object = Cfg.getHdr();
+
+				if ( hdr != null )
+					tlSlider.value = hdr.tl;
+				
+				var miss:String = hdr.mission || _missions[0].code;
+				setSelection( missions, hdr.mission );
+				setMission(missions.selectedItem)
+
+				var disp:String = hdr.disposition;
+				setSelection( disposition, disp, dispositions );
+				
+				var bldr:String = hdr.builder;
+				setSelection( builder, bldr, builders );
+				
+				var ownr:String = hdr.owner || catalogs[0].code;
+				setSelection( catalog, ownr, catalogs );
+				
+				info = hdr;
+				
+				comments.text = Cfg.getHdr().comments;
+  			}
+			
+			private function addItem( ac: ArrayCollection, item: String ):void
+			{
+			}
+			
+			public function resetUI():void
+			{
+				tlSlider.value = 12;
+				setSelection( missions,    	'' );
+				setSelection( disposition, 	'' );
+				setSelection( builder, 		'' );
+				setSelection( catalog,      '' );
+				comments.text = '';	
+			}
+
+			private function setSlider( list:mx.controls.HSlider, label:String ):void
+			{
+				for ( var i:int=0; i<list.labels.length; i++ )
+				{
+					var value:String = list.labels[i].toString();
+					if ( label == value )
+					{
+						list.value = i;
+						break;
+					}
+				}
+			}
+			
+			private function setSelection( list:ComboBox, code:String, ac:ArrayCollection=null ):int
+			{
+				if ( code == null ) return 0;
+				
+				for each ( var s:Object in list.dataProvider )
+				{
+					if ( s[ 'code' ] == code || s[ 'label' ] == code )
+					{
+						list.selectedItem = s;
+						return 0;
+					}
+				}
+				
+				if ( ac == null ) return 0; // alas
+				
+				var newItem:Object = 
+					{
+						code:  code,
+						label: code
+					};
+				ac.addItemAt( newItem, 0 );
+				list.selectedIndex = 0;	
+				return -1; // list updated
+			}
+			
+			private function setDisposition():void
+			{
+				if ( disposition.selectedIndex == -1 ) return;
+				if ( disposition.selectedIndex == ComboBox.CUSTOM_SELECTED_ITEM )
+				{
+					var newItem:Object = 
+						{
+							code:  disposition.selectedItem,
+							label: disposition.selectedItem
+						};
+					dispositions.addItemAt( newItem, 0 );
+					disposition.selectedIndex = 0;
+				}
+
+				Cfg.getHdr().disposition = disposition.selectedItem.label;
+			}
+			
+			private function setBuilder():void
+			{
+				if ( builder.selectedIndex == -1 ) return;
+				if ( builder.selectedIndex == ComboBox.CUSTOM_SELECTED_ITEM )
+				{
+					var newItem:Object = 
+						{
+							code:  builder.selectedItem,
+							label: builder.selectedItem
+						};
+					builders.addItemAt( newItem, 0 );
+					builder.selectedIndex = 0;
+				}
+				Cfg.getHdr().builder = builder.selectedItem.label;
+			}
+
+			private function setCatalog():void
+			{
+				if ( catalog.selectedIndex == -1 ) return;
+				if ( catalog.selectedIndex == ComboBox.CUSTOM_SELECTED_ITEM )
+				{
+					var newItem:Object = 
+						{
+							code:  catalog.selectedItem,
+							label: catalog.selectedItem
+						};
+					catalogs.addItemAt( newItem, 0 );
+					catalog.selectedIndex = 0;
+				}
+				Cfg.getHdr().owner = catalog.selectedItem.label;
+			}
+
+			
+			private function setShipTL( tl:int ):void
+			{
+				Cfg.getHdr().tl = tl;
+			}
+			
+			private function setMission( mission:Object ):void
+			{
+				Cfg.getHdr().mission = mission.code;
+				Cfg.getHdr().missionLabel = mission.label;
+				calcQSP();
+			}
+			
+			private function setHdr( tag:String, input:TextInput ):void
+			{
+				Cfg.getHdr()[ tag ] = input.text;
+			}
+			
+			private function calcQSP():void
+			{
+				Cfg.getInstance().calcQSP();
+			}
+			
+			private function showMissionWithCode(item:Object):String
+			{
+				return item.label + ' (' + item.code + ')';
+			}
+			
+			private function popupEditor():void
+			{
+				editor.addEventListener( 'closed', closeEditor ); 
+				editor.initText = comments.text;
+				PopUpManager.addPopUp( editor, this, true );
+			}
+			
+			private function closeEditor( event:ResultEvent ):void
+			{
+				editor.removeEventListener( 'closed', closeEditor );
+				PopUpManager.removePopUp( editor );		
+				
+				if ( event.result != null )
+					comments.text = event.result as String;
+				
+				setComments();
+			}
+			
+			private function popupHistoryEditor():void
+			{
+				historyEditor.addEventListener( 'closed', closeHistoryEditor );
+				historyEditor.initText = Cfg.getHdr().history;
+				PopUpManager.addPopUp( historyEditor, this, true );				
+			}
+			
+			private function closeHistoryEditor( event:ResultEvent ):void
+			{
+				historyEditor.removeEventListener( 'closed', closeHistoryEditor );
+				PopUpManager.removePopUp( historyEditor );
+				
+				if ( event.result != null )
+					Cfg.getHdr().history = event.result as String;
+			}
+			
+			private function setComments():void
+			{
+				Cfg.getHdr().comments = comments.text;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label x="318" y="10" fontWeight="bold" text="Basic Information" textDecoration="none"/>
+	<s:Label x="117" y="70" text="Tail ID:"/>
+	<s:Label x="118" y="96" text="Name:"/>
+	<s:Label x="115" y="122" text="Owner:"/>
+	<s:Label x="103" y="148" text="Architect:"/>
+	<s:Label x="66" y="228" text="Keel Laid Down:"/>
+	<s:Label x="94" y="253" text="First Flight:"/>
+	<s:Label x="91" y="201.5" text="Disposition:"/>
+	<s:Label x="66" y="278" text="Notes:"/>
+	
+	<s:ComboBox id="disposition" x="165" y="196" width="133" 
+				change="setDisposition()"
+				dataProvider="{dispositions}" 
+				labelField="label"
+				restrict="^\\&quot;"
+				toolTip="Current status of ship"/>
+	
+	<s:Label x="113" y="174.5" text="Builder:"/>
+	<s:ComboBox id="builder" x="165" y="169" width="133" 
+				change="setBuilder()"
+				dataProvider="{builders}" 
+				labelField="label" 
+				restrict="^\\&quot;"
+				toolTip="Shipyard where the ship was constructed"/>
+	<s:ComboBox id="catalog" x="165" y="117" width="133" 
+				change="setCatalog()"
+				dataProvider="{catalogs}" 
+				labelField="label" 
+				restrict="^\\&quot;"
+				toolTip="Owning government, company, or person"/>
+	
+	<s:TextInput id="shipId" x="165" y="65" width="133" change="setHdr( 'id', shipId )"
+				 restrict="^\\&quot;" text="{info.id}"
+				 toolTip="Tail ID of this starship"/>
+	<s:TextInput id="shipName" x="165" y="91" width="133"
+				 change="setHdr( 'shipname', shipName ); calcQSP()"
+				 restrict="^\\&quot;" text="{info.shipname}"
+				 />
+	<s:TextInput visible="false" id="ownedby" x="299" y="112" width="133" change="setHdr( 'owner', ownedby )"
+				 restrict="^\\&quot;" text="{info.owner}"
+				 toolTip="Company or person holding this ship's papers"/>
+	<s:TextInput id="architect" x="165" y="143" width="133" change="setHdr( 'architect', architect )"
+				 restrict="^\\&quot;" text="{info.architect}"
+				 toolTip="Design firm or person that designed this ship"/>
+	<s:TextInput id="keel" x="164" y="223" width="133" 
+				 change="setHdr( 'keel', keel )"
+				 restrict="-0123456789"
+				 text="{info.keel}"
+				 toolTip="Date ship began to be built"/>
+	
+	<s:TextInput id="flight" x="164" y="248" width="133" 
+				 change="setHdr( 'flight', flight )"
+				 restrict="-0123456789" 
+				 text="{info.flight}"
+				 toolTip="Date of ship's first test flight"/>
+	
+	<mx:HRule x="66" y="27" width="356" height="1"/>
+	<s:Label x="113" y="41.5" text="Mission:"/>
+	<s:ComboBox id="missions" 
+				change="setMission(missions.selectedItem)" 
+				dataProvider="{_missions}" 
+			    selectedIndex="0"
+				labelFunction="showMissionWithCode" x="166" y="36" width="252"
+			    />
+	<s:Label x="10" y="12" text="TL:"/>
+	<mx:VSlider id="tlSlider" labelOffset="12" x="22" y="27" width="6" height="413" 
+				change="setShipTL(tlSlider.value)"
+				labels="[7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33]" 
+				liveDragging="true"
+				maximum="33" minimum="7" snapInterval="1" value="7"/>
+	<s:TextArea id="comments" x="108" y="278" width="309" height="162"
+				change="setComments()" restrict="^\\&quot;"
+			    toolTip="Text explaining the ship in detail"/>
+	<s:Button x="66" y="298" width="34" height="142" label="..." click="popupEditor()"/>
+	<s:Button x="305" y="169" width="34" height="101" label="Registry" click="popupHistoryEditor()"
+			  toolTip="Class Registry Data"/>
+</s:Group>

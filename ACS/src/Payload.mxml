@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VDividedBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+         paddingLeft="10"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="onCreationComplete()"
+		 >
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			[Bindable] private var _payload:ArrayCollection = new ArrayCollection();
+			//[Bindable] private var _livingSpace:ArrayCollection = new ArrayCollection();
+						
+			private function onCreationComplete():void
+			{
+				_payload.source = Cfg.getInstance().payload[ 'payload' ];
+//				updateUI();
+			}
+		]]>
+	</fx:Script>
+	
+	<mx:DataGrid id="misc" width="420" height="100%" dataProvider="{_payload}"
+				 editable="false" 
+				 dragEnabled="true" dragEnter="DragManager.acceptDragDrop(this.misc);" dragDrop="event.action='';"
+				 >
+		<mx:columns>
+			<mx:DataGridColumn width="180" dataField="label" headerText="Payload"/>
+			<!--mx:DataGridColumn width="45"  dataField="tl"    headerText="TL"/-->
+			<mx:DataGridColumn width="45"  dataField="tons"  headerText="Tons"/>
+			<mx:DataGridColumn width="45"  dataField="mcr"   headerText="MCr"/>
+			<mx:DataGridColumn width="170"  dataField="notes" headerText="Notes"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+	
+</mx:VDividedBox>

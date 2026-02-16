@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   width="400" height="210" title="DISCLAIMER"
+			   close="doClose()"
+			   >
+
+	<fx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			
+			private function doClose():void
+			{
+				this.dispatchEvent( new CloseEvent('Close') );
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<s:RichText x="10" y="10" width="378" height="172" text="The Traveller game in all forms is owned by Far Future Enterprises. Copyright 1977 - 2015 Far Future Enterprises. Traveller is a registered trademark of Far Future Enterprises. Far Future permits web sites and fanzines for this game, provided it contains this notice, that Far Future is notified, and subject to a withdrawal of permission on 90 days notice. The contents of this site are for personal, non-commercial use only. Any use of Far Future Enterprises's copyrighted material or trademarks anywhere on this web site and its files should not be viewed as a challenge to those copyrights or trademarks. In addition, any program/articles/file on this site cannot be republished or distributed without the consent of the author who contributed it."/>
+	<!--s:Button x="318" y="192" label="OK" click="doClose()"/-->
+</s:TitleWindow>

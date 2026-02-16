@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="519" height="100%" 
+		 creationComplete="onCreationComplete()">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Metadata>
+		[Event(name="stageChanged", type="flash.events.Event")]		
+		[Event(name="shipDestroyed", type="flash.events.Event")]
+	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+			import component.Living;
+			import component.StageEffects;
+			import component.TextEditor;
+			
+			import data.Cfg;
+			import data.Drives;
+			import data.IO;
+			import data.ItemEditorFactory;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.IHierarchicalCollectionView;
+			import mx.controls.Alert;
+			import mx.controls.DataGrid;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			private var _template:Object = {};
+			
+			[Bindable] public var crewComfort:int = 0;
+			[Bindable] public var passengerDemand:int = 0;
+
+			[Bindable] private var _qsp:String = '';
+			[Bindable] private var _mcr:Number = 0;
+			[Bindable] private var _tonsFree:Number = 0;
+			[Bindable] private var _overtons:Number = 0;
+			[Bindable] private var _undertons:Number = 0;
+			[Bindable] private var _airlocks:Number = 0;
+			[Bindable] private var overUnderTonnage:String = '';
+			[Bindable] private var textColor:uint = 0x000000;
+			
+			private var s:StageEffects = new StageEffects();
+			private var editor:TextEditor = new TextEditor();
+
+			public function get tons():int
+			{
+				return Cfg.getHdr().tons;
+			}
+
+			public function get tonsFree():int
+			{
+				return Cfg.getHdr().tonsFree;
+			}
+			
+			public function get mcr():Number
+			{
+				return Cfg.getHdr().mcr;
+			}
+			
+			[Bindable]
+			public function set componentList( ac:ArrayCollection ):void
+			{
+				var old:ArrayCollection = Cfg.getInstance().componentList;
+				old.removeEventListener(CollectionEvent.COLLECTION_CHANGE, recalculate);
+				old = null;
+				
+ 				if ( ac == null )
+				{
+					ac = new ArrayCollection();
+//					ac.addItem( Cfg.copy( Cfg.getInstance().templateHull ) );
+				}
+ 				Cfg.getInstance().componentList = ac;
+				Cfg.getInstance().componentList.refresh();
+				gc.refresh();
+				
+				onCreationComplete(); // reattach event listener
+			}
+			
+			public function get componentList():ArrayCollection
+			{
+				return Cfg.getInstance().componentList;
+			} 
+			
+			private function onCreationComplete():void
+			{			
+				//
+				// Give Drives something to work from
+				//
+				Drives.getDriveHelper().shipGrid = this;
+				this.componentList.addEventListener(CollectionEvent.COLLECTION_CHANGE, recalculate);		    
+			}
+			
+			public function recalculate( evt:Event=null ):void
+			{
+				var hdr:Object = Cfg.getHdr();
+				
+				if ( hdr == null ) return;
+				
+				Cfg.getInstance().calcQSP();
+				
+				//
+				//  Calculate space free and cost and fuel requirements.
+				//
+				var tonsUsed:Number = 0;
+				_overtons = 0;
+				_undertons = 0;
+				_mcr = 0;
+				
+				// 
+				//  Calculate console cost
+				//
+				var cc:int = hdr.controlConsoles   || 0;
+				var op:int = hdr.operatingConsoles || 0;
+				var ws:int = hdr.workstations      || 0;
+				
+				//_mcr += cc * 0.2 + op * 0.1 + ws * 0.05; <-- moved to Bridge calc
+				
+				var jumpFuelPercentage:Number = 0;
+				var powerFuelPercentage:Number = 0;
+				
+				var crewSpace:int = 0;
+				var crewCount:int = 0;
+				var paxSpace:int  = 0;
+				var paxCount:int  = 0;
+				var totalCargoSpace:int = 0;
+				var troops:int = 0;
+				var staff:int = 0;
+				
+				for each ( var item:Object in componentList )
+				{
+					var label:String = item.label;
+					
+					if ( label == 'Barracks' || item.type == 'Troops' )
+					{
+						troops += item.sleeps;
+					}
+					
+					if ( item.type == 'Staff' )
+					{
+						staff += item.sleeps;
+					}
+					
+					if ( label.search( /^Cargo (Hold|Module) / ) > -1 )
+						totalCargoSpace += item.tons;
+						
+					if ( item.hasOwnProperty( 'overtons' ) )
+						_overtons += parseFloat(item.overtons);
+					
+					if ( item.hasOwnProperty( 'totalTons' ) 
+					  && item[ 'category' ] != 'Hull' )
+							tonsUsed += parseFloat(item.totalTons);
+					
+					if ( item.hasOwnProperty( 'totalMCr' ) )
+						_mcr += parseFloat(item.totalMCr);
+					
+					// don't we already calculate the drive stuff?
+ 	
+					if ( item.hasOwnProperty( 'eff' ) == false ) // e.g. drive efficiency
+						item.eff = 1.0;
+ 					
+					//
+					//  NOTE: Jump fuel does NOT increase just because the 
+					//  jump drive rating increases!  Jump fuel is entirely
+					//  dependent on the number of parsecs and the hull volume.
+					//
+ 					if ( item.hasOwnProperty( 'jumpFuelUsage' ) 
+						//&& ! isNaN(item.rating)
+						//&& item.rating > 0
+						&& ! isNaN(item.jumpFuelUsage) )
+					{
+						var p1:Number = int(/*item.rating * */ item.jumpFuelUsage * 1000 / item.eff  ) / 1000;
+						jumpFuelPercentage = Math.max( jumpFuelPercentage, p1 );
+					}
+					
+					//
+					//  NOTE: PowerPlant fuel INCREASES based on the power plant's
+					//  rating AND the hull volume.
+					//
+					if ( item.hasOwnProperty( 'powerFuelUsage' ) 
+						&& ! isNaN(item.rating)
+						&& item.rating > 0
+						&& ! isNaN(item.powerFuelUsage) )
+					{
+						var p2:Number = int(item.rating * item.powerFuelUsage * 1000  / item.eff  ) / 1000;
+						powerFuelPercentage = Math.max( powerFuelPercentage, p2 );
+					}
+					
+					//
+					//  Now calculate crew space
+					//
+					if ( item.type == 'Crew' )
+					{
+						crewSpace += item.totalTons   || item.tons   || 0;
+						crewCount += item.totalSleeps || item.sleeps || 0;
+					}
+					
+					//
+					//  Now calculate passenger space
+					//
+					if ( item.type == 'Passenger' )
+					{
+						paxSpace += item.totalTons   || item.tons   || 0;
+						paxCount += item.totalSleeps || item.sleeps || 0;
+					}
+  				}
+
+				hdr.troops = troops;
+				hdr.staff  = staff;
+				
+				hdr.totalCargoSpace = totalCargoSpace;
+				hdr.passengers = paxCount;
+				
+				//
+				//  Now calculate crew comfort and passenger demand
+				//
+				if ( crewSpace == 0 ) crewCount = 1; // avoid divide by 0
+				if ( paxSpace  == 0 ) paxCount = 1;  // avoid divide by 0
+				
+				
+				this.crewComfort 
+					= hdr.crewComfort
+					= int(crewSpace / crewCount - 5);
+				
+				this.passengerDemand 
+					= hdr.demand
+			  		= int(paxSpace / paxCount - 5);
+
+				if ( hdr.hasOwnProperty( 'low' ) == false )
+					hdr.low	= 0;		
+
+				tonsUsed = Math.floor( tonsUsed * 2 )/2;
+				_mcr = Math.floor( _mcr * 10 ) / 10; // to the KCr 100
+				if ( _mcr >= 10000 ) // very expensive: round to the MCr
+				{
+					_mcr = Math.floor( _mcr );
+				}
+				
+				_tonsFree = hdr.tons - tonsUsed;
+
+				if ( _tonsFree < 0 )
+					_overtons -= _tonsFree;
+				
+				textColor = 0x000000;
+				if ( _overtons > 0 )
+				{
+					hdr.overtons = _overtons;
+					
+					if ( hdr.hasOwnProperty( 'undertons' ) )
+						delete hdr.undertons;
+					
+					this.overUnderTonnage = _overtons + "t over tons";
+					textColor = 0xaa0000;
+				}
+				else if ( _tonsFree > 0 )
+				{
+					hdr.undertons = _tonsFree;
+					
+					if ( hdr.hasOwnProperty( 'overtons' ) )
+						delete hdr.overtons;
+					
+					this.overUnderTonnage = _tonsFree + "t under tons";
+				}
+				else
+				{
+					this.overUnderTonnage = '0 tons free';
+				}
+				
+				
+				hdr.tonsFree = _tonsFree;
+				hdr.jumpFuelPercentage = jumpFuelPercentage;
+				hdr.powerFuelPercentage = powerFuelPercentage;
+				hdr.totalMCr = _mcr;
+					
+				calculateCrewLevels();
+				
+				Living.updateLifeSupport( this ); // hope this works.
+				
+				_qsp = hdr.qsp;
+				_airlocks = int( hdr.tons / 100 );
+			}
+
+			public function calculateCrewLevels():void
+			{
+				var hdr:Object = Cfg.getHdr();
+				
+				if ( hdr.hasOwnProperty('crewLocked') && hdr[ 'crewLocked' ] == 'yes' )
+					return;
+				
+				var numShifts:int = hdr.shifts;
+
+				var pilot:int = 1;
+				var astrogator:int = 1;
+				var sensop:int = Math.ceil(Cfg.getInstance().sum( 'Sensor' )/3);
+				var gunner:int = Math.floor(Cfg.getInstance().sum( 'Weapon' )/3 + Cfg.getInstance().sum( 'Defense' )/3)
+				var driver:int = Math.floor(Cfg.getInstance().sum( 'Vehicle' )/2);
+				var engineer:int = Math.ceil(Cfg.getInstance().sum( 'Drive', 'CP' )/3);
+				var freightmaster:int = Math.floor(hdr.totalCargoSpace/100);
+				var steward:int = Math.ceil(hdr.high / 8);
+				
+				/*
+				hdr.pilot 	  		= pilot; 
+				hdr.astrogator 		= astrogator;
+				hdr.sensop			= sensop;
+				hdr.gunner			= gunner;
+				hdr.driver			= driver
+				hdr.engineer		= engineer;
+				hdr.freightmaster	= freightmaster;
+				hdr.steward 		= steward;
+				*/
+				
+				/*
+				hdr.crew = 
+					hdr.pilot  	
+					+ hdr.engineer
+					+ hdr.astrogator  	+ hdr.freightmaster
+					+ hdr.sensop 		+ hdr.driver
+					+ hdr.gunner
+					//+ hdr.troops
+					//+ hdr.staff
+					;
+
+				hdr.medic = int( (hdr.passengers + hdr.crew)/30 );
+				
+				hdr.crew += hdr.medic;
+                */
+				
+				var cc:int = pilot + gunner;
+				var op:int = astrogator + engineer + sensop;
+				var ws:int = steward + freightmaster + driver;
+				
+				hdr.controlConsoles = cc;
+				hdr.operatingConsoles = op;
+				hdr.workstations = ws;
+				hdr.crew = cc + op + ws;
+
+				// Medic
+				var medic:int = int((hdr.passengers + hdr.crew)/10);
+				cc += medic;
+				hdr.crew += medic;
+				
+				hdr.crew *= numShifts;
+			}
+			
+			public function get template():Object
+			{
+				return _template;
+			}
+
+			public function set template(value:Object):void
+			{
+				_template = value;
+			}
+
+			private function handleDragEnter( evt:DragEvent ):void
+			{				
+				DragManager.acceptDragDrop( this.shipGrid );
+//				var source:DataGrid = evt.dragInitiator as DataGrid;
+//				if ( source != null )
+//				   DragManager.acceptDragDrop(this.shipGrid);				
+			}
+			
+			private function handleDragDropToShipGrid( evt:DragEvent ):void
+			{
+ 				var source:DataGrid = evt.dragInitiator as DataGrid;	
+				
+				// a kludge, but prevents a runtime error
+				if ( source == null )
+					return;
+				
+				var obj:Object = Cfg.copy(source.selectedItem);
+				delete obj.mx_internal_uid;
+				
+				if ( obj.hasOwnProperty( 'header' ) && obj.hasOwnProperty( 'components' ) )
+				{
+					// ah, it's a ship from the archive. Summarize it.
+					obj = 
+					{
+						type: 'Ship',
+						category: 'Ship',
+						code: obj.header.mission,
+						tl: obj.header.tl,
+						tons: obj.header.tons,
+						label: obj.header.missionLabel,
+						mcr: obj.header.totalMCr,
+						note: obj.header.qsp
+					};
+				}
+				
+				//
+				// ADDED March 19.  Will this cause PROBLEMS??
+				//
+				Cfg.getInstance().sanitize( obj );
+				//
+				//
+				//
+				
+				this.componentList.addItem( obj );
+ 			}    
+			
+			private function handleDragComplete( evt:DragEvent ):void
+			{
+				if ( evt.dragInitiator == shipGrid ) // remove
+				{					
+					var adg:AdvancedDataGrid = evt.dragInitiator as AdvancedDataGrid;
+					var selected:Object = adg.selectedItem;
+
+					// remove children, if any
+					if ( selected.hasOwnProperty( 'children' ) ) // a node
+					{
+						for each (var item:Object in selected.children)
+						{
+							this.removeItem( item );
+						}
+					}
+					else // remove item
+					{
+						this.componentList.removeItemAt
+							(
+								this.componentList.getItemIndex( selected )
+							);						
+					}
+					
+				}
+			}
+			/************************************************************************************
+			 * 
+			 *                            general behavior
+			 * 
+			 * **********************************************************************************/
+			
+			public function addComponent( obj:Object ):void
+			{
+				if ( obj != null )
+				{
+					Cfg.getInstance().sanitize( obj );
+					this.componentList.addItem( obj );
+				}
+			}
+
+			public function findBy( tag:String, name:String ):Object
+			{
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ tag ] == name )
+					{
+						return item;
+					}
+				}
+				return null;
+			}
+			
+			
+			public function find( category:String ):Object
+			{
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ 'category' ] == category )
+					{
+						return item;
+					}
+				}
+				return null;
+			}
+
+			public function findAllByConfig( config:String ):Array
+			{
+				var out:Array = [];
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ 'config' ] == config )
+					{
+						out.push( item );
+					}
+				}
+				return out;
+			}
+
+			public function findAllBy( tag:String, name:String ):Array
+			{
+				var out:Array = [];
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ tag ] == name )
+					{
+						out.push( item );
+					}
+				}
+				return out;
+			}
+			
+			public function findAllByPattern( tag:String, pattern:String ):Array
+			{
+				var out:Array = [];
+				for each (var item:Object in this.componentList )
+				{
+					if ( (item[ tag ] as String).match( pattern ) )
+					{
+						out.push( item );
+					}
+				}
+				return out;
+			}
+			
+			public function filterBy( array:Array, tag:String, pattern:String ):Array
+			{
+				var out:Array = [];
+				for each (var item:Object in array )
+				{
+					if ( (item[tag] as String).search( pattern ) == -1 )
+					{
+						out.push( item );
+					}
+				}
+				return out;
+			}
+			
+			public function countNumberOf( items:Array ):int
+			{
+				var i:int = 0;
+				for each ( var item:Object in items )
+				{
+					if ( item.hasOwnProperty( 'howMany' ) )
+					{
+						i += item.howMany;
+					}
+					else
+					{
+						i++;
+					}
+				}
+				return i;
+			}
+			
+			public function removeItem( item:Object ):void
+			{
+				this.componentList.removeItemAt( this.componentList.getItemIndex( item ) );
+			}
+			
+			public function remove( category:String ):Object
+			{
+//				var found:Object = null;
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ 'category' ] == category )
+					{
+						this.componentList.removeItemAt( this.componentList.getItemIndex( item ) );
+						return item;
+					}
+				}
+				return null; // found;
+			}
+			
+			public function replaceByInternalId( replacement:Object ):void
+			{
+				for each (var item:Object in this.componentList )
+				{
+					if ( item.mx_internal_uid == replacement.mx_internal_uid )
+					{
+						this.componentList.removeItemAt( this.componentList.getItemIndex( item ) );
+					}
+				}
+				delete replacement.mx_internal_id;
+				addComponent( replacement );				
+			}
+
+			public function replaceByName( replacement:Object ):void
+			{
+				for each (var item:Object in this.componentList )
+				{
+					if ( item[ 'category' ] == replacement.category )
+					{
+						var typeField:String;
+						if ( item.hasOwnProperty( 'name' ) )
+							typeField = 'name';
+						else
+							typeField = 'label';
+						
+						if ( item[ typeField ] == replacement[ typeField ] )
+							this.componentList.removeItemAt( this.componentList.getItemIndex( item ) );
+					}
+				}
+				addComponent( replacement );
+			}
+			
+			public function replace( category:String, replacement:Object=null ):void
+			{
+				remove( category );
+				addComponent( replacement );
+			}
+			
+			public function toggleOn( obj:Object, unless:Object=null ):void
+			{
+				if ( unless != null && this.componentList.contains( unless ) )
+					return;
+				
+				if ( this.componentList.contains( obj ) == false )
+					this.componentList.addItem( obj );
+			}
+			
+			public function toggleOff( obj:Object ):void
+			{
+				if ( this.componentList.contains( obj ) )
+				{
+					this.componentList.removeItemAt(this.componentList.getItemIndex(obj));
+				}
+			}
+			
+			public function toggle( obj:Object ):void
+			{
+				var ac:ArrayCollection = this.componentList;
+				
+				if ( ac.contains( obj ) )
+				{
+					ac.removeItemAt(ac.getItemIndex(obj));
+				}
+				else
+				{
+					ac.addItem(obj);
+				}
+			}
+			
+			private function openStageEffects( event:Event=null ):void
+			{
+				// shove appropriate data in
+				if ( shipGrid.selectedItem == null ) return;
+				
+				s.thingy = shipGrid.selectedItem;
+
+				s.addEventListener( 'stageClosed', closeStageEffects ); 
+				PopUpManager.addPopUp( s, this, true );
+				//PopUpManager.centerPopUp();
+
+				//
+				//  Now for the moment we've all been waiting for:
+				//  add the item editor for this thing.
+				//
+				s.itemEditorContainer.addElement( ItemEditorFactory.itemEditorFor( s.thingy ) );
+ 			}
+			
+			private function closeStageEffects( event:ResultEvent ):void
+			{
+				// drag appropriate data out
+ 				s.removeEventListener( 'stageClosed', closeStageEffects );
+				PopUpManager.removePopUp( s );
+				
+				var replacement:Object = event.result;
+				
+				Cfg.getInstance().sanitize(replacement);
+				
+				if ( replacement != null )
+				{
+					replaceByInternalId( replacement );
+					this.dispatchEvent( new Event( 'stageChanged' ) ); 
+				}
+				
+				s.itemEditorContainer.removeAllElements();
+ 			}
+			
+			private function destroyShip():void
+			{
+				Alert.show( "Reset the ship grid?", 'Reset', Alert.YES + Alert.NO, null, destroyShipAck );
+			}
+			
+			private function describeShip():void
+			{
+				var h:Object = Cfg.getHdr();
+				var qsp:String = h.qsp;
+				var f1:Array = qsp.split( '-' );
+				var f2:Array = f1[1].split('');
+				
+				var msg:String = 
+					  "Using a " + h.tons + "-ton, TL" + h.tl + ' hull, the ';
+				
+				if ( h.shipname != null ) msg += h.shipname + ' Class ';
+				
+				msg +=  h.missionLabel + ' mounts ';
+
+				var jumpdrive:Object = this.find( 'Jump Drive' );  // code and rating
+				var mdrive:Object = this.find( 'Maneuver Drive' ); // code and rating
+				var powerplant:Object = this.find( 'PowerPlant' ); // code
+				
+				if ( jumpdrive != null ) msg += "jump drive-" + jumpdrive.code;
+				if ( mdrive != null )
+				{
+					if ( jumpdrive != null ) msg += ", ";
+					msg += "maneuver drive-" + mdrive.code;
+					if ( jumpdrive != null ) msg += ",";
+				}
+
+				if ( jumpdrive != null || mdrive != null ) msg += " and ";
+				
+				msg += "power plant-" + powerplant.code + ", giving a performance of ";
+				
+				if ( jumpdrive != null )      msg += "jump-" + jumpdrive.rating;
+				if ( mdrive == null )         msg += ".";
+				else
+				{
+					if ( jumpdrive != null ) msg += " and ";
+					msg += mdrive.rating + "G acceleration. ";
+				}
+
+				var powerplantFuel:Object = this.find( 'Powerplant Fuel' ); // notes for duration (and totalTons if you want)
+				var jumpFuel:Object = this.find( 'Jump Fuel' );    // notes for amount
+				var cpu:Object = this.find( 'Computer' );
+				if ( cpu == null )
+					cpu = this.findBy( 'name', 'Computer' );           // mount
+				var states:Array = this.findAllByPattern( 'label', 'Stateroom' );
+				var numStates:int = this.countNumberOf( states );
+				var lb:Array = this.findAllBy( 'label', 'Low Berth' );
+				var numLB:String = this.countNumberOf( lb ) + '';
+				if (numLB == '0') numLB = 'no';
+				
+				msg += "Fuel tankage supports ";
+				
+				if ( jumpdrive != null ) msg += "a " + jumpFuel.notes + ", and ";
+				
+				msg += powerplantFuel.notes + " of operations. ";
+				msg += 'Attached to the bridge is a ' + cpu.label + '. ';
+				msg += 'There are ' + numStates + ' staterooms and ' + numLB + ' low berths. ';
+
+				var weapons:Array = this.findAllByConfig( 'Weapon' );  // category and howMany
+				var cargo:Object = this.find( 'Cargo' );           // totalTons
+				var craft:Array = this.findAllBy( 'type', 'Vehicle' ); // label and howMany
+				craft = this.filterBy( craft, 'label', 'Lock' );
+				
+				if ( weapons.length > 0 )
+				{
+					msg += 'Installed weaponry include ';
+					for ( var i:int=0; i<weapons.length; i++ )
+					{
+						var name:String = weapons[i].category.replace( /^\w+ /, '' );
+						msg += weapons[i].howMany + ' ' + name;
+						if ( weapons[i].howMany > 1 ) msg += 's';
+						if ( i <= weapons.length - 2 ) msg += ', ';
+						if ( i == weapons.length - 2 ) msg += 'and ';
+					}
+					msg += '. ';
+				}
+				
+				if ( cargo != null )
+					msg += 'Cargo capacity is ' + cargo.totalTons + ' tons. ';
+				else
+					msg += 'The ship does not have cargo space. ';
+
+				var hull:Object = find( 'Hull' );
+				//var landers:Object = this.find( 'landers' );       // name
+				var scoops:Object = this.find( 'Fuel Scoops' );  
+				var intakes:Object = this.find( 'Fuel Intakes' );
+				var bins:Object = this.find( 'Fuel Bins' );
+
+				msg += 'The ship has a';
+				if ( hull.code == 'U' || hull.code == 'A' ) msg += 'n';
+				msg += ' ' + (hull.config as String).toLowerCase() + ' hull';
+				
+				if ( scoops != null || intakes != null || bins != null )
+				{
+					msg += ', with ';
+					var refuel:Array = [];
+					if ( scoops != null )  refuel.push( 'scoops' );
+					if ( intakes != null ) refuel.push( 'intakes' );
+					if ( bins != null )    refuel.push( 'bins' );
+					
+					if ( refuel.length == 3 ) msg += 'scoops, intakes, and bins';
+					if ( refuel.length == 2 ) msg += refuel[0] + ' and ' + refuel[1];
+					if ( refuel.length == 1 ) msg += refuel[0];
+					
+					msg += ' for frontier refueling';
+				}
+
+				msg += ". \n\n";
+				
+				if ( craft.length > 0 )
+				{
+					if ( craft.length == 1 ) msg += 'The ship carries ';
+					if ( craft.length > 1 )  msg += 'Carried craft include ';
+					for ( var j:int=0; j<craft.length; j++ )
+					{
+						msg += craft[j].howMany + ' ' + craft[j].label;
+						if ( craft[j].howMany > 1 ) msg += 's';
+						if ( j <= craft.length - 2 ) msg += ', ';
+						if ( j == craft.length - 2 ) msg += 'and ';
+					}
+					msg += '. ';
+				}
+
+				msg += 'The ship has ' + h.crew + ' crew';
+				
+				var pax:int = parseInt(h.passengers);
+				
+				if ( pax > 0 || numLB != 'no' ) msg += ', and can carry ';
+				
+				if ( pax > 0 ) msg += pax + ' passenger';	
+				if ( pax > 1 ) msg += 's';
+				if ( numLB != 'no' ) msg += ' and ' + numLB + ' low passenger';
+				if ( numLB != '1' && numLB != 'no' ) msg += 's';
+				msg += '. ';
+				
+				Alert.show( msg, "Summary" );
+			}
+			
+			private function describeShipFully():void
+			{
+				editor.initText = IO.encodeAsText();
+//				editor.addEventListener(CloseEvent.CLOSE, onCloseDescription);
+				editor.addEventListener('closed', onCloseDescription);
+				PopUpManager.addPopUp( editor, this, true );
+			}
+			
+			private function onCloseDescription(e:Event):void
+			{
+//				editor.removeEventListener(CloseEvent.CLOSE);
+				editor.removeEventListener('closed', onCloseDescription);
+				PopUpManager.removePopUp(editor);
+			}
+			
+			private function tx( val:String, pre:String, post:String ):String
+			{
+				return val==null? '' : pre + val + post;
+			}
+			
+			private function destroyShipAck( event:CloseEvent ):void
+			{
+				if ( event.detail == Alert.YES )
+				{
+					this.componentList = null;
+					Cfg.getInstance().header = null;
+					Cfg.getHdr(); // force a re-initialization
+					recalculate();
+					this.dispatchEvent( new Event( 'shipDestroyed' ) );
+				}
+			}
+			
+			// worth a try...
+			public function refreshShipGrid():void
+			{ 
+				var openNodes:Object = IHierarchicalCollectionView(shipGrid.dataProvider).openNodes;
+				
+				for each ( var component:Object in Cfg.getInstance().componentList )
+				{
+					Cfg.getInstance().sanitize( component );
+				}
+				
+				Cfg.getInstance().componentList.refresh();
+				shipGrid.validateNow();
+				for each ( var item:Object in openNodes )
+				{
+					shipGrid.expandItem( item, false );
+					shipGrid.expandItem( item, true );
+				}
+			}
+			
+			//
+			//  Attempts to bring older formats into line.
+			//  We can't modernize weapons, but we can do the rest.
+			//
+			public function updateShipFormat():void
+			{
+				var updates:Array = [];
+				
+				// fix the old categories which were not capitalized.
+				
+				updateCategory( updates,  'hull', 'Hull' );
+				updateCategory( updates,  'bridge', 'Bridge' );
+				updateCategory( updates,  'jumpfuel', 'Jump Fuel' );
+				updateCategory( updates,  'powerfuel', 'Powerplant Fuel' );
+				updateCategory( updates,  'computer', 'Computer' );
+				updateCategory( updates,  'purifiers', 'Fuel Purifiers');
+				updateCategory( updates,  'scoops', 'Fuel Scoops' );
+				updateCategory( updates,  'intakes', 'Fuel Intakes' );
+				updateCategory( updates,  'bins', 'Fuel Bins' );
+				updateCategory( updates,  'pumps', 'Transfer Pumps' );
+				updateCategory( updates,  'crewTons', 'Crew Space' );
+				updateCategory( updates,  'paxTons', 'Passenger Space' );
+				updateCategory( updates,  'lowBerths', 'Low Berths' );
+				updateCategory( updates,  'lifeSupport', 'Life Support' );
+				updateCategory( updates,  'luxurySupport', 'Luxury Life Support' );
+//				updateCategory( updates,  'fittings', 'Fittings' );
+//				updateCategory( updates,  'landers', 'Landers' );
+//				updateCategory( updates,  'wings', 'Wings' );
+				
+				retype( updates, 'Drives', 		'Drive' );
+				retype( updates, 'Weapons', 	'Weapon' );
+				retype( updates, 'Sensors', 	'Sensor' );
+				retype( updates, 'Defenses',	'Weapon' );			
+				retype( updates, 'Smallcraft', 'Vehicle' );
+				
+				if ( updates.length > 0 )
+				{
+					Alert.show( "This design is of an older format. \n"
+						     +  "** Weapons will have to be manually replaced. **\n"
+							 +  "The following elements have been automatically upgraded: \n\n" 
+							 + updates.join( "\n" )
+							 ,
+							 "Older Format Detected",
+							 Alert.OK );
+				}
+				
+				// last but not least, sanitize.  (why not?)
+				for each (var item:Object in this.componentList)
+					Cfg.getInstance().sanitize(item);
+			}
+			
+			private function updateCategory( updates:Array, old:String, fix:String ):void
+			{
+				var obj:Object = this.find( old );
+				
+				if ( obj != null )
+				{
+					obj.category = fix;
+					updates.push( 'Category ' + old + ' updated to ' + fix );
+				}
+			}
+			
+			private function retype( updates:Array, oldtype:String, newType:String ):void
+			{
+				var list:Array = Cfg.getInstance().grepByType( oldtype );
+				
+				for each (var item:Object in list )
+				{
+					item[ 'type' ] = newType;
+				}
+				
+				if ( list.length > 0 )
+					updates.push( 'Type ' + oldtype + ' updated to ' + newType );
+			}
+			
+			protected function shipGrid_mouseDownHandler(event:MouseEvent):void
+			{
+				// TODO Deny drag operation if this is the ship hull!	
+			}
+			
+		]]>
+	</fx:Script>
+
+	<s:HGroup width="100%" horizontalAlign="center" verticalAlign="baseline">
+		<s:Button x="0" y="4" label="Edit Item" click="openStageEffects()"/>
+		<s:Label color="{textColor}" x="100" y="8.5" width="125" text="{overUnderTonnage}"/>		
+		<s:Label x="327" y="8.5" width="75" text="MCr {_mcr}"/>
+		<s:Label x="324" width="70" text="{_qsp}"/>
+		<s:Button x="386" width="63" label="Summary" click="describeShip()" fontSize="10"/>
+		<s:Button width="48" label="Full" click="describeShipFully()" fontSize="10"/>
+				  
+	</s:HGroup>
+
+	<mx:AdvancedDataGrid id="shipGrid" x="0" y="29" width="519" height="100%"
+						 paddingBottom="5"
+						 designViewDataType="tree" 
+						 dragDrop="handleDragDropToShipGrid(event);"
+						 mouseDown="shipGrid_mouseDownHandler(event)"
+						 dragEnabled="true" 
+						 dragEnter="handleDragEnter(event)"
+						 dragMoveEnabled="true" 
+						 draggableColumns="true"
+						 dragComplete="handleDragComplete(event)"
+						 editable="false" 
+						 focusOut="recalculate(event)"
+						 sortableColumns="true"
+						 doubleClickEnabled="true"
+						 doubleClick="openStageEffects(event)"
+						 >
+		<mx:dataProvider>
+			<mx:GroupingCollection2 id="gc" source="{Cfg.getInstance().componentList}">
+				<mx:grouping>
+					<mx:Grouping>
+						<mx:GroupingField name="type"/>
+					</mx:Grouping>
+				</mx:grouping>
+			</mx:GroupingCollection2>
+		</mx:dataProvider>        
+
+		<mx:columns>
+			<mx:AdvancedDataGridColumn width="100" dataField="type"  	  headerText="Type"/>
+			<mx:AdvancedDataGridColumn width="25"  dataField="howMany"  headerText="#"/>
+			<mx:AdvancedDataGridColumn width="150" dataField="label" 	  headerText="Label"/>
+			<mx:AdvancedDataGridColumn width="45"  dataField="totalTons"  headerText="Vol"/>
+			<mx:AdvancedDataGridColumn width="55"  dataField="totalMCr"   headerText="MCr"/>
+			<mx:AdvancedDataGridColumn width="125" dataField="notes" 	  headerText="Notes"/>
+		</mx:columns>
+	</mx:AdvancedDataGrid>
+	
+	<s:HGroup width="499">
+		<s:Label text="Crew Comfort: {this.crewComfort}" />
+		<s:Label text="Passenger Demand: {this.passengerDemand}" />
+		<s:Label text="&quot;Free&quot; Airlocks:"/>
+		<s:Label text="{_airlocks}"/>
+	</s:HGroup>
+</s:VGroup>

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+			   xmlns:s="library://ns.adobe.com/flex/spark"
+			   xmlns:mx="library://ns.adobe.com/flex/mx"
+			   xmlns:component="component.*"
+			   width="608" height="248" 
+			   close="cancel()" 
+			   title="Item Editor">
+
+	<fx:Declarations>
+		<s:RadioButtonGroup id="stageEffectsRadioGroup"  />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Metadata>
+		[Event(name="stageClosed", type="mx.rpc.events.ResultEvent")]		
+	</fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[			
+			import data.Cfg;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.CloseEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
+			
+			import spark.components.Group;
+						
+			[Bindable] private var unlocked:Boolean = false;
+			[Bindable] private var _thingy:Object = {};
+			[Bindable] private var _newthingy:Object = {};
+				
+			[Bindable] private var thingyList:ArrayCollection = new ArrayCollection();
+			[Bindable] private var newThingyList:ArrayCollection = new ArrayCollection();
+						
+ 	 		public function set thingy( obj:Object ):void
+			{
+				thingyList.removeAll();
+				thingyList.addItem( obj );
+				_thingy = obj;
+				
+				newThingyList.removeAll();
+				
+				//
+				//  copy retains the mx_internal_id so we can do a replacement when we're done
+				//
+				_newthingy = ObjectUtil.copy( _thingy );
+				newThingyList.addItem( _newthingy );
+				
+				if ( newthingy.hasOwnProperty( 'stage' ) )
+				{
+//					setStage( newthingy.stage );
+					stageEffectsRadioGroup.selectedValue = newthingy.stage;
+				}
+				else
+				{
+					stageEffectsRadioGroup.selectedValue = 'Std';
+				}
+				
+				// set the available stages
+				if ( ult != null )
+				{
+					ult.enabled = checkStage( 'Ult' );
+					adv.enabled = checkStage( 'Adv' );
+					imp.enabled = checkStage( 'Imp' );
+					mod.enabled = checkStage( 'Mod' );
+					gen.enabled = checkStage( 'Gen' );
+					alt.enabled = checkStage( 'Alt' );
+					std.enabled = checkStage( 'Std' );
+					bas.enabled = checkStage( 'Bas' );
+					ear.enabled = checkStage( 'Ear' );
+					pro.enabled = checkStage( 'Pro' );
+					exp.enabled = checkStage( 'Exp' );
+				}
+			
+
+				if ( itemCount != null )
+				{
+					// reset the 'count' stepper
+					this.itemCount.value = 1;
+					if ( thingy.howMany > 0 )
+						this.itemCount.value = thingy.howMany;
+				}				
+			}
+
+			public function get thingy():Object
+			{
+				return _thingy;
+			}
+
+			private function set newthingy( obj:Object ):void
+			{
+				_newthingy = obj;
+			}
+			
+			private function get newthingy():Object
+			{
+				return _newthingy;
+			}
+			
+			private function checkCodes( obj:Object, codes:Array ):void
+			{
+				for each (var code:String in codes )
+					if ( obj.hasOwnProperty( code ) == false )
+						obj[ code ] = 0;
+			}
+			
+			private function setStage( code:String ):void
+			{
+				var stage:Object = Cfg.getInstance().drives.stage[ code ];
+				var original:Object = {};
+				
+				if ( thingy.hasOwnProperty( 'original' ) )
+				{
+					original = thingy.original;
+				}
+				else // create originals
+				{
+					checkCodes( thingy, ['mod', 'q','r','e','b','s','eff'] );
+					
+					original = {};
+					for (var prop:Object in thingy)
+						original[ prop ] = thingy[ prop ];
+				}
+				newthingy.original = original;
+				
+				newthingy.tl  = original.tl - stage[ 'tl' ];
+				newthingy.eff = stage[ 'efficiency' ];
+				newthingy.rating = int( newthingy.eff * original.rating ); // TODO: IMPORTANT BUT TRICKY
+				newthingy.mcr = original.mcr * stage[ 'cost mult' ];
+				
+				//
+				//  Stage does not affect the volume of mounted weapons, sensors, defenses
+				//
+				if ( original.config != 'Weapon' && original.config != 'Sensor' && original.config != 'Defense' )
+				{
+					newthingy.tons = original.tons * stage[ 'tons mult' ];
+				}
+				
+				//
+				//  This for Craig, so that emplacements don't go under 1 ton.
+				//  Basically, NOTHING goes under one ton if you use Stage Effects.
+				//  This might have unwanted side effects.  Tough (for now).
+				//
+				//if ( newthingy.tons < 1 ) newthingy.tons = 1;
+				
+				//newthingy.label = code + ' ' + original.label;
+				newthingy.label = code + ' ' + original.category;
+				if ( original.code )
+					newthingy.label += ' ' + original.code + ' (R' + newthingy.rating + ')';
+				
+				newthingy.stage = code;
+
+				newthingy.notes = "R" + newthingy.rating;
+				
+				//
+				//  I *think* we don't have to change the fuel usage numbers here,
+				//  because they're already massaged in ShipGrid, resulting in 
+				//  a double application.  So stage[ 'fuel' ] is commented out.
+				//
+				if ( newthingy.hasOwnProperty( 'powerFuelUsage' ) )
+					newthingy.powerFuelUsage = original.powerFuelUsage; // * stage[ 'fuel' ];
+
+				if ( newthingy.hasOwnProperty( 'jumpFuelUsage' ) )
+					newthingy.jumpFuelUsage = original.jumpFuelUsage; // * stage[ 'fuel' ];
+				
+				if ( code == 'Std' ) newthingy.label = original.label;
+					
+				if ( stage.hasOwnProperty( 'mod mult' ) )
+					newthingy.mod = -original.tl * stage[ 'mod mult' ] ;
+				else
+					newthingy.mod = stage[ 'mod' ];
+				
+				if ( original.hasOwnProperty( 'mod' ) )
+					newthingy.mod += original.mod;
+				
+				var q:String = stage[ 'q' ];
+				// q can be 'no' (=0), 'flux', or a number representing a single mod applied to all qualities
+
+				newthingy.q 
+					= newthingy.r
+					= newthingy.e
+					= newthingy.b
+					= newthingy.s = 0;
+				
+				var dm:int = 0;
+				
+				switch( q )
+				{
+					case '-5':
+				    case '-4':
+					case '-3':
+					case '-2':
+					case '-1':
+					case '0':
+					case '1':
+					case '2':
+					case '3':
+					case '4':
+					case '5':
+						dm = parseInt( q );
+					case 'flux': 
+						qrebs( dm, dm, dm, -dm, dm );	
+				}
+				
+				newThingyList.refresh();
+			}
+			
+			private function qrebs( qm:int=0, rm:int=0, em:int=0, bm:int=0, sm:int=0):void
+			{
+				newthingy.q	= flux(qm) + 5; // i.e. 0 to 10
+				newthingy.r	= flux(rm);
+				newthingy.e	= flux(em);
+				newthingy.b = flux(bm);
+				newthingy.s = flux(sm);				
+			}
+			
+			private function flux( dm:int=0 ):int
+			{
+				var num:int = Math.random()*6 - Math.random()*6 + dm;
+				if ( num < -5 ) return -5;
+				if ( num >  5 ) return 5;
+				return num;
+			}
+			
+			private function apply():void
+			{
+				closeMe();
+			}
+			
+			private function cancel():void
+			{
+				newthingy = null;
+				closeMe();
+			}
+			
+			protected function closeMe(event:CloseEvent=null):void
+			{
+				this.dispatchEvent( new ResultEvent( 'stageClosed', false, true, newthingy ) );
+			}
+			
+			private function checkStage( code:String ):Boolean
+			{
+				var stage:Object = Cfg.getInstance().drives.stage[ code ];
+				
+				return thingy.basetl <= thingy.tl - stage.tl;
+			}
+			
+			private function setCount( count:Number ):void
+			{
+				newthingy.howMany = 1;
+				if ( count > 1 )
+					newthingy.howMany = int(count);
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<s:Button x="438" y="186" label="Apply"  click="apply()"/>
+	<s:Button x="526" y="186" height="21" label="Cancel" click="cancel()"/>
+	<s:DataGrid x="14" y="10" width="582" height="50" alpha="0.8" contentBackgroundAlpha="1.0"
+				contentBackgroundColor="#D6D6D6" dataProvider="{thingyList}" requestedRowCount="4">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="200" dataField="label" headerText="Original"></s:GridColumn>
+				<s:GridColumn width="40" dataField="tl" headerText="TL"></s:GridColumn>
+				<s:GridColumn width="40" dataField="mod" headerText="Mod"></s:GridColumn>
+				<s:GridColumn width="45" dataField="tons" headerText="Tons"></s:GridColumn>
+				<s:GridColumn width="24" dataField="q" headerText="Q"></s:GridColumn>
+				<s:GridColumn width="24" dataField="r" headerText="R"></s:GridColumn>
+				<s:GridColumn width="24" dataField="e" headerText="E"></s:GridColumn>
+				<s:GridColumn width="24" dataField="b" headerText="B"></s:GridColumn>
+				<s:GridColumn width="24" dataField="s" headerText="S"></s:GridColumn>
+				<s:GridColumn width="30" dataField="eff" headerText="Eff"></s:GridColumn>
+				<s:GridColumn width="36" dataField="loc" headerText="Loc"></s:GridColumn>				
+				<s:GridColumn width="50" dataField="mcr" headerText="MCr"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:DataGrid editable="true" x="14" y="133" width="582" height="50" requestedRowCount="4" dataProvider="{newThingyList}">
+		<s:columns>
+			<s:ArrayList>
+				<s:GridColumn width="200" dataField="label" headerText="Label"></s:GridColumn>
+				<s:GridColumn width="40" dataField="tl" headerText="TL"></s:GridColumn>
+				<s:GridColumn width="40" dataField="mod" headerText="Mod"></s:GridColumn>
+				<s:GridColumn width="45" dataField="tons" headerText="Tons"></s:GridColumn>
+				<s:GridColumn width="24" dataField="q" headerText="Q"></s:GridColumn>
+				<s:GridColumn width="24" dataField="r" headerText="R"></s:GridColumn>
+				<s:GridColumn width="24" dataField="e" headerText="E"></s:GridColumn>
+				<s:GridColumn width="24" dataField="b" headerText="B"></s:GridColumn>
+				<s:GridColumn width="24" dataField="s" headerText="S"></s:GridColumn>
+				<s:GridColumn width="30" dataField="eff" headerText="Eff"></s:GridColumn>
+				<s:GridColumn width="36" dataField="loc" headerText="Loc"></s:GridColumn>				
+				<s:GridColumn width="50" dataField="mcr" headerText="MCr"></s:GridColumn>
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
+	<s:RadioButton x="425" y="100" label="Ultimate" value="Ult" id="ult"
+				   click="setStage('Ult')"
+				   enabled="{checkStage('Ult')}"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="425" y="74" label="Advanced" value="Adv" id="adv" 
+				   click="setStage('Adv')"
+				   enabled="{checkStage('Adv')}"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="346" y="100" label="Modified" value="Mod" id="mod"
+				   click="setStage('Mod')"
+				   enabled="{checkStage('Mod')}"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="346" y="74" label="Generic" value="Gen" id="gen" 
+				   click="setStage('Gen')"
+				   enabled="{checkStage('Gen')}"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="261" y="100" label="Improved" value="Imp" id="imp"
+				   click="setStage('Imp')"
+				   enabled="{checkStage('Imp')}"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="261" y="74" label="Alternate" value="Alt" id="alt"
+				   click="setStage('Alt')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="111" y="100" label="Basic" value="Bas" id="bas"
+				   click="setStage('Bas')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="175" y="74" label="Standard" value="Std" id="std"
+				   click="setStage('Std')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="111" y="74" label="Early" value="Ear" id="ear"
+				   click="setStage('Ear')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="14" y="100" label="Prototype" value="Pro" id="pro"
+				   click="setStage('Pro')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:RadioButton x="14" y="74" label="Experimental" value="Exp" id="exp"
+				   click="setStage('Exp')"
+				   groupName="stageEffectsRadioGroup"/>
+	<s:NumericStepper id="itemCount" x="516" y="102" maximum="999" minimum="1" stepSize="1" click="setCount(itemCount.value)"/>
+	<s:Label x="516" y="82" text="Count:"/>
+	<s:Button x="14" y="186" label="Export" enabled="false"/>
+	<s:BorderContainer visible="false" id="itemEditorContainer" x="14" y="187" width="582" height="35">
+	</s:BorderContainer>
+	<mx:VRule x="516" y="186" height="21"/>
+</s:TitleWindow>

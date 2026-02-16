@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()"
+		 show="onShow()"
+		 >
+
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.DragEvent;
+			import mx.managers.DragManager;
+			
+			public var shipGrid:ShipGrid;
+			[Bindable] private var redundancy:String;
+			[Bindable] private var _livingSpace:ArrayCollection = new ArrayCollection();
+
+			private function onCreationComplete():void
+			{
+				_livingSpace.source = Cfg.getInstance().payload[ 'living' ];
+				updateUI();
+			}
+
+			private function reset():void
+			{
+				Cfg.getHdr().crewLocked = 'no';  // i.e. lock to USER's selections = NO
+				shipGrid.calculateCrewLevels();
+				updateUI();
+			}
+			
+			private function onShow(event:Event=null):void
+			{
+				updateUI();
+			}
+			
+			public function updateUI():void
+			{
+				var hdr:Object = Cfg.getHdr();
+				
+				bridge.value 			= hdr.spaciousness		|| 0;
+				
+				controlConsoles.value   = hdr.controlConsoles   || 0;
+				operatingConsoles.value = hdr.operatingConsoles || 0;
+				workstations.value      = hdr.workstations      || 0;
+				
+				/*
+				pilot.value 			= hdr.pilot				|| 0;
+				astrogator.value		= hdr.astrogator		|| 0;
+				sensop.value			= hdr.sensop			|| 0;
+				steward.value			= hdr.steward			|| 0;
+				medic.value				= hdr.medic				|| 0;
+				gunner.value			= hdr.gunner			|| 0;
+				driver.value			= hdr.driver			|| 0;
+				engineer.value			= hdr.engineer			|| 0;
+				freightmaster.value		= hdr.freightmaster		|| 0;
+				*/
+				
+				//lifeSupport.value       = hdr.lifeSupport       || 0;
+				//luxuryLifeSupport.value = hdr.luxuryLifeSupport || 0;
+				
+				//setLifeSupport();
+				setBridge();
+			}
+			
+			public function resetUI():void
+			{
+				bridge.value = 2;
+				
+				/*
+				pilot.value
+					= this.astrogator.value
+					= sensop.value
+					= steward.value
+					= medic.value
+					= gunner.value
+					= driver.value
+					= engineer.value
+					= freightmaster.value
+					= lifeSupport.value
+					= luxuryLifeSupport.value
+					= 0;
+				*/				
+			}
+			
+			private function setSkill(event:Event):void
+			{
+				Cfg.getHdr().crewLocked = 'yes';
+				setBridge();
+			}
+
+			/*
+			private function setLifeSupport():void
+			{
+				shipGrid.remove( 'Life Support' );
+				
+				var hdr:Object = Cfg.getHdr();
+				hdr.lifeSupport = lifeSupport.value;
+				
+				//var people:int = hdr.crew + hdr.passengers; // hdr.totalCrew + hdr.medium + 2*hdr.high;
+				
+				var tons:int    = lifeSupport.value;
+				var dur:int     = 0;
+				var units:String = ' person-months';
+				
+				switch( tons )
+				{
+					case 0: // short term
+						dur = 40;
+						units = ' person-days';
+						break;
+					
+					case 1: // standard
+						dur = 10;
+						break;
+					
+					default: // long-term
+						dur = 60 * tons;
+						break;
+				}
+								
+				var note:String = dur + units;
+				var mcr:Number	= tons;
+				
+				if ( isNaN( dur ) ) note = '';
+
+				var replacement:Object =
+					{
+						type: 'Ops',
+						category: 'Life Support',
+						label: 'Life support (' + note + ')',
+						name: 'life support', 
+						notes: note,
+						tons: tons,
+						mcr: mcr,
+						CP: Math.ceil(tons/10)
+					};
+				
+				shipGrid.addComponent( replacement );		
+			}
+			*/
+			/*
+			private function setLuxuryLifeSupport():void
+			{
+				shipGrid.remove( 'Luxury Life Support' );
+				
+				var hdr:Object = Cfg.getHdr();
+				hdr.luxuryLifeSupport = luxuryLifeSupport.value;
+				
+				var tons:int    = luxuryLifeSupport.value;
+				var dur:int		= tons * 10;
+				var note:String = dur + ' high pass-weeks';
+				var mcr:Number	= tons;
+				
+				if ( isNaN( dur ) ) note = '';
+				
+				var replacement:Object =
+					{
+						type: 'Ops',
+						category: 'Luxury Life Support',
+						label: 'Luxury LS (' + dur + ' high pass-weeks)',
+						name: 'life support', 
+						notes: note,
+						tons: tons,
+						mcr: mcr,
+						CP: Math.ceil(tons/10)
+					};
+				
+				shipGrid.addComponent( replacement );				
+			}
+			*/			
+			private function setBridge():void
+			{
+				shipGrid.remove( 'Bridge' );
+				
+				var cc:int = this.controlConsoles.value;
+				var op:int = this.operatingConsoles.value;
+				var ws:int = this.workstations.value;
+				
+				/*
+				var pilo:int = pilot.value 		;
+				var astr:int = astrogator.value	;
+				var sens:int = sensop.value		;
+				var stew:int = steward.value		;
+				var medi:int = medic.value		    ;
+				var gunn:int = gunner.value		;
+				var driv:int = driver.value		;
+				var engi:int = engineer.value	;
+				var frei:int = freightmaster.value	;
+				*/
+				
+				var skillTotal:int = 0; // pilo + astr + sens + stew + medi + gunn + driv + engi + frei;
+				skillTotal = cc + op + ws;
+				
+				var spaciousness:Number = bridge.value;
+				
+				var hdr:Object = Cfg.getHdr();
+				hdr.controlConsoles = cc;
+				hdr.operatingConsoles = op;
+				hdr.workstations = ws;
+				hdr.spaciousness = spaciousness;
+				
+				if ( skillTotal == 0 ) return;
+				
+				var tons:Number = Math.ceil( skillTotal * spaciousness * 2 ) / 2; // to the half ton
+				var label:String = 'Standard Bridge';
+				var notes:String = cc + 'cc ' + op + 'op ' + ws + 'ws';
+				var mcr:Number = cc * 0.2 + op * 0.1 + ws * 0.05;
+				
+				var mod:int = 0;
+				
+				this.redundancy = '';
+				
+				if ( spaciousness < 1.0 )
+				{
+					label = 'Cramped Bridge';
+					mod = -2;
+				}
+				else if ( spaciousness >= 2.0 ) 
+				{
+					label = 'Spacious Bridge';
+					mod = 2;
+				}
+				
+				var bridge:Object =
+					{
+						type: 'Ops',
+						category: 'Bridge',
+						name: 'Bridge',
+						label: label,
+						notes: notes,
+						tons: tons,
+						mod: mod,
+						mcr: mcr,
+						cc: cc,
+						op: op,
+						ws: ws		
+					};
+				
+				shipGrid.addComponent( bridge );
+			}
+		]]>
+	</fx:Script>
+
+	
+	<s:Label x="85" y="67.5" text="Control Consoles (e.g. Pilot, Medic, Gunner)"/>
+	<s:Label x="85" y="93.5" text="Operating Consoles (e.g. Astrogator, Engineer, Gunner, Sensop)"/>
+	<s:Label x="85" y="119.5" text="Workstations (e.g. Steward, Freightmaster)"/>
+	<s:NumericStepper id="controlConsoles" x="12" y="62" maximum="900" change="setSkill(event)"
+					  toolTip="Realtime interface to the ship's systems"/>
+	<s:NumericStepper id="operatingConsoles" x="12" y="88" maximum="900" change="setSkill(event)"
+					  toolTip="Standard interface to the ship's systems"/>
+	<s:NumericStepper id="workstations" x="12" y="114" maximum="900" change="setSkill(event)"
+					  toolTip="Interface to the ship's computer"/>
+	
+	<!--s:Label x="42" y="44" text="Pilot"/>
+	<s:Label x="10" y="68" text="Astrogator"/>
+	<s:Label x="147" y="68" text="Engineer"/>
+	<s:Label x="155" y="92.5" text="Gunner"/>
+	<s:Label x="25" y="92.5" text="Sensop"/>
+	<s:Label x="286" y="44" text="Steward"/>
+	<s:Label x="163" y="44" text="Medic"/>
+	<s:Label x="293" y="68" text="Freight"/>
+	<s:Label x="299" y="92.5" text="Driver"/>
+	<s:NumericStepper id="pilot" 		x="74" y="38.5" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="astrogator" 	x="74" y="62.5" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="steward" 		x="339" y="38.5" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="sensop" 		x="74" y="87" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="medic" 		x="207" y="38.5" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="engineer"		x="207" y="62.5" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="gunner"		x="207" y="87" width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="freightmaster" x="339" y="62.5"  width="65" maximum="999" change="setSkill(event)" />
+	<s:NumericStepper id="driver"		x="339" y="87"   width="65" maximum="999" change="setSkill(event)" /-->
+
+	<s:NumericStepper id="bridge" x="167" y="37" width="50" change="setBridge()"
+					  maximum="99.0" minimum="0.5" value="2.0" stepSize="0.25"
+					  toolTip="The averge amount of tonnage allocated to each control space on the ship"/>
+	<s:Label x="85" y="42.5" text="Spaciousness"/>
+	
+	<s:Button x="342" y="34" width="80" label="Reset" click="reset()"
+			  toolTip="Reset crew estimate"/>
+	
+	<mx:DataGrid id="misc" x="10" y="148" width="412" height="292" dataProvider="{_livingSpace}"
+				 dragDrop="event.action='';" dragEnabled="true"
+				 dragEnter="DragManager.acceptDragDrop(this.misc);" editable="false"
+				 toolTip="Standard life support components.  Drag and drop onto the ship design grid.">
+		<mx:columns>
+			<mx:DataGridColumn width="180" dataField="label" headerText="Life Support"/>
+			<!--mx:DataGridColumn width="45"  dataField="tl"    headerText="TL"/-->
+			<mx:DataGridColumn width="45"  dataField="tons"  headerText="Tons"/>
+			<mx:DataGridColumn width="45"  dataField="mcr"   headerText="MCr"/>
+			<mx:DataGridColumn width="170"  dataField="notes" headerText="Notes"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+	<!--
+	<s:Label x="142" y="128" text="Typical"/>
+	<s:Label x="238" y="128" text="Luxury"/>
+	<s:Label x="335" y="128" text="Adaptable"/>
+	<s:NumericStepper id="lifeSupport" x="142" y="143" width="65" change="setLifeSupport()"
+					  maximum="999"/>
+	<s:NumericStepper id="adaptableLifeSupport" x="335" y="143" width="65" change="setAdaptableLifeSupport()"
+					  maximum="999"/>
+	<s:NumericStepper id="luxuryLifeSupport" x="238" y="143" width="65"
+					  change="setLuxuryLifeSupport()" maximum="999"/>
+	-->
+	<s:Label x="225" y="42.5" width="66" text="{redundancy}"/>
+	<s:Label x="274" y="10" fontWeight="bold" text="Controls and Life Support" textDecoration="none"/>
+	<mx:HRule x="66" y="27" width="356" height="1"/>
+</s:Group>

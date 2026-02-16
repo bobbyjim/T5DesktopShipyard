@@ -1,0 +1,264 @@
+--- 
+components: 
+   - {CP: 1, category: 'hull', label: 'Streamlined hull', mult: 1, mcr: 16, eff: 1, config: 'S', type: 'Hull', name: 'hull', tons: 200}
+
+   - {q: 0, r: 0, tl: 11, notes: 'J1, 20t/pc', s: 0, CP: 0, eff: 1, e: 0, Sq: 0, mcr: 0, category: 'jumpfuel', label: 'Jump Fuel (J1, 20t/pc)', type: 'Drives', tons: 20, target: 11, sq: 40, b: 0}
+
+   - {q: 0, r: 0, tl: 11, notes: 'one month', s: 0, CP: 0, eff: 1, e: 0, type: 'Drives', mcr: 0, sq: 4, label: 'Plant Fuel (one month)', b: 0, tons: 2, target: 11, category: 'powerfuel', Sq: 0}
+
+   - {CP: 1, category: 'landers', label: 'Landing legs with pads', type: 'Hull', mcrPerTon: 1, tonsPercent: 1, mcr: 2, eff: 1, name: 'Landing legs with pads', code: 'K', tons: 2}
+
+   - {CP: 1, category: 'computer', label: 'Model/1', type: 'Ops', mcr: 1.5, notes: '1 cells', eff: 1, name: 'computer', code: 1, tons: 1}
+
+   - {CP: 1, range: 'Vdistant', label: 'Vd T3 Hybrid L-S-M', tl: 11, mcr: 1, mount: 'Triple Turret', basetl: 10, eff: 1, mod: -1, type: 'Weapons', name: 'Hybrid L-S-M', tons: 1}
+
+   - {CP: 1, range: 'Vdistant', label: 'Vd T3 Hybrid L-S-M', tl: 11, mcr: 1, mount: 'Triple Turret', basetl: 10, eff: 1, mod: -1, type: 'Weapons', name: 'Hybrid L-S-M', tons: 1}
+
+   - {eff: 1, label: 'Mail Vault', type: 'Payload', mcr: 0, notes: 'for express contracts', tons: 1}
+
+   - 
+      CP: 1
+      label: 'Cargo Lock'
+      notes: ''
+      eff: 1
+      type: 'Payload'
+      mcr: 0
+      tons: 2
+
+   - 
+      eff: 1
+      label: 'Cargo Hold Basic'
+      type: 'Payload'
+      mcr: 0
+      notes: ''
+      tons: '82'
+
+   - {count: 1, category: 'scoops', label: 'Fuel Scoops 200t/hr', tl: 8, notes: '200t/hr', CP: 1, eff: 1, type: 'Drives', mcr: 0.1, tons: 1}
+
+   - 
+      category: 'bridge'
+      label: 'Spacious Bridge'
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      name: 'bridge'
+      mcr: 0
+      tons: 20
+
+   - {category: 'paxTons', label: 'Pass. H=6 M=0 Demand=-1', name: 'passenger space', notes: 'Demand=-1', eff: 1, type: 'Passengers', mcr: 3, tons: 24}
+
+   - {category: 'lowBerths', label: 'Low berths (20)', type: 'Passengers', notes: 20, eff: 1, name: 'low berths', mcr: 2, tons: 10}
+
+   - {category: 'crewTons', label: 'Crew C=4 Comfort=-2', name: 'crew space', notes: 'Comfort=-2', eff: 1, type: 'Crew', mcr: 1.5, tons: 12}
+
+   - {CP: 1, category: 'lifeSupport', label: 'Life support 37 days at capacity', type: 'Ops', notes: '37 days at capacity', eff: 1, name: 'life support', mcr: 2, tons: 2}
+
+   - {category: 'luxurySupport', label: 'Luxury life support', note: '6 High passengers', type: 'Ops', eff: 1, name: 'luxury life support', mcr: 1, tons: 1}
+
+   - {autoAdjust: 1, basetl: 9, E: 0, tl: 11, notes: '1 G', Sq: 4, CP: 1, eff: 1, type: 'Drives', rating: 1, tons: 2, category: 'Maneuver', label: 'Maneuver-1 (A)', B: 0, R: 0, S: 0, name: 'Maneuver', mcr: 4, Q: 0}
+
+   - {CP: 1, R: 0, E: 0, basetl: 9, notes: 'J 1', Sq: 20, autoAdjust: 1, eff: 1, type: 'Drives', jumpFuelUsage: 0.1, tons: 10, category: 'Jump', label: 'Jump-1 (A)', B: 0, tl: 11, name: 'Jump', S: 0, rating: 1, mcr: 10, Q: 0}
+
+   - {autoAdjust: 1, basetl: 8, E: 0, tl: 11, notes: '1', Sq: 8, CP: 1, eff: 1, B: 0, R: 0, tons: 4, category: 'PowerPlant', label: 'PowerPlant-1 (A)', type: 'Drives', powerFuelUsage: 0.01, name: 'PowerPlant', S: 0, rating: 1, mcr: 4, Q: 0}
+
+   - 
+      CP: 1
+      label: 'Air Locks (2)'
+      notes: ''
+      eff: 1
+      type: 'Ops'
+      mcr: 0
+      tons: '1'
+
+   - {CP: 1, range: 'Attack Range', label: 'AR Ant Basic Suite', tl: 11, mcr: 3.5, mount: 'Antenna', basetl: 9, eff: 1, mod: 1, type: 'Sensors', name: 'Basic Suite', tons: 1}
+header: 
+   troops: 0
+   undertons: 1
+   freightmaster: 0
+   steward: 1
+   tl: 11
+   comments: |
+      Using a 200-ton hull, the Beowulf-class free trader is an elementary interstellar merchant ship plying the space lanes carrying cargo and passengers. It has jump drive-A, maneuver drive-A, and power plant-A, giving performance of jump-1 and 1-G acceleration. Fuel tankage supports the jump drive and one jump-1. Adjacent to the bridge is a computer Model/1. There are ten staterooms and twenty low berths. There are two hardpoints; the Beowulf has two hybrid triple turrets installed. There are no ship's vehicles. Cargo capacity is 82 tons. The hull is streamlined.
+      
+      The free trader typically requires a crew of four: pilot, engineer, medic, and steward. Up to two gunners may be added. The ship can carry six high or middle passengers and twenty low passengers.
+   nolifters: {}
+   format: 'B'
+   pf: 1
+   medic: 0
+   totalMCr: 52.6
+   crewComfort: -2
+   jumpFuelPercentage: 0.1
+   id: ''
+   tons: 200
+   powerFuelPercentage: 0.01
+   demand: -1
+   totalCrew: 4
+   passengers: 6
+   builder: 'Clan Severn'
+   name: ''
+   tonsFree: 0
+   medium: 0
+   missionLabel: 'Free Trader'
+   config: 'S'
+   url: ''
+   shifts: 1
+   jf: 1
+   qsp: 'A-S211'
+   pilot: 1
+   crewLocked: 'yes'
+   high: 6
+   spaciousness: 2
+   overtons: 0.5
+   architect: ''
+   crew: 4
+   shipname: 'Beowulf'
+   keel: ''
+   low: 20
+   disposition: 'In Service'
+   mult: 1
+   flight: ''
+   astrogator: 1
+   engineer: 3
+   gunner: 2
+   mission: 'A'
+   sensop: 2
+   driver: 0
+   staff: 0
+   numShifts: 1
+   owner: 'A. L. Jamison'
+
+--- 
+header: 
+   disposition: 'In Service'
+   undertons: 15.5
+   freightmaster: 0
+   steward: 0
+   tl: 15
+   driver: 0
+   crew: 123
+   format: 'B'
+   pf: 1
+   medic: 4
+   totalMCr: 10926.1
+   crewComfort: 0
+   jumpFuelPercentage: 0
+   tons: 19200
+   powerFuelPercentage: 0.08
+   demand: 0
+   passengers: 0
+   builder: 'Gashidda No. 2'
+   nolifters: 'x'
+   tonsFree: 15.5
+   medium: 0
+   missionLabel: 'Cruiser'
+   troops: 0
+   shifts: 3
+   jf: 0
+   qsp: 'C-S19280'
+   pilot: 1
+   config: 'S'
+   astrogator: 1
+   overtons: 36.5
+   totalCrew: 414
+   high: 0
+   sensop: 2
+   longTerm: {}
+   low: 75
+   comments: 'This 200 ton Cruiser has a jump range of 0 parsecs and an acceleration of 0 G. It can carry 0 passengers and costs MCr18'
+   shipname: 'Nolikian'
+   spaciousness: 2
+   engineer: 37
+   gunner: 0
+   mission: 'C'
+   mult: 8
+   staff: 0
+components: 
+   - {q: 0, e: 0, tl: 15, mcr: 1154, s: 0, CP: 0, eff: 1, r: 0, Sq: 38400, tons: 19200, mult: 8, category: 'hull', label: 'Streamlined hull, no lifters', type: 'Hull', target: 15, sq: 38400, config: 'S', name: 'hull', b: 0}
+
+   - {CP: 0, r: 0, tl: 15, notes: 'J0, 0t/pc', s: 0, type: 'Drives', q: 0, eff: 1, e: 0, b: 0, tons: 0, sq: 0, label: 'Jump Fuel (J0, 0t/pc)', Sq: 0, target: 15, category: 'jumpfuel', mcr: 0}
+
+   - {q: 0, r: 0, tl: 15, notes: 'one month', s: 0, Sq: 0, CP: 0, eff: 1, e: 0, b: 0, tons: 1536, sq: 3072, label: 'Plant Fuel (one month)', type: 'Drives', target: 15, category: 'powerfuel', mcr: 0}
+
+   - {CP: 1, r: 0, tl: 15, notes: '9 cells', s: 0, b: 0, q: 0, eff: 1, e: 0, type: 'Ops', code: 9, category: 'computer', label: 'Model/9 fib', Sq: 36, tons: 18, target: 15, sq: 36, name: 'computer', mcr: 127.5}
+
+   - {q: 0, e: 0, basetl: 14, s: 0, b: 0, CP: 1, eff: 1, mod: 15, Sq: 14000, tons: 7000, range: 'Long Range', sq: 14000, label: 'LR S Meson Gun', r: 0, tl: 15, target: 30, mount: 'Spine', name: 'Meson Gun', mcr: 3005, type: 'Weapons'}
+
+   - 
+      q: 0
+      e: 0
+      tl: 15
+      s: 0
+      b: 0
+      CP: 1
+      eff: 1
+      mod: ''
+      type: 'Armor'
+      basetl: 14
+      tons: 3072
+      range: '4'
+      sq: 6144
+      label: 'AV=112. 4 Blast Charged'
+      Sq: 6144
+      target: 15
+      mount: 'Blast'
+      name: 'Charged'
+      mcr: 460.8
+      r: 0
+
+   - {q: 0, e: 0, basetl: 11, s: 0, b: 0, CP: 1, range: 'Attack Range', mod: 8, Sq: 200, tons: 100, eff: 1, sq: 200, label: 'AR LBay Particle Accelerator', r: 0, tl: 15, target: 23, mount: 'LBay', name: 'Particle Accelerator', mcr: 12.5, type: 'Weapons'}
+
+   - {q: 0, e: 0, tl: 15, s: 0, type: 'Weapons', CP: 1, range: 'Attack Range', mod: 8, b: 0, basetl: 11, tons: 100, eff: 1, sq: 200, label: 'AR LBay Particle Accelerator', r: 0, target: 23, mount: 'LBay', name: 'Particle Accelerator', mcr: 12.5, Sq: 200}
+
+   - {q: 0, e: 0, tl: 15, s: 0, Sq: 100, CP: 1, eff: 1, r: 0, type: 'Weapons', basetl: 12, label: 'Vd Bay Fusion Gun', range: 'Vdistant', sq: 100, mod: 5, b: 0, tons: 50, target: 20, mount: 'Bay', name: 'Fusion Gun', mcr: 1.5}
+
+   - {q: 0, e: 0, name: 'Salvo Rack', s: 0, type: 'Weapons', CP: 1, eff: 1, mod: 5, Sq: 1200, tons: 600, range: 'Attack Range', sq: 1200, label: '12 x AR Bay Salvo Rack', b: 0, tl: 15, target: 20, mount: 'Bay', basetl: 10, mcr: 180, r: 0}
+
+   - {q: 0, e: 0, basetl: 10, s: 0, b: 0, CP: 1, range: 'Vdistant', mod: -1, Sq: 24, tons: 12, eff: 1, sq: 24, label: '12 x Vd T3 Beam Laser', r: 0, tl: 15, target: 14, mount: 'Triple Turret', name: 'Beam Laser', mcr: 6, type: 'Weapons'}
+
+   - {q: 0, e: 0, tl: 15, s: 0, Sq: 100, CP: 1, eff: 1, mod: 8, b: 0, basetl: 15, tons: 50, range: 'Distant', sq: 100, label: 'D LBay Tractor/Pressor', type: 'Weapons', target: 23, mount: 'LBay', name: 'Tractor/Pressor', mcr: 10, r: 0}
+
+   - {CP: 1, r: 0, tl: 15, s: 0, Sq: 32, q: 0, range: 'Vdistant', e: 0, b: 0, name: 'Sandcaster', tons: 16, eff: 1, sq: 32, mod: -1, type: 'Weapons', target: 14, label: '16 x Vd T3 Sandcaster', mount: 'Triple Turret', basetl: 9, mcr: 1.6}
+
+   - {q: 0, e: 0, tl: 15, s: 0, type: 'Defense', CP: 1, eff: 1, mod: 8, Sq: 202, name: 'Meson Screen', tons: 101, range: 'Contact', sq: 202, label: 'LBay Meson Screen', r: 0, target: 23, mount: 'LBay', basetl: 11, mcr: 11.5, b: 0}
+
+   - {q: 0, r: 0, tl: 15, s: 0, Sq: 204, CP: 1, eff: 1, mod: 8, type: 'Defense', basetl: 12, tons: 102, range: 'Contact', sq: 204, label: 'LBay Nuclear Damper', b: 0, target: 23, mount: 'LBay', name: 'Nuclear Damper', mcr: 12, e: 0}
+
+   - {speed: '7G', tl: 12, av: '40,10,10,15,10,10,10', eff: 1, label: 'Gig', type: 'Vehicle', mcr: 28, tons: 20, load: 15}
+
+   - {label: 'Gig', tl: 12, av: '40,10,10,15,10,10,10', eff: 1, speed: '7G', type: 'Vehicle', mcr: 28, tons: 20, load: 15}
+
+   - {speed: '7G', tl: 12, av: '40,10,10,15,10,10,10', eff: 1, label: 'Gig', type: 'Vehicle', mcr: 28, tons: 20, load: 15}
+
+   - {label: 'Gig', tl: 12, av: '40,10,10,15,10,10,10', eff: 1, speed: '7G', type: 'Vehicle', mcr: 28, tons: 20, load: 15}
+
+   - {CP: 1, e: 0, basetl: 14, s: 0, type: 'Sensors', q: 0, eff: 1, mod: 5, Sq: 104, tons: 52, range: 'Deep Space', sq: 104, label: 'DS Bay EMS', r: 0, tl: 15, target: 20, mount: 'Bay', name: 'EMS', mcr: 26, b: 0}
+
+   - {CP: 1, e: 0, basetl: 12, s: 0, b: 0, q: 0, eff: 1, mod: 5, type: 'Sensors', tons: 52, range: 'Deep Space', sq: 104, label: 'DS Bay Neutrino Detector', Sq: 104, tl: 15, target: 20, mount: 'Bay', name: 'Neutrino Detector', mcr: 26, r: 0}
+
+   - {q: 0, e: 0, name: 'Jammer', s: 0, type: 'Sensors', CP: 1, eff: 1, mod: 5, Sq: 104, tons: 52, range: 'Deep Space', sq: 104, label: 'DS Bay Jammer', b: 0, tl: 15, target: 20, mount: 'Bay', basetl: 10, mcr: 26, r: 0}
+
+   - {q: 0, e: 0, basetl: 11, s: 0, b: 0, CP: 1, range: 'Deep Space', mod: 5, Sq: 104, tons: 52, eff: 1, sq: 104, label: 'DS Bay Scope', r: 0, tl: 15, target: 20, mount: 'Bay', name: 'Scope', mcr: 26, type: 'Sensors'}
+
+   - {CP: 1, r: 0, tl: 15, s: 0, Sq: 104, q: 0, eff: 1, e: 0, b: 0, name: 'Stealth Mask', tons: 52, range: 'Deep Space', sq: 104, mod: 5, type: 'Sensors', target: 20, label: 'DS Bay Stealth Mask', mount: 'Bay', basetl: 14, mcr: 26}
+
+   - 
+      category: 'bridge'
+      label: 'Spacious Bridge'
+      type: 'Ops'
+      notes: ''
+      eff: 1
+      name: 'bridge'
+      mcr: 0
+      tons: 94
+
+   - {category: 'lowBerths', label: 'Low berths (75)', name: 'low berths', notes: 75, eff: 1, type: 'Passengers', mcr: 7.5, tons: 37.5}
+
+   - {category: 'crewTons', label: 'Crew C=414 Comfort=0', name: 'crew space', notes: 'Comfort=0', eff: 1, type: 'Crew', mcr: 258.75, tons: 2070}
+
+   - {E: 0, name: 'PowerPlant', notes: '8', B: 0, tons: 2305, label: 'PowerPlant-8 (Z32)', Sq: 4610, tl: 15, S: 0, R: 0, mcr: 2305, Q: 0, CP: 66, e: 0, rating: 8, s: 0, q: 0, eff: 1, r: 0, type: 'Drives', autoAdjust: 1, category: 'PowerPlant', b: 0, powerFuelUsage: 0.01, target: 15, sq: 4610, basetl: 15}
+
+   - {E: 0, tl: 15, notes: '8 G', Sq: 3070, basetl: 11, tons: 1535, label: 'Maneuver-8 (Z32)', B: 0, S: 0, rating: 8, mcr: 3070, Q: 0, CP: 44, r: 0, R: 0, s: 0, q: 0, eff: 1, e: 0, type: 'Drives', autoAdjust: 1, category: 'Maneuver', b: 0, target: 15, sq: 3070, name: 'Maneuver'}
+
+   - {CP: 5, category: 'lifeSupport', label: 'Life support 30 days at capacity', name: 'life support', notes: '30 days at capacity', eff: 1, type: 'Ops', mcr: 42, tons: 42}
+
+   - {q: 0, e: 0, tl: 15, s: 0, Sq: 8, CP: 1, eff: 1, mod: 3, b: 0, basetl: 10, tons: 4, range: 'Deep Space', sq: 8, label: 'DS Ext Communicator', type: 'Sensors', target: 18, mount: 'Extendable', name: 'Communicator', mcr: 6, r: 0}

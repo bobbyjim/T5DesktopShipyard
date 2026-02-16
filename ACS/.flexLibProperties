@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="data.IO"/>
+    <classEntry path="DriveBuilder"/>
+    <classEntry path="data.Drives"/>
+    <classEntry path="data.Stages"/>
+    <classEntry path="component.ComponentFactory"/>
+    <classEntry path="component.Computer"/>
+    <classEntry path="component.ComponentUtils"/>
+    <classEntry path="component.TextEditor"/>
+    <classEntry path="CrewAndPassengers"/>
+    <classEntry path="component.Living"/>
+    <classEntry path="component.Disclaimer"/>
+    <classEntry path="component.Component"/>
+    <classEntry path="data.Codec"/>
+    <classEntry path="component.itemEditors.DriveEditor"/>
+    <classEntry path="data.ItemEditorFactory"/>
+    <classEntry path="component.itemEditors.DriveItemEditor"/>
+    <classEntry path="component.itemEditors.NoItemEditor"/>
+    <classEntry path="generators.AcsCodec"/>
+    <classEntry path="generators.acs.AcsComponent"/>
+    <classEntry path="generators.acs.Format"/>
+    <classEntry path="generators.acs.AcsComponentFactory"/>
+    <classEntry path="generators.acs.AcsImportable"/>
+    <classEntry path="generators.acs.Unsupported"/>
+    <classEntry path="generators.acs.Hull"/>
+    <classEntry path="data.ExpressionEngine"/>
+  </includeClasses>
+  <includeResources>
+    <resourceEntry destPath="T5ShipyardCfg/acs-hulls.yml" sourcePath="T5ShipyardCfg/acs-hulls.yml"/>
+    <resourceEntry destPath="T5ShipyardCfg/acs-vehicles.yml" sourcePath="T5ShipyardCfg/acs-vehicles.yml"/>
+  </includeResources>
+  <namespaceManifests/>
+</flexLibProperties>

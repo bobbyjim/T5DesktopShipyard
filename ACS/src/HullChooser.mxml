@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="432" height="450"
+		 creationComplete="onCreationComplete()">
+
+	<!--fx:Declarations>
+		<s:RadioButtonGroup id="computerRadioGroup"/>
+		Place non-visual elements (e.g., services, value objects) here 
+	</fx:Declarations-->
+	
+	<fx:Metadata>
+		[Event(name="hullChanged", type="flash.events.Event")]		
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import data.Cfg;
+			import data.ExpressionEngine;
+			
+			import flashx.textLayout.tlf_internal;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.sliderClasses.Slider;
+			
+			import spark.components.ComboBox;
+			
+			
+			/**********************************************************
+			 * 
+			 * This should actually be a configuration switch, but...
+			 * 
+			 * *******************************************************/
+			[Bindable] public var enableLargerHulls:Boolean = true;
+			
+			
+			
+			public var shipGrid:ShipGrid;
+	
+			private var letters:Array 
+			= ['0', 'A','B','C','D','E','F','G','H','J','K','L','M','N','P','Q','R','S','T','U','V','W','X','Y','Z'];
+			
+			private var config:Array
+			= [ 'Cluster', 'Braced', 'Planetoid', 'Unstreamlined', 'Streamlined', 'Airframe', 'Lift body'];
+			
+			private var fittingsLabels:Array = [];
+			private var fittings:Array = [];
+			
+			private var wingsLabels:Array= [];
+			private var wings:Array = []; 
+			
+			private var landersLabels:Array= [];
+			private var landers:Array = []; 
+			
+			private var jumpGridLabels:Array = [];
+			private var jumpGrids:Array = [];
+			
+			[Bindable] private var podDivisor:Number = 1;
+			
+			private function onCreationComplete():void
+			{
+				var hulls:Object = Cfg.getInstance().hulls.hulls;
+				
+				ExpressionEngine.calculateMCr( {} );
+				
+				fittings	= Cfg.getInstance().hulls.hulls.fittings;
+				fittingsLabels = getCodes( fittings );
+				this.fittingslider.labels = fittingsLabels;
+				this.fittingslider.maximum = fittingsLabels.length-1;
+				
+				wings   	= Cfg.getInstance().hulls.hulls.wings;
+				wingsLabels = getCodes( wings );
+				this.wingslider.labels = wingsLabels;
+				this.wingslider.maximum = wingsLabels.length-1;
+				
+				landers		= Cfg.getInstance().hulls.hulls.landers;
+				landersLabels = getCodes( landers );
+				this.landerslider.labels = landersLabels;
+				this.landerslider.maximum = landersLabels.length-1;
+				
+				jumpGrids   = Cfg.getInstance().hulls.hulls.jumpGrid;
+				jumpGridLabels = getCodes( jumpGrids );
+				this.jumpGridSlider.labels = jumpGridLabels;
+				this.jumpGridSlider.maxHeight = jumpGridLabels.length-1;
+				
+				updateUI();
+			}
+			
+			private function getCodes( objects:Array ):Array
+			{
+				var out:Array = [];
+				for each ( var obj:Object in objects )
+				{
+					out.push( obj.code );
+				}
+				return out;
+			}
+			
+			public function handleVolumeChanged():void
+			{
+				var obj:Object;
+				
+				// reseat the hull extras
+				
+				obj = shipGrid.find( 'fittings' );
+				setHullFittings( obj );
+				
+				obj = shipGrid.find( 'wings' );
+				setHullFittings( obj );
+				
+				obj = shipGrid.find( 'landers' );
+				setHullFittings( obj );
+				
+				//obj = shipGrid.find( 'lifters' );
+				//setLifters( obj );
+				
+				obj = shipGrid.find( 'jump field' );
+				setHullFittings( obj );
+				
+				var armor:Array = shipGrid.findAllBy( 'type', 'Armor' );
+				for each ( var item:Object in armor )
+				{
+					setHullFittings( item );
+				}
+				
+			}
+			
+			public function updateUI():void
+			{
+				// initialize UI from configuration:
+				
+				// ship tons
+				var tons:int = Cfg.getHdr().tons;
+				
+				if ( tons == 0 ) return;
+
+				var hdr:Object = Cfg.getHdr();
+					
+				if ( hdr.mission.toString().substr(0,1) == 'Q' )
+				{
+					podDivisor = 10; // smallcraft
+					enableLargerHulls = false;
+					hullMult.value = 1;
+				}			
+				else
+				{
+					podDivisor = 1;
+					enableLargerHulls = true;					
+				}
+				
+				//if ( tons < 2401 )
+				//{
+				//	hullCode.value = podDivisor * tons;
+				//	hullMult.value = 0;
+				//}
+				//else
+				//{
+					var mult:int = Cfg.getHdr().mult || 1;
+					var preMult:int = Cfg.getHdr().preMult || 1;
+					var t1:int = podDivisor * tons/mult/preMult;
+					
+					hullCode.value = t1;
+					hullMult.value = mult;
+					hullPreMult.value = preMult;
+				//}
+				
+				// config
+				var config:String = hdr.config;
+				setSlider( hullcfg, config );
+				
+				// fittings
+				var fit:String = Cfg.getInstance().getValue( 'hullfitting', 'code' );
+				setSlider( fittingslider, fit );
+				
+				// wings
+				var wingCode:String = Cfg.getInstance().getValue( 'wings', 'code' );
+				setSlider( wingslider, wingCode );
+				
+				wingslider.enabled = true;
+				if ( config == 'C' || config == 'B' || config == 'P' )
+				{
+					wingslider.enabled = false;
+					wingslider.value = 0;
+					setHullFittings( wings[0] );
+				}
+				
+				// landers
+				var landers:String = Cfg.getInstance().getValue( 'landers', 'code' );
+				if ( landers == '' ) // DEFAULT = skids
+					landers = 'J';
+				
+				setSlider( landerslider, landers );
+				
+				// lifters
+				if ( Cfg.getHdr().tl > 7 ) // hasOwnProperty( 'lifters' ) )
+					this.lifters.selected = true;		
+				
+				// jump grid
+				var grid:String = Cfg.getInstance().getValue( 'jump field', 'code' );
+				if ( grid == '' ) // DEFAULT = bubble
+					grid = 'B';
+				
+				setSlider( jumpGridSlider, grid );
+			}
+		
+			public function resetUI():void
+			{
+				hullCode.value = 200;
+				hullMult.value = 1;
+				hullPreMult.value = 1;
+				setSlider( hullcfg, 'S' );
+				setSlider( fittingslider, 'n/a' );
+				setSlider( wingslider, 'none' );
+				setSlider( landerslider, 'J' );
+				lifters.selected = false;
+			}
+			
+			private function setSlider( list:mx.controls.HSlider, label:String ):void
+			{
+				for ( var i:int=0; i<list.labels.length; i++ )
+				{
+					var value:String = list.labels[i].toString();
+					if ( label == value )
+					{
+						list.value = i;
+						break;
+					}
+				}
+			}
+
+			private function setSelection( list:ComboBox, label:String ):void
+			{
+				for each ( var s:Object in list.dataProvider )
+				{
+					if ( s[ 'code' ] == label )
+					{
+						list.selectedItem = s;
+						break;
+					}
+				}
+			}
+			
+			private function setHull():void
+			{
+				if ( hullMult.value < 10 )
+					this.mult1code.text = '' + hullMult.value;
+				else
+					this.mult1code.text = this.letters[ hullMult.value - 9 ];
+				
+				if ( hullPreMult.value < 10 )
+					this.mult2code.text = '' + hullPreMult.value;
+				else
+					this.mult2code.text = this.letters[ hullPreMult.value - 9 ];
+				
+				var hull:Object = shipGrid.find( 'Hull' );
+				
+				if ( hull == null )
+					hull = Cfg.getInstance().templateHull.hull;
+				
+				var hulldata:Object = Cfg.getInstance().hulls.hulls;
+				var costs:Object 	= hulldata.cost;
+				
+				var cfgcode:String 	= hullcfg[ 'labels' ][ hullcfg.value ];
+				var cfgname:String 	= config[ hullcfg.value ];
+				var costEq:String 	= costs[ cfgcode ];
+				costEq = costEq.replace(/\s/g, '');
+				var costBits:Array 	= costEq.split( '+' );
+				
+				this.hullcfgLabel.text = cfgname;
+				
+				var percentString:String  = '';
+				var percent:Number = 0;
+				var constant:Number = 0;
+
+				if ( Cfg.getHdr().mission.toString().substr(0,1) == 'Q' )
+				{
+					podDivisor = 10; // smallcraft
+					enableLargerHulls = false;
+					hullMult.value = 1;
+				}			
+				else
+				{
+					podDivisor = 1;
+					enableLargerHulls = true;					
+				}
+					
+				if ( costBits.length > 0 )
+				{
+					percentString = costBits.shift();
+					percentString = percentString.replace( /\%.*/, '' );
+					percent = Number( percentString )/100;
+				}
+				
+				if ( costBits.length > 0 )
+					constant = Number(costBits.shift());
+				
+				var tons:int = hullCode.value * hullMult.value * hullPreMult.value / podDivisor;
+				var mcr:Number = int(tons * percent * 100)/100 + constant;
+				
+				Cfg.getHdr().tons = tons;
+				Cfg.getHdr().mult = hullMult.value;
+				Cfg.getHdr().preMult = hullPreMult.value;
+				Cfg.getHdr().config = cfgcode;
+				
+				var etc:String = '';
+				var CP:int = 0;
+
+				//  Incorporate lifters into the hull
+				if ( lifters.selected )
+				{
+					Cfg.getHdr().lifters = 'y';
+					etc = ', lifters';
+					//mcr += int(tons/100); // 1%
+				}
+				else
+				{
+					delete Cfg.getHdr().lifters;
+					if ( Cfg.getHdr().tl < 8 ) 
+						mcr -= int(tons/200); // 0.5% credit back for low-TL hulls
+				}
+				
+				etc += ', ' + int( tons/100 ) + ' a/l free';
+
+				hull[ 'name'     ] = 'Hull';
+				hull[ 'category' ] = 'Hull';
+				hull[ 'label'  ] = cfgname + ' Hull' + etc;
+				hull[ 'config' ] = cfgname;
+				hull[ 'code'   ] = cfgcode;
+				hull[ 'notes'  ] = cfgcode + etc;
+				hull[ 'tons'   ] = tons;
+				hull[ 'mult'   ] = hullMult.value;
+				hull[ 'preMult'] = hullPreMult.value;
+				hull[ 'mcr'    ] = mcr;
+				hull[ 'CP'     ] = CP;
+ 				
+				shipGrid.refreshShipGrid();
+				
+				this.dispatchEvent( new Event( 'hullChanged' ) ); 
+			}
+						
+			private function setLanders( item:Object ):void
+			{
+				this.landersLabel.text = item.label;
+				setHullFittings( item );
+			}
+			
+			private function setHullType( item:Object ):void
+			{
+				this.fittingsLabel.text = item.label;
+				setHullFittings( item );				
+			}
+
+			private function setWings( item:Object ):void
+			{
+				this.wingsLabel.text = item.label;
+				setHullFittings( item );
+			}
+			
+			private function setJumpGrid( item: Object ):void
+			{
+				this.jumpGridLabel.text = item.label;
+				setHullFittings( item );
+			}
+			
+			private function setArmor( item: Object ):void
+			{
+				setHullFittings( item );
+			}
+			
+			private function setHullFittings(item:Object):void
+			{
+				if ( item == null ) return;
+				
+				var found:Object = shipGrid.find( item.category );
+				var hulldata:Array = Cfg.getInstance().grepByCategory( 'Hull' );
+				
+				if ( item.hasOwnProperty( 'default' ) ) 
+				{
+					shipGrid.remove( item.category );
+					return;
+				}
+				
+				var replacement:Object = found;
+				var newitem:Boolean = (replacement == null);
+				
+				if ( newitem )
+					replacement = {};
+
+				var tons:Number = 0;
+				var mcr:Number  = 0;
+				
+				if ( item.hasOwnProperty( 'tonsFormula') )
+				{
+					
+				}
+				
+				if ( item.hasOwnProperty( 'mcrPerHullTon' ) )
+				{
+				   mcr += item.mcrPerHullTon * Cfg.getHdr().tons;
+				   replacement.mcrPerHullTon = item.mcrPerHullTon;
+				}
+
+				if ( item.hasOwnProperty( 'tonsPercent' ) )
+				{
+					replacement.tonsPercent = item.tonsPercent;
+					replacement.mcrPerTon   = item.mcrPerTon; // per 100 tons of hull actually
+					tons = Math.ceil(item.tonsPercent * Cfg.getHdr().tons / 50)/2;
+					mcr += Math.ceil(item.mcrPerTon * Cfg.getHdr().tons / 50)/2;  // item.mcrPerTon * tons;
+				}
+				
+				if ( item.hasOwnProperty( 'hull cost mult' ) ) 
+				{
+				   mcr = hulldata[0].mcr * item[ 'hull cost mult' ];
+				}
+		
+				replacement.type		= 	item.type;
+				replacement.category	= 	item.category;
+				replacement.label		= 	item.label;
+				replacement.name		=	item.label;
+				replacement.code		=	item.code;
+				replacement.note        =   item.code;
+				replacement.tons		=	tons;
+				replacement.mcr			=	mcr;
+				replacement.CP			=	1;
+	
+				if ( newitem )
+				{
+					shipGrid.addComponent( replacement );
+				}
+				
+				shipGrid.refreshShipGrid();
+ 			}
+						
+			private function setBridge(event:Event):void
+			{
+				var value:int = event.target.value;
+			}
+		]]>
+	</fx:Script>
+	
+	<s:Label x="31" y="59.3" text="Hull Code"/>
+	<mx:HSlider id="hullCode" x="92" y="44" width="265" height="30" change="setHull()" maximum="2400"
+				minimum="100" snapInterval="100" value="100"
+				toolTip="Select a hull tonnage"/>
+
+	<s:Label    visible="{enableLargerHulls}" enabled="true" x="18" y="90.3" text="Hull Mult 1"/>
+	<mx:HSlider visible="{enableLargerHulls}" id="hullMult" x="92" y="76" width="265" height="30" change="setHull()" enabled="true"
+				maximum="33" minimum="1" snapInterval="1" value="1"
+				toolTip="Select a multiple for larger hulls"/>
+	<mx:HSlider visible="true" id="hullPreMult" x="92" y="104" width="265" height="30" change="setHull()" enabled="true"
+				maximum="33" minimum="1" snapInterval="1" value="1"/>
+	<s:Label visible="false" id="mult1code" x="362" y="86.3" width="60"/>
+	<s:Label visible="false" id="mult2code" x="362" y="117.3" width="60"/>
+	
+	<s:Label x="362" y="59.3" width="60" text="{hullCode.value * hullMult.value * hullPreMult.value / podDivisor }"/>
+	<mx:HSlider id="hullcfg" x="91" y="156" width="200" height="30" change="setHull()"
+				labelOffset="30" labels="['C','B','P','U','S','A','L']" maximum="6" minimum="0"
+				snapInterval="1" value="0"
+				toolTip="Select your ship's structural configuration"/>
+	<s:Label x="12" y="156.3" text="Configuration"/>
+	<mx:HSlider id="fittingslider" x="87" y="349" width="210" height="30"
+				change="setHullType(fittings[ fittingslider.value ])" labelOffset="30" maximum="2"
+				minimum="0" snapInterval="1" value="0"
+				toolTip="Select hull reverse-pressure option"/>
+	<s:Label x="20" y="352.25" text="Hull Fittings"/>
+	<mx:HSlider id="wingslider" x="87" y="388" width="210" height="30" 
+				change="setWings(wings[ wingslider.value ])"
+				labelOffset="30" maximum="3" minimum="0"
+				snapInterval="1" value="0"
+				toolTip="Select wing option"/>
+	<s:Label x="50" y="391.3" text="Wings"/>
+	<mx:HSlider id="landerslider" x="87" y="273" width="210" height="30" 
+				change="setLanders(landers[ landerslider.value ])"
+				labelOffset="30" maximum="3" minimum="0"
+				snapInterval="1" value="0"
+				toolTip="Select the type of landers on your ship"/>
+	<s:Label x="39" y="275" text="Landers"/>
+
+	<s:Label id="hullcfgLabel" x="301" y="156.3" />
+	<s:CheckBox enabled="false" id="lifters" x="92" y="308" label="Lifters" change="setHull()"	selected="false"
+				toolTip="Extended-strength lifters for extended hover"/>
+	<mx:HRule x="10" y="253" width="412" height="1"/>
+	<s:Label id="landersLabel" x="301" y="277.5"/>
+	<s:Label id="jumpGridLabel" x="301" y="210.5"/>
+	<s:Label id="fittingsLabel" x="301" y="357.75"/>
+	<s:Label id="wingsLabel" x="301" y="396.8"/>
+	
+	<mx:HSlider id="jumpGridSlider" x="90" y="210" width="200" height="30"
+				change="setJumpGrid(jumpGrids[jumpGridSlider.value])"
+				labelOffset="30" labels="['B','P','G']" maximum="2" minimum="0"
+				snapInterval="1" value="0"
+				toolTip="Select one of (B)ubble, (P)lates, or (G)rid"/>
+	<s:Label x="24" y="212" text="Jump Field"/>
+	<s:Label x="317" y="10" fontWeight="bold" text="Hull Configuration" textDecoration="none"/>
+	<mx:HRule x="66" y="27" width="356" height="1"/>
+	<s:Label    visible="{enableLargerHulls}" enabled="true" x="18" y="118.3" text="Hull Mult 2"/>
+	 	
+</s:Group>
