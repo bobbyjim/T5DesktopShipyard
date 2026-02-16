@@ -1,0 +1,63 @@
+Escort E-LA100 Ka Remish MCr519.7
+
+Owner: Kursae
+
+
+
+Actual volume: 1056.5 tons
+Crew comfort:     +0
+Passenger demand: -5
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+   1100	 Airframe Hull, lifters             	   90	A, lifters
+      0	 Jump Grid                          	   11	
+     11	 Landing legs with pads             	   11	
+     22	 Submergence hull                   	   44	
+     22	 Wings and fins                     	   22	
+     16	 AV=114. 3 EMP Charged              	    0	
+      0	 Jump Fuel (0  parsec)              	    0	0 parsec jump, at 0t per parsec
+  365.2	 Plant Fuel (4 months)              	    0	4 months
+      1	 Fuel Scoops                        	  0.1	
+      1	 Fuel Intakes                       	  0.1	
+      1	 Fuel Bins                          	  0.1	
+      3	 3x Fuel Purifiers                  	  0.3	#3 
+     90	 Hop Drive-3 (S)                    	   90	H 3
+   9.24	 Adv PowerPlant-9 (J)               	   28	P 10
+   5.61	 Adv Maneuver Drive-9 (J)           	   34	10 G
+      3	 AR Ext Jammer                      	  2.5	
+      3	 AR Ext Stealth Mask                	  2.5	
+      3	 AR Ext CommPlus                    	  2.5	
+      3	 AR Ext HoloVisor                   	  2.5	
+      3	 AR Ext Scanner                     	  2.5	
+      0	 G Surf Proximeter                  	  4.1	
+      5	 AR B2 CommCaster                   	    9	
+      5	 Vd B2 DataCaster                   	    5	
+      5	 Vd B2 Tractor/Pressor              	    9	
+      5	 Vd B2 Disruptor                    	   19	
+     10	 2x AR B2 Particle Accelerator      	   13	#2 
+      6	 B2 Proton Screen                   	    5	
+      6	 B2 Grav Scrambler                  	    6	
+      6	 B2 Meson Screen                    	    5	
+      7	 B2 Nuclear Damper                  	    5	
+     51	 Ear Bay White Globe                	   30	R0
+      5	 Computer Model/5 std               	   27	
+      2	 Life Support Long Term             	    2	40 person-months
+      1	 Life Support Adaptable             	    1	10 sophonts
+     16	 2x Squad Barracks                  	  0.4	#2 (5) R1 R1 R2 R2 R3
+     92	 Spacious Bridge                    	  2.6	4cc 18op 1ws
+     24	 12x Spacer Niche                   	  1.2	#12 1 crew
+      6	 6x Spacer Bunks                    	  0.6	#6 1 crew
+     24	 6x Crew Stateroom                  	  0.6	#6 1 crew
+      6	 6x Crew Shared Fresher             	    3	#6 4 crew
+    112	 14x Crew Lounge                    	    0	#14 
+     20	 Cargo Hold Basic                   	    0	
+    0.5	 Air Lock                           	  0.1	
+     20	 2x Large Vehicle Lock              	    0	#2 
+     60	 2x Fast Boat                       	   28	#2 
+[/code]
+
+[code]
+[/code]
+

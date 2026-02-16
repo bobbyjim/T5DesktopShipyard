@@ -1,0 +1,51 @@
+Lab Ship L-EU13 Tarshish MCr172.2
+
+Owner: Llellewyloly
+
+Using a 500-ton, TL16 hull, the Lab Ship is designed for wilderness research and transport operations. It mounts jump drive-H, maneuver drive-C, and power plant-C, giving a performance of jump-3 and 1G acceleration. Fuel tankage supports a 1 parsec jump, at 45t per parsec, and two months of operations. A Collector supports jump-3. Attached to the bridge is a Computer Model/3. There are 6 quad-capacity staterooms and 10 low berths. Research payload includes survey sensors, 10 tons of mission-specific space, 5 medical capsules, and one medical clone capsule. Cargo capacity is 50 tons. The ship has an unstreamlined hull. 
+
+The ship carries a Light Shuttle in a hangar. The ship requires 7 crew, and can carry 16 passengers and 10 low passengers. 
+
+
+Actual volume: 496 tons
+Crew comfort:     +0
+Passenger demand: +0
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+    500	 Unstreamlined Hull, lifters, 5 a/l 	   17	U, lifters, 5 a/l free
+      5	 Landing legs with pads             	    5	
+      0	 AV=32. 1 EMP Charged               	    0	
+     45	 Jump Fuel (1  parsec)              	    0	1 parsec jump, at 45t per parsec
+      9	 Plant Fuel (2 months)              	    0	2 months
+     90	 Collector-3 (H)                    	   45	3 C
+      5	 Mod PowerPlant C (R1)              	    5	R1
+   22.5	 Mod Jump Drive H (R3)              	 22.5	R3
+    2.5	 Mod Maneuver Drive C (R1)          	    5	R1
+      1	 AR Ant Basic C-E-N-T               	  4.5	
+      0	 Or Surf Basic Survey 12            	  3.9	
+      3	 Computer Model/3                   	 10.5	
+      2	 Life Support Long Term             	    2	84 people
+     10	 5x Medical Capsule                 	    5	#5 
+     10	 Medical Clone Capsule              	   10	
+      2	 Clinic                             	    1	
+      2	 Counsellor                         	  0.2	
+     10	 10x Mission Space                  	    1	#10 
+      4	 4x Emergency Capsule               	    4	#4 max. 10 for 15 days
+     14	 Spacious Bridge                    	  0.7	1cc 5op 1ws
+     10	 10x Machine Shop                   	   10	#10 Sophisticated equipment
+      4	 2x Crew Cramped                    	  0.2	#2 4 crew
+     20	 5x Crew Commons                    	    0	#5 
+     50	 Cargo Hold Basic                   	    0	
+      5	 10x Low Berth                      	    1	#10 1 passenger
+      2	 Cargo Lock                         	  0.4	
+      8	 4x Stateroom Cramped               	  0.4	#4 4 passengers
+     60	 15x Passenger Commons              	    0	#15 
+     10	 Hangar Lock                        	    0	
+     90	 Light Shuttle + Hangar             	   18	m1bis 3 B S
+[/code]
+
+[code]
+[/code]
+

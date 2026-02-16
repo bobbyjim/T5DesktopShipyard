@@ -1,0 +1,62 @@
+Patrol Frigate GP-HA72 Customs Frigate MCr503.5
+
+Owner: Republic of Regina
+Disposition: In Service
+
+
+
+Actual volume: 778.5 tons
+Crew comfort:     -2
+Passenger demand: -5
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+    800	 Airframe Hull, lifters, 8 a/l free 	   58	A, lifters, 8 a/l free
+      8	 Landing legs with pads             	    8	
+      8	 Flotation hull                     	    8	
+      0	 AV=0. c Slick                      	    0	
+     32	 AV=32. 2 EMP Plate                 	    0	
+    132	 Jump Fuel (2  parsecs)             	    0	2 parsec jump, at 66t per parsec
+   92.8	 Plant Fuel (2 months)              	    0	2 months
+      2	 Fuel Scoops with Purifier          	  1.1	100 t/hr
+      2	 Fuel Intakes with Purifier         	  1.1	40 t/hr
+      2	 Fuel Bins with Purifier            	  1.1	20 t/hr
+  15.51	 Adv Maneuver Drive Z (R7)          	   94	R7
+  24.09	 Adv PowerPlant Z (R7)              	   73	R7
+  14.85	 Adv Jump Drive H (R2)              	   45	R2
+      3	 AR Ext Jammer                      	  2.5	
+      3	 AR Ext Neutrino Detector           	  2.5	
+      3	 AR Ext Stealth Mask                	  2.5	
+      3	 AR Ext Visor                       	  2.5	
+      6	 LR Ext EMS                         	  5.5	
+      0	 Or Surf Proximeter                 	  1.6	
+      0	 Or Surf Activity Sensor            	  1.6	
+      0	 Or Surf Life Detector              	  1.6	
+      0	 AR Surf Grav Sensor                	  1.5	
+      0	 LR Surf Communicator               	  2.5	
+      7	 Vd B2de Jump Damper                	   22	
+     14	 2x Vd B2de Beam Laser              	   15	#2 
+    200	 AR M Particle Accelerator          	 22.5	
+     28	 2x LR B2de Missile                 	 42.4	#2 
+      7	 Vd B2de Tractor/Pressor            	   12	
+     51	 Bay Black Globe                    	    9	
+     12	 Computer Model/6 fib               	 58.5	
+      2	 Clinic                             	    1	
+      8	 2x Amindii Barracks                	  0.4	#2 (5) R1 R1 R2 R2 R3
+      2	 2x Emergency Capsule               	    2	#2 max. 10 for 15 days
+      8	 2x Gunner Barracks                 	  0.4	#2 (5) R1 R1 R2 R2 R3
+     26	 Spacious Bridge                    	  1.6	3cc 10op 0ws
+      6	 Captain's Suite                    	  0.4	fresher + safe
+      8	 4x Crew Stateroom                  	  0.4	#4 1 crew
+      4	 4x Spacer Niche                    	  0.4	#4 1 crew
+     20	 5x Crew Commons                    	    0	#5 
+    1.5	 3x Crew Shared Fresher             	  1.5	#3 4 crew
+      2	 4x Spacer Bunks                    	  0.4	#4 1 crew
+      1	 Mail Vault                         	    0	for express contracts
+     20	 Cargo Hold Basic                   	    0	
+[/code]
+
+[code]
+[/code]
+

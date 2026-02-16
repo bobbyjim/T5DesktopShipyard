@@ -1,0 +1,55 @@
+Frontier Cruiser CF-KU44 Border Prowler MCr271.2
+
+Owner: Republic of Regina
+
+Using a 1000-ton hull, the Border Prowler Class Frontier Cruiser is a multi-purpose patrol and secure transport vessel. It mounts V-class drives, giving a performance of jump-4 and 4G acceleration. Interlan fuel tankage plus two 50-ton fuel pods provides two months' operations and one jump-4. An added Collector allows an additional jump-1 without fuel. Attached to the bridge is a Computer Model/4. There are 20 staterooms and two gunners' barracks. Installed weaponry include a dual barbette Particle Accelerator, 3 triple Sandcasters, 3 triple Missiles, and 3 triple Beam Lasers. Cargo capacity is 200 tons. The ship has an unstreamlined hull, with scoops, intakes, and bins for frontier refueling.
+
+The ship has 18 crew, and can carry 8 passengers.
+
+The Prowler is reconfigurable for multiple missions. The fuel pods can be replaced, reducing jump range in exchange for cargo or other uses. A troop module  fits into the cargo bay supporting 100 troops in middle passage. A low passage module supports 250 low berths, 50 tons of equipment, and stateroom for 10 command personnel. Another module provides for 20 troops, 20 tons of equipment, and semi-external carriage of a pair of 40-ton attack shuttles.
+
+The Border Prowler Class is designed to show a presence on far-flung borders and long-range scouting missions. In wartime, it is suitable as a commerce raider. In peacetime it is invaluable in moving critical cargo with lower risks. It holds a fair amount of cargo and is armed to discourage pirates. It also serves well as a Modular Merchant Cruiser and Colonial Fleet Cruiser.
+
+Actual volume: 955.5 tons
+Crew comfort:     +0
+Passenger demand: -5
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+   1000	 Unstreamlined Hull, lifters, 10 a/l	   32	U, lifters, 10 a/l free
+    270	 Jump Fuel (3  parsecs)             	    0	3 parsec jump, at 90t per parsec
+     72	 Plant Fuel (2 months)              	    0	2 months
+      6	 All fuel processors                	  3.3	S/I/B +P
+   19.5	 Mod Maneuver Drive V (R4)          	   39	R4
+   52.5	 Mod Jump Drive V (R4)              	 52.5	R4
+   30.5	 Mod PowerPlant V (R4)              	 30.5	R4
+     30	 Mod Collector E (R1)               	   15	R1
+      0	 LR Surf Basic C-E-N-T              	    7	
+      0	 Or Surf Basic Survey 12            	  3.9	
+     10	 LR B2 Particle Accelerator         	 14.5	
+      6	 3x LR T3 Missile                   	  9.6	#3 
+      3	 3x Vd T3 Sandcaster                	  3.3	#3 
+      3	 3x Vd T3 Beam Laser                	  4.5	#3 
+      4	 4x Magazine                        	    0	#4 50 x Size-5
+      2	 B Meson Screen                     	    2	
+      3	 B Nuclear Damper                   	    2	
+      2	 B Mag Scrambler                    	    2	
+      2	 B Black Globe                      	    5	
+      4	 Computer Model/4                   	   18	
+      2	 Life Support Long Term             	    2	84 people
+      3	 3x Life Support Adaptable          	    3	#3 4 sophonts
+      2	 Clinic                             	    1	
+      2	 Counsellor                         	  0.2	
+      8	 2x Security Barracks               	  0.4	#2 5 gunners
+     26	 Spacious Bridge                    	  1.6	4cc 7op 2ws
+     51	 3x Crew Cluster                    	  2.7	#3 4 + common + fresher
+     34	 2x Mission or VIP Rooms            	  1.8	#2 4 + common + fresher
+    200	 Cargo Hold Basic                   	    0	
+      8	 8x Pod Grapples                    	    8	#8 
+    100	 2x Fuel Pod (req. 4 grapples)      	  6.4	#2 
+[/code]
+
+[code]
+[/code]
+

@@ -36,3 +36,10 @@ There is also a rollup/header containing summary data and some metadata about th
 The design structure is a little messy, and there's simplification and cleanup to be done
 in some places, and on the other hand, some lost complexity to be restored in a few cases. For example, the ship console info is tightly abbreviated and condensed.
 
+# Ship Design Library
+
+Ship designs, and tools used to manipulate them, are stored in /designs-and-tools. There
+are designs ported from Classic Traveller as well as some original designs.  Most are
+written in YAML, but some have been "down-converted" to a newer ACS format or a more
+tightly compressed format. 
+

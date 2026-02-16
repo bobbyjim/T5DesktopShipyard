@@ -1,0 +1,55 @@
+Trader A-FA20 Guzler Laeyam MCr201.2
+
+Owner: Kursae
+
+
+
+Actual volume: 561 tons
+Crew comfort:     +4
+Passenger demand: +3
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+    600	 Airframe Hull, lifters             	   50	A, lifters
+      0	 Jump Grid                          	    6	
+      6	 Landing legs with pads             	    6	
+      3	 Fins                               	  1.5	
+      0	 AV=36. 1 Kinetic Charged           	    0	
+      0	 AV=0. c Ablat                      	    0	
+      0	 Jump Fuel (0  parsec)              	    0	0 parsec jump, at 0t per parsec
+   38.4	 Plant Fuel (4 months)              	    0	4 months
+      1	 Fuel Scoops                        	  0.1	
+      1	 Fuel Intakes                       	  0.1	
+      2	 2x Fuel Purifiers                  	  0.2	#2 
+     35	 Hop Drive-2 (F)                    	   35	H 2
+   2.31	 Adv PowerPlant-2 (B)               	    7	P 2
+   0.99	 Adv Maneuver Drive-2 (B)           	    6	2 G
+      0	 AR Surf CommPlus                   	  1.5	
+      0	 AR Surf HoloVisor                  	  1.5	
+      0	 SR Surf Scanner                    	  1.2	
+      2	 2x Vd T3 Tractor/Pressor           	   12	#2 
+      2	 2x Vd T3 DataCaster                	    4	#2 
+      2	 2x Vd T3 Jump Damper               	   32	#2 
+      1	 Life Support Standard              	    1	10 person-months
+      1	 Life Support Adaptable             	    1	10 sophonts
+      3	 Computer Model/3 std               	 10.5	
+     28	 Spacious Bridge                    	  0.7	1cc 4op 2ws
+     32	 4x Crew Lounge                     	    0	#4 
+      2	 2x Crew Shared Fresher             	    1	#2 4 crew
+     24	 6x Crew Stateroom                  	  0.6	#6 1 crew
+     20	 Workshop                           	    0	
+      1	 Mail Vault                         	    0	for express contracts
+      4	 4x Low Berth                       	  0.4	#4 1 passenger
+    1.5	 3x Air Lock                        	  0.3	#3 
+    150	 Cargo Hold Basic                   	    0	
+      4	 4x Shared Fresher                  	    2	#4 4 passengers
+     68	 17x Standard Stateroom             	  1.7	#17 1 passenger
+     72	 9x Passenger Lounge                	    0	#9 
+     50	 Pinnace + hangar                   	   18	
+      4	 Vehicle Lock                       	    0	
+[/code]
+
+[code]
+[/code]
+

@@ -1,0 +1,47 @@
+--- 
+ACS1.0: Sun May  8 14:38:35 2022
+Mission: Touring Ship
+QSP: K-DA13 
+Cx: 
+Vx: 
+Name: testship
+Tons: 400
+TL: 12 
+
+MCr: 
+Allegiance: test
+
+Crew comfort: 
+Passengers: 
+Passenger demand: 
+Low berths: 
+Cargo: 
+Fuel: 0
+Fuel treatment: 
+Computer: 
+
+Comments: |-
+   
+
+Components:
+#
+#   TONS   # HULL                                MCR   CODE  R QREBS
+#  ----- --- -------------------------------- ------  ,---- -- -----
+ -   200   . Streamlined hull                   14.0  ,HH.  S  0000
+#
+#   TONS   # DRIVES                              MCR   CODE  R QREBS
+#  ----- --- -------------------------------- ------  ,---- -- -----
+ -    35   . Jump Drive-3 (F)                   35.0  ,DJ31  F  0000
+ -     3   . Maneuver Drive-1 (B)                6.0  ,DM11  B  0000
+ -    19   . PowerPlant-3 (F)                   19.0  ,DP31  F  0000
+#
+#   TONS   # S-SENSORS                           MCR   CODE  R QREBS
+#  ----- --- -------------------------------- ------  ,---- -- -----
+ -     0   . AR Surf Basic C-R-T                 6.0  ,SS.1  . .....
+#
+#   TONS   # PAYLOAD                             MCR   CODE  R QREBS
+#  ----- --- -------------------------------- ------  ,---- -- -----
+ -    20   . Cargo Hold Basic                    0.0  ,PC.  .  0000
+
+ref: [<a href='http://www.farfuture.net/'>Far Future Enterprises</a>]
+

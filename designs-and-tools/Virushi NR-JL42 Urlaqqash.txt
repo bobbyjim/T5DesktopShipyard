@@ -1,0 +1,51 @@
+Search/Rescue Ship NR-JL42 Urlaqqash MCr546.7
+
+Owner: Tukera
+
+
+
+Crew comfort:     +3
+Passenger demand: +0
+
+[code]
+   Tons	 Component                          	  MCr	Notes
+-------	 -----------------------------------	-----	--------------------
+    900	 Lift body Hull, lifters, 9 a/l free	  112	L, lifters, 9 a/l free
+      9	 Landing legs with pads             	    9	
+     18	 Submergence hull                   	   18	
+     74	 Jump Fuel (1  parsec)              	    0	1 parsec jump, at 74t per parsec
+   59.4	 Plant Fuel (2 months)              	    0	2 months
+      1	 Fuel Scoops                        	  0.1	100 t/hr
+      1	 Fuel Intakes                       	  0.1	40 t/hr
+      1	 Fuel Bins                          	  0.1	20 t/hr
+    100	 Collector-2 (J)                    	   50	2 C
+   16.5	 Adv Jump Drive J (R2)              	   50	R2
+  14.19	 Adv PowerPlant P (R4)              	   43	R4
+   8.91	 Adv Maneuver Drive P (R4)          	   54	R4
+      0	 DS Surf Basic C-E-N-T              	    9	
+      4	 4x Vd T3 Hybrid L-S-M              	    8	#4 
+      4	 Computer Model/4                   	   18	
+      4	 Counsellor (Virushi)               	  0.4	
+     16	 4x Clinic (Virushi)                	    8	#4 
+      4	 2x Life Support Long Term          	    4	#2 84 people
+      5	 5x Life Support Adaptable          	    5	#5 4 sophonts
+     72	 36x Medical Low Berth (Large)      	   36	#36 
+     44	 Spacious Bridge                    	  1.6	5cc 6op 0ws
+     48	 12x Crew Stateroom                 	  2.4	#12 1 crew
+      8	 2x Crew Common Fresher             	    8	#2 10 crew
+     32	 8x Crew Commons                    	    0	#8 
+     16	 4x Machine Shop                    	   16	#4 Sophisticated equipment
+     60	 2x Personnel Module                	    4	#2 Cutter Module
+      2	 Cargo Hold Basic                   	    0	
+     60	 2x Cargo Module                    	    2	#2 Cutter Module
+      4	 Workspace                          	    4	Sophisticated equipment
+     80	 20x Standard Stateroom             	    4	#20 1 passenger
+      8	 2x Common Fresher                  	    8	#2 10 passengers
+     16	 4x Lab                             	   16	#4 Sophisticated equipment
+     10	 Hangar Lock                        	    0	
+    100	 2x Modular Cutter + hangar         	   56	#2 m3bis 3
+[/code]
+
+[code]
+[/code]
+
