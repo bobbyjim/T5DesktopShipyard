@@ -27,4 +27,12 @@ changes. A future improvement would be to design item-specific editors by type, 
 would remove the complexity from the rest of the UI and allow the editor to be more 
 centered on the main datagrid.
 
+# Ship Design Structure
+
+The ship design is structured as a collection of components, each with its own properties and configurations. The design is saved in YAML format, which allows for easy readability and editing. 
+
+There is also a rollup/header containing summary data and some metadata about the ship.
+
+The design structure is a little messy, and there's simplification and cleanup to be done
+in some places, and on the other hand, some lost complexity to be restored in a few cases. For example, the ship console info is tightly abbreviated and condensed.
 
