@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../ACS/ACS.iml" filepath="$PROJECT_DIR$/../ACS/ACS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../BCS/BCS.iml" filepath="$PROJECT_DIR$/../BCS/BCS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/T5DesktopShipyard.iml" filepath="$PROJECT_DIR$/T5DesktopShipyard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../as3yaml/as3yaml.iml" filepath="$PROJECT_DIR$/../as3yaml/as3yaml.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,21 @@
+---
+header:
+   format: 'T5-ACS-1'
+   tons: 200
+   tl: 12
+   mission: 'A'
+   config: 'S'
+   spaciousness: 2
+   shifts: 1
+
+components:
+   - {type: 'Hull', category: 'Hull', label: 'Streamlined hull', eff: 1, name: 'Hull', config: 'Streamlined', code: 'S', mcr: 14, tons: 200, mult: 1}
+
+   - 
+      type: 'Payload'
+      category: 'Cargo'
+      label: 'Cargo Hold Basic'
+      mcr: 0
+      eff: 1
+      tons: '20'
+      notes: ''

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx" 
+					   xmlns:local="*"
+					   width="970"
+					   height="600">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<local:ACSBuilder id="builder" initialize="ExternalDataLoader.load(builder)" />
+	<!--mx:Accordion>
+		<s:NavigatorContent width="100%" height="100%" label="ACS">
+		</s:NavigatorContent>
+		<s:NavigatorContent width="100%" height="100%" label="BCS">
+			<local:BCSBuilder id="bcsBuilder" />		
+		</s:NavigatorContent>
+	</mx:Accordion-->
+	
+</s:WindowedApplication>

@@ -1,0 +1,35 @@
+living: 
+   - { label: Medical Low Berth, type: Living,      tons: 1,  mcr: 1,    notes:  }
+   - { label: Frozen Watch,      type: Ops,         tons: 2,  mcr: 1,    notes: 10 individuals }
+   - { label: Animal Berth,      type: Payload,     tons: 1,  mcr: 0.5,  notes:  }
+   - { label: Emergency Capsule, type: Ops,         tons: 1,  mcr: 1,    notes:  }
+
+payload:
+   - { label: Mail Vault,             type: Payload,  tons: 1,   mcr: 0,   notes: for express contracts }
+   - { label: Airlock,                type: Ops,      tons: 0.5, mcr: 0,   notes:  , CP: 1 }
+   - { label: Cargo Lock,             type: Payload,  tons: 2,   mcr: 0,   notes:  , CP: 1 }
+   - { label: Vehicle Lock,           type: Vehicle,  tons: 4,   mcr: 0,   notes:  , CP: 1 }
+   - { label: Large Vehicle Lock,     type: Vehicle,  tons: 10,  mcr: 0,   notes:  , CP: 1 }
+   - { label: Magazine,               type: Weapon,   tons: 1,   mcr: 0,   notes:  }
+   - { label: Cargo Hold Basic,       type: Payload,  tons: 0,   mcr: 0,   notes:  }
+   - { label: Container Handler,      type: Payload,  tons: 1,   mcr: 1,   notes: 12t/hr }
+   - { label: Cargo Hold Bulk Solid,  type: Payload,  tons: 1,   mcr: 0,   notes:  }
+   - { label: Solid Bulk Handler,     type: Payload,  tons: 1,   mcr: 0.1, notes: 20t/hr }
+   - { label: Cargo Hold Bulk Liquid, type: Payload,  tons: 1,   mcr: 0,   notes:  }
+   - { label: Liquid Bulk Handler,    type: Payload,  tons: 1,   mcr: 0.1, notes: 40t/hr }
+   - { label: Cargo Hold Bulk Gas,    type: Payload,  tons: 1,   mcr: 0,   notes:  }
+   - { label: Gas Bulk Handler,       type: Payload,  tons: 1,   mcr: 0.1, notes: 60t/hr }
+   - { label: Lab/Workspace,          type: Payload,  tons: 10,  mcr: 0,   notes:  , CP: 1 }
+   - { label: ATV Module,             type: Payload,  tons: 30,  mcr: 1.8, notes: Cutter Module }
+   - { label: Personnel Module,       type: Payload,  tons: 30,  mcr: 2.0, notes: Cutter Module }
+   - { label: Cargo Module,           type: Payload,  tons: 30,  mcr: 1.0, notes: Cutter Module }
+   - { label: Skimmer Module,         type: Payload,  tons: 30,  mcr: 1.0, notes: Cutter Module }
+   - { label: Assault Module,         type: Payload,  tons: 30,  mcr: 2.5, notes: Cutter Module }
+   - { label: Pressurized Shelter,    type: Payload,  tons: 30,  mcr: 4.5, notes: Cutter Module }
+   - { label: Weapons Module,         type: Payload,  tons: 30,  mcr: 8.0, notes: Cutter Module }
+   - { label: Fighter Module,         type: Payload,  tons: 30,  mcr: 2.0, notes: Cutter Module }
+   - { label: Grapple,                type: Vehicle,  tons: 2,   mcr: 2,   notes: 2 per 35t }
+   - { label: Pod A2-S,               type: Ops,      tons: 20,  mcr: 1.4, notes: req 1 pair grapples, CP: 1 }
+   - { label: Pod A4-S,               type: Ops,      tons: 40,  mcr: 2.6, notes: req 2 pair grapples, CP: 1 }
+   - { label: Pod A6-S,               type: Ops,      tons: 60,  mcr: 3.8, notes: req 2 pair grapples, CP: 1 }
+   - { label: Pod A8-S,               type: Ops,      tons: 80,  mcr: 5.0, notes: req 3 pair grapples, CP: 1 }

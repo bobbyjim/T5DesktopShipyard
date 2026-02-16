@@ -1,0 +1,90 @@
+hulls:
+   missions:
+      - { code: 'A', label: 'Trader' }
+      - { code: 'A2', label: 'Far Trader' }
+      - { code: 'B', label: 'Bulk Carrier' }
+      - { code: 'B2', label: 'Enhanced Bulk Carrier' }
+      - { code: 'C', label: 'Cruiser' }
+      - { code: 'C2', label: 'Enhanced Cruiser' }
+      - { code: 'D', label: 'Defender' }
+      - { code: 'D2', label: 'UpArmored Defender' }
+      - { code: 'E', label: 'Escort' }
+      - { code: 'E2', label: 'Enhanced Escort' }
+      - { code: 'F', label: 'Freighter' }
+      - { code: 'F2', label: 'Specialized Freighter' }
+      - { code: 'G', label: 'Frigate' }
+      - { code: 'G2', label: 'Upgunned Frigate' }
+      - { code: 'J', label: 'Prospector' }
+      - { code: 'K', label: 'Safari Ship' }
+      - { code: 'K2', label: 'Excursion Ship' }
+      - { code: 'L', label: 'Lab Ship' }
+      - { code: 'M', label: 'Liner' }
+      - { code: 'M2', label: 'Long Liner' }
+      - { code: 'N', label: 'Scientific' }
+      - { code: 'P', label: 'Raider' }
+      - { code: 'P2', label: 'Corsair' }
+      - { code: 'R', label: 'Merchant' }
+      - { code: 'R2', label: 'Merchant Cruiser' }
+      - { code: 'S', label: 'Scout/Courier' }
+      - { code: 'S2', label: 'Enhanced Scout/Courier' }
+      - { code: 'T', label: 'Military Transport' }
+      - { code: 'T2', label: 'Enhanced Transport' }
+      - { code: 'V', label: 'Corvette' }
+      - { code: 'V2', label: 'Enhanced Corvette' }
+      - { code: 'X', label: 'Express Courier' }
+      - { code: 'X2', label: 'Alternate Courier' }
+      - { code: 'Y', label: 'Yacht' }
+      - { code: 'Y2', label: 'Enhanced Yacht' }
+      - { code: 'Z', label: 'Unclassified' }
+      - { code: 'Z2', label: 'Alternate Unclassified' }
+
+   cost:
+      C: 2.5% + 1
+      B: 3% + 1.333
+      P: 2%
+      U: 4% + 2
+      S: 7% + 2
+      A: 8% + 2
+      L: 13% + 4
+
+   griddingCostByVolume: 0.001
+
+   fittings:
+      - { code: n/a, label: ,                 type: Hull, category: fittings, tonsPercent: 0, mcrPerTon: 0 }
+      - { code: D,   label: Flotation hull,   type: Hull, category: fittings, tonsPercent: 1, mcrPerTon: 1  }
+      - { code: E,   label: Submergence hull, type: Hull, category: fittings, tonsPercent: 2, mcrPerTon: 2  }
+
+   wings:
+      - { code: none, label: ,                 type: Hull, category: wings, tonsPercent: 0, mcrPerTon: 0 }
+      - { code: F,    label: Fins,             type: Hull, category: wings, tonsPercent: 0.5, mcrPerTon: 0.5, not: CBP  }
+      - { code: G,    label: Folding wings,    type: Hull, category: wings, tonsPercent: 1, mcrPerTon: 0.5, not: CBP   }
+      - { code: W,    label: Wings and fins,   type: Hull, category: wings, tonsPercent: 2, mcrPerTon: 1, not: CBP   }
+      - { code: V,    label: Collapsing wings, type: Hull, category: wings, tonsPercent: 1, mcrPerTon: 2, not: CBP   }
+
+   landers:
+      - { code: none, label: No landing gear, type: Hull, category: landers, tonsPercent: -1.0, mcrPerTon: 1.0 }
+      - { code: J,    label: Skids,           type: Hull, category: landers, tonsPercent: -0.5, mcrPerTon: 1.0 }
+      - { code: K,    label: Legs with pads,  type: Hull, category: landers, tonsPercent: 0,    mcrPerTon: 0  }
+      - { code: M,    label: Wheels,          type: Hull, category: landers, tonsPercent: 1,    mcrPerTon: 0.5 }
+
+   lifters: { code: Z, label: Lifters,         type: Hull, category: lifters, tonsPercent: 0, mcrPerTon: 1 }
+
+computer:
+   models:
+    0:    { label: Model 0,    tl: 8,  type: Bridge, tons: 0.5, mcr:  0.1, notes:    }
+    1:    { label: Model 1,    tl: 9,  type: Bridge, tons: 1.0, mcr:  1.5, notes:    }
+    2:    { label: Model 2,    tl: 10, type: Bridge, tons: 2.0, mcr:  5.0, notes:    }
+    3:    { label: Model 3,    tl: 11, type: Bridge, tons: 3.0, mcr: 10.5, notes:    }
+    4:    { label: Model 4,    tl: 12, type: Bridge, tons: 4.0, mcr: 18.0, notes:    }
+    5:    { label: Model 5,    tl: 13, type: Bridge, tons: 5.0, mcr: 27.0, notes:    }
+    6:    { label: Model 6,    tl: 14, type: Bridge, tons: 6.0, mcr: 39.0, notes:    }
+    7:    { label: Model 7,    tl: 15, type: Bridge, tons: 7.0, mcr: 52.0, notes:    }
+    8:    { label: Model 8,    tl: 16, type: Bridge, tons: 8.0, mcr: 68.0, notes:    }
+    9:    { label: Model 9,    tl: 17, type: Bridge, tons: 9.0, mcr: 85.0, notes:    }
+
+   options:
+    fib: { label: fib,  tl: 1, mcr_mult: 1.5, tons_mult: 2, notes: Fiber Optic }
+    phot: { label: phot, tl: 3, mcr_mult: 0.5, tons_mult: 1, notes: Photonic    }
+    flu: { label: flu,  tl: 4, mcr_mult: 2.0, tons_mult: 2, notes: Fluidic     }
+    neu: { label: neu,  tl: 5, mcr_mult: 2.0, tons_mult: 1, notes: Neural      }
+

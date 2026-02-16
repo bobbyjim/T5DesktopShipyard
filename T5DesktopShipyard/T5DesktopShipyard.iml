@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="T5DesktopShipyard">
+    <configurations>
+      <configuration name="T5DesktopShipyard" target-platform="Desktop" main-class="T5DesktopShipyard" output-file="T5DesktopShipyard.swf" output-folder="$MODULE_DIR$/bin-debug">
+        <dependencies>
+          <entries>
+            <entry library-id="4a2fde22-3532-4a65-a202-4b218be915b8">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="1099b3a2-d0d2-4a5c-882f-99ad62f7cb9f">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-id="c8c3f2c1-0ff0-470f-b20e-37c2e35cd411">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex_sdk_4.6" />
+        </dependencies>
+        <compiler-options>
+          <map>
+            <entry key="compiler.locale" value="en_US" />
+          </map>
+        </compiler-options>
+        <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/src/T5DesktopShipyard-app.xml" package-file-name="T5DesktopShipyard">
+          <files-to-package>
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/src/T5ShipyardCfg" path-in-package="T5ShipyardCfg" />
+          </files-to-package>
+          <AirSigningOptions keystore-path="$MODULE_DIR$/../eaglenet digital sig.p12" use-temp-certificate="false" />
+        </packaging-air-desktop>
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="flex_sdk_4.6" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="4a2fde22-3532-4a65-a202-4b218be915b8" />
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="1099b3a2-d0d2-4a5c-882f-99ad62f7cb9f" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/ACS/bin/ACS.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library type="flex">
+        <properties id="c8c3f2c1-0ff0-470f-b20e-37c2e35cd411" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/BCS/bin/BCS.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>
