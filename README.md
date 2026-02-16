@@ -1,6 +1,8 @@
 # T5DesktopShipyard
 An old FlashBuilder app that really did a lot of things well (for the 2010s).
 
+The last successful compile (before FlashBuilder was discontinued) was in 2016, but the app is still functional as of 2026. It was built using ActionScript 3 and the Flex framework, which were popular for desktop applications at the time.
+
 # Overall Structure
 
 As far as I can tell:
