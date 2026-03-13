@@ -1,45 +1,89 @@
 # T5DesktopShipyard
-An old FlashBuilder app that really did a lot of things well (for the 2010s).
 
-The last successful compile (before FlashBuilder was discontinued) was in 2016, but the app is still functional as of 2026. It was built using ActionScript 3 and the Flex framework, which were popular for desktop applications at the time.
+T5DesktopShipyard is a legacy desktop ship-design tool built with ActionScript 3 and Flex.
+It was originally developed in Adobe Flash Builder and has remained usable long after the
+original toolchain stopped receiving support.
 
-# Overall Structure
+## Status
 
-As far as I can tell:
-- The app source is under /ACS.
-- The wrapper might actually be in /T5DesktopShipyard... maybe.
-- Supporting library code is in /as3yaml and /lib1541.
+- Last known successful compile in the original environment: 2016.
+- Runtime behavior is still functional in preserved builds as of 2026.
+- This repository should be treated as a legacy codebase with historical tooling.
 
-# Multiple formats supported
-Internally, this app loads and saves in YAML, but it can also import and export in JSON and XML. This allows ship designs to be shared in a variety of formats, which is useful for compatibility with other tools and for users who prefer different data representations. 
+## Repository Layout
 
-In retrospect, it's overkill to support three formats, but it was relatively easy to implement them all.
+- `ACS/`
+	- Core shipyard UI and component logic.
+	- Key source root: `ACS/src/`.
+	- Includes configuration YAML under `ACS/src/T5ShipyardCfg/`.
+- `T5DesktopShipyard/`
+	- Desktop wrapper application project.
+	- Main app entry point: `T5DesktopShipyard/src/T5DesktopShipyard.mxml`.
+- `T5DesktopShipyard-app/`
+	- Preserved app package artifacts.
+- `as3yaml/`
+	- Supporting AS3 YAML parsing library.
+- `lib1541/`
+	- Additional supporting ActionScript library code.
+- `designs-and-tools/`
+	- Design library (mostly `.yml`, plus `.acs`, `.txt`, `.html`, and some `.json`).
+	- Conversion, reporting, and batch scripts for design data.
 
-# Component Structure
+## Data and Formats
 
-Most of the components are built from configuration files; this was done to provide a 
-measure of forward-compatibility with future edits of T5. These configurations typically rely on a component factory that manages range, stage, and component type. The result is
-a flexible but complex system where multiple picklists are required to define a component
-list of items available.
+The project primarily uses YAML for design persistence and configuration. The surrounding
+tooling also supports workflows involving ACS text format, JSON, and HTML exports.
 
-The item editor is generic, containing stage effects and a direct editor for custom
-changes. A future improvement would be to design item-specific editors by type, which 
-would remove the complexity from the rest of the UI and allow the editor to be more 
-centered on the main datagrid.
+Common data locations:
 
-# Ship Design Structure
+- App configuration: `ACS/src/T5ShipyardCfg/*.yml`
+- Design corpus and converters: `designs-and-tools/`
 
-The ship design is structured as a collection of components, each with its own properties and configurations. The design is saved in YAML format, which allows for easy readability and editing. 
+## Tooling in `designs-and-tools`
 
-There is also a rollup/header containing summary data and some metadata about the ship.
+The Perl scripts in `designs-and-tools/` are useful for conversion and reporting.
 
-The design structure is a little messy, and there's simplification and cleanup to be done
-in some places, and on the other hand, some lost complexity to be restored in a few cases. For example, the ship console info is tightly abbreviated and condensed.
+Examples:
 
-# Ship Design Library
+- Convert YAML ships to ACS format:
 
-Ship designs, and tools used to manipulate them, are stored in /designs-and-tools. There
-are designs ported from Classic Traveller as well as some original designs.  Most are
-written in YAML, but some have been "down-converted" to a newer ACS format or a more
-tightly compressed format. 
+	```bash
+	cd designs-and-tools
+	perl acs2acs.pl "Im-- A2-CL22 Fat Cat.yml"
+	```
+
+- Convert YAML ships to HTML:
+
+	```bash
+	cd designs-and-tools
+	perl acs2html.pl "Im-- A2-CL22 Fat Cat.yml"
+	```
+
+- Build summary CSV from YAML designs:
+
+	```bash
+	cd designs-and-tools
+	perl compile.pl > acs-summary.csv
+	```
+
+Dependencies for these scripts include Perl plus the YAML module.
+
+## Opening the Project
+
+Because Flash Builder is discontinued, modern development is mostly archival/maintenance.
+If you have a compatible Flex/AS3 environment, import the projects as existing Eclipse-style
+projects from:
+
+- `ACS/`
+- `T5DesktopShipyard/`
+- `as3yaml/`
+- `lib1541/`
+
+## Notes for Maintenance
+
+- The component system is highly configuration-driven, which makes extension easier but
+	increases UI/editor complexity.
+- Design headers and component arrays contain overlapping summary/detail fields; changes
+	should be tested with real ship files from `designs-and-tools/`.
+- Prefer small, verifiable changes and keep sample ship exports to confirm compatibility.
 
