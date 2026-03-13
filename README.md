@@ -25,9 +25,8 @@ original toolchain stopped receiving support.
 	- Supporting AS3 YAML parsing library.
 - `lib1541/`
 	- Additional supporting ActionScript library code.
-- `designs-and-tools/`
-	- Design library (mostly `.yml`, plus `.acs`, `.txt`, `.html`, and some `.json`).
-	- Conversion, reporting, and batch scripts for design data.
+- `examples/`
+	- Example ship designs.
 
 ## Data and Formats
 
@@ -37,36 +36,7 @@ tooling also supports workflows involving ACS text format, JSON, and HTML export
 Common data locations:
 
 - App configuration: `ACS/src/T5ShipyardCfg/*.yml`
-- Design corpus and converters: `designs-and-tools/`
-
-## Tooling in `designs-and-tools`
-
-The Perl scripts in `designs-and-tools/` are useful for conversion and reporting.
-
-Examples:
-
-- Convert YAML ships to ACS format:
-
-	```bash
-	cd designs-and-tools
-	perl acs2acs.pl "Im-- A2-CL22 Fat Cat.yml"
-	```
-
-- Convert YAML ships to HTML:
-
-	```bash
-	cd designs-and-tools
-	perl acs2html.pl "Im-- A2-CL22 Fat Cat.yml"
-	```
-
-- Build summary CSV from YAML designs:
-
-	```bash
-	cd designs-and-tools
-	perl compile.pl > acs-summary.csv
-	```
-
-Dependencies for these scripts include Perl plus the YAML module.
+- Examples: `examples/`
 
 ## Opening the Project
 
